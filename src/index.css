@@ -1,12 +1,19 @@
-/* Base placeholder styles — each variation branch replaces this file entirely. */
+/* Type foundry / metal type design language */
 :root {
-  --bg: #f2efe8;
-  --ink: #1a1a1a;
-  --muted: #5c5a55;
-  --accent: #0b4f4a;
-  --line: #d4cfc4;
-  --font-display: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
-  --font-body: 'Segoe UI', 'Helvetica Neue', sans-serif;
+  --iron: #141210;
+  --iron-lift: #1c1916;
+  --metal: #a8a29a;
+  --metal-bright: #c4bfb6;
+  --ember: #c45c26;
+  --ember-hot: #e06a2c;
+  --ember-deep: #8f3f16;
+  --proof: #ebe6dc;
+  --proof-dim: #d8d2c6;
+  --ink: #1a1612;
+  --muted: #6b655c;
+  --rule: color-mix(in srgb, var(--metal) 35%, transparent);
+  --font-brand: 'Archivo Black', 'Arial Black', Impact, sans-serif;
+  --font-body: 'Literata', 'Iowan Old Style', Georgia, serif;
 }
 
 * {
@@ -21,155 +28,629 @@ body {
   margin: 0;
   font-family: var(--font-body);
   color: var(--ink);
-  background: var(--bg);
-  line-height: 1.55;
+  background: var(--iron);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Ambient foundry floor behind the whole page */
+.foundry-floor {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 90% 60% at 18% 12%, color-mix(in srgb, var(--ember) 14%, transparent), transparent 55%),
+    radial-gradient(ellipse 70% 50% at 88% 78%, color-mix(in srgb, #3a3228 55%, transparent), transparent 50%),
+    linear-gradient(165deg, #1a1714 0%, var(--iron) 42%, #0e0c0a 100%);
+}
+
+.foundry-floor::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.35;
+  background-image:
+    radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--metal) 28%, transparent) 1px, transparent 1.5px);
+  background-size: 28px 28px;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.55), transparent 70%);
+}
+
+.foundry-floor::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.18;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 47px,
+      color-mix(in srgb, var(--metal) 22%, transparent) 47px,
+      color-mix(in srgb, var(--metal) 22%, transparent) 48px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 47px,
+      color-mix(in srgb, var(--metal) 18%, transparent) 47px,
+      color-mix(in srgb, var(--metal) 18%, transparent) 48px
+    );
 }
 
 .page {
-  max-width: 920px;
+  position: relative;
+  z-index: 1;
+  max-width: 1080px;
   margin: 0 auto;
-  padding: 2rem 1.25rem 4rem;
+  padding: 0 1.25rem 5rem;
 }
 
-.hero {
-  min-height: 70vh;
+/* Nav */
+.site-nav {
   display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
+  align-items: center;
+  justify-content: space-between;
   gap: 1rem;
-  padding-bottom: 2rem;
-  border-bottom: 1px solid var(--line);
+  padding: 1.1rem 0 0.75rem;
+  color: var(--metal);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.site-nav a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.site-nav a:hover {
+  color: var(--ember-hot);
+}
+
+.nav-mark {
+  font-weight: 600;
+  color: var(--metal-bright);
+}
+
+.site-nav ul {
+  display: flex;
+  gap: 1.25rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Hero — full-bleed metal type cast */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  align-items: flex-end;
+  margin: 0 -1.25rem;
+  padding: 0;
+  overflow: hidden;
+}
+
+.hero-atmosphere {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 100%, color-mix(in srgb, var(--ember) 22%, transparent), transparent 60%),
+    radial-gradient(ellipse 50% 40% at 70% 30%, color-mix(in srgb, #2a241c 80%, transparent), transparent 55%),
+    linear-gradient(180deg, transparent 0%, color-mix(in srgb, var(--iron) 40%, transparent) 55%, var(--iron) 100%),
+    linear-gradient(135deg, #1f1b17 0%, var(--iron) 45%, #0c0a08 100%);
+}
+
+.hero-atmosphere::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.45;
+  background-image:
+    radial-gradient(circle, color-mix(in srgb, var(--metal) 40%, transparent) 1.2px, transparent 1.6px);
+  background-size: 22px 22px;
+  background-position: 4px 6px;
+}
+
+.hero-atmosphere::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.12;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent 0 19px,
+      color-mix(in srgb, var(--metal) 30%, transparent) 19px 20px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 19px,
+      color-mix(in srgb, var(--metal) 25%, transparent) 19px 20px
+    );
+}
+
+.hero-cast {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 5rem 1.25rem 3.5rem;
+}
+
+.specimen-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin: 0 0 1.5rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--metal);
+}
+
+.ember-rule {
+  display: inline-block;
+  height: 2px;
+  width: 2.5rem;
+  background: var(--ember);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--ember) 55%, transparent);
+  animation: ember-pulse 2.4s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+.ember-rule.wide {
+  display: block;
+  width: 4.5rem;
+  margin-top: 0.75rem;
+}
+
+@keyframes ember-pulse {
+  0%,
+  100% {
+    opacity: 0.65;
+    box-shadow: 0 0 6px color-mix(in srgb, var(--ember) 35%, transparent);
+  }
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 14px color-mix(in srgb, var(--ember) 70%, transparent);
+  }
 }
 
 .brand {
-  font-family: var(--font-display);
-  font-size: clamp(2.5rem, 8vw, 4.5rem);
-  line-height: 0.95;
   margin: 0;
+  font-family: var(--font-brand);
+  font-size: clamp(3.2rem, 12vw, 7.5rem);
+  line-height: 0.88;
   letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--proof);
+  text-shadow:
+    0 1px 0 color-mix(in srgb, #fff 18%, transparent),
+    0 2px 0 #2a2620,
+    0 3px 0 #1f1c18,
+    0 6px 18px color-mix(in srgb, #000 55%, transparent);
 }
 
-.hero h1 {
-  font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+.brand-line {
+  display: block;
+}
+
+.specimen-label {
+  margin: 1.35rem 0 0;
+  font-family: var(--font-body);
+  font-size: clamp(1rem, 2.2vw, 1.2rem);
   font-weight: 600;
-  margin: 0;
-  color: var(--accent);
+  font-style: italic;
+  letter-spacing: 0.04em;
+  color: var(--ember);
+  max-width: 28rem;
 }
 
 .lede {
-  max-width: 38rem;
-  color: var(--muted);
-  margin: 0;
+  margin: 0.85rem 0 0;
+  max-width: 36rem;
+  color: var(--metal-bright);
+  font-size: 1.05rem;
 }
 
 .cta-row {
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
-  margin-top: 0.5rem;
+  margin-top: 1.75rem;
 }
 
 .cta {
   display: inline-block;
-  padding: 0.7rem 1.1rem;
-  background: var(--accent);
-  color: #fff;
+  padding: 0.85rem 1.2rem;
+  background: var(--ember);
+  color: var(--proof);
   text-decoration: none;
-  font-size: 0.95rem;
+  font-size: 0.92rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border: 1px solid var(--ember-deep);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, #fff 18%, transparent);
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.cta:hover {
+  background: var(--ember-hot);
+  transform: translateY(-1px);
 }
 
 .cta.ghost {
   background: transparent;
-  color: var(--accent);
-  outline: 1px solid var(--accent);
+  color: var(--metal-bright);
+  border-color: var(--metal);
+  box-shadow: none;
 }
 
-.proof {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 1.25rem;
-  padding: 2rem 0;
-  border-bottom: 1px solid var(--line);
+.cta.ghost:hover {
+  color: var(--proof);
+  border-color: var(--proof);
+  background: color-mix(in srgb, var(--metal) 12%, transparent);
 }
 
-.proof strong {
-  display: block;
-  font-family: var(--font-display);
-  font-size: 1.75rem;
+/* Metal stamp settle */
+.stamp-settle {
+  opacity: 0;
+  transform: translateY(-18px) scale(1.04);
+  animation: stamp-settle 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
-.proof figcaption {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-  font-size: 0.9rem;
-  color: var(--muted);
+.stamp-settle.delay-1 {
+  animation-delay: 0.12s;
 }
 
-.proof em {
-  font-style: normal;
-  color: var(--ink);
+.stamp-settle.delay-2 {
+  animation-delay: 0.24s;
 }
 
+.stamp-settle.delay-3 {
+  animation-delay: 0.36s;
+}
+
+@keyframes stamp-settle {
+  0% {
+    opacity: 0;
+    transform: translateY(-22px) scale(1.06);
+    filter: blur(1px);
+  }
+  70% {
+    opacity: 1;
+    transform: translateY(2px) scale(0.995);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Section scaffolding */
 section {
-  padding: 2.5rem 0;
-  border-bottom: 1px solid var(--line);
+  padding: 3.25rem 0;
+  border-top: 1px solid var(--rule);
+}
+
+.section-head {
+  margin-bottom: 1.25rem;
+}
+
+.kicker {
+  margin: 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ember);
 }
 
 section h2 {
-  font-family: var(--font-display);
-  font-size: 1.75rem;
-  margin: 0 0 0.75rem;
+  margin: 0.35rem 0 0;
+  font-family: var(--font-body);
+  font-size: clamp(1.55rem, 3vw, 2rem);
+  font-weight: 700;
+  color: var(--proof);
+  letter-spacing: -0.01em;
 }
 
 .section-lede {
-  color: var(--muted);
+  margin: 0 0 2rem;
   max-width: 40rem;
+  color: var(--metal);
+  font-size: 1.05rem;
 }
 
-.job,
-.project {
-  margin-top: 1.75rem;
+/* Punch measurements */
+.punch-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  border: 1px solid var(--rule);
+  background: color-mix(in srgb, var(--iron-lift) 80%, transparent);
 }
 
-.job h3,
-.project h3 {
-  margin: 0 0 0.35rem;
-  font-size: 1.15rem;
-}
-
-.job header p,
-.stack {
-  color: var(--muted);
-  font-size: 0.9rem;
-  margin: 0 0 0.75rem;
-}
-
-.job ul {
+.punch {
   margin: 0;
+  padding: 1.5rem 1.25rem;
+  border-right: 1px solid var(--rule);
+}
+
+.punch:last-child {
+  border-right: none;
+}
+
+.punch-index {
+  margin: 0 0 0.75rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--metal);
+}
+
+.punch strong {
+  display: block;
+  font-family: var(--font-body);
+  font-size: clamp(1.5rem, 3vw, 1.9rem);
+  font-weight: 700;
+  color: var(--proof);
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.punch figcaption {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin-top: 0.75rem;
+  font-size: 0.9rem;
+}
+
+.punch figcaption span {
+  color: var(--ember);
+  font-weight: 600;
+}
+
+.punch figcaption em {
+  font-style: normal;
+  color: var(--metal);
+}
+
+/* Type specimens / castings */
+.casting {
+  margin-top: 2rem;
+  padding: 1.5rem 0 0;
+  border-top: 1px solid var(--rule);
+}
+
+.casting-meta {
+  margin: 0 0 0.4rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--metal);
+}
+
+.casting h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--proof);
+}
+
+.casting-company {
+  color: var(--ember);
+  font-weight: 600;
+}
+
+.casting-place {
+  margin: 0.25rem 0 0.9rem;
+  font-size: 0.9rem;
+  color: var(--metal);
+}
+
+.casting ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.casting li {
+  position: relative;
+  margin-bottom: 0.65rem;
   padding-left: 1.1rem;
+  color: var(--proof-dim);
+  font-size: 0.98rem;
 }
 
-.job li {
-  margin-bottom: 0.45rem;
+.casting li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.65em;
+  width: 0.45rem;
+  height: 2px;
+  background: var(--ember);
 }
 
-.project span {
+/* Custom sorts */
+.sort-rail {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.sort {
+  padding: 1.5rem 0 0;
+  border-top: 1px solid var(--rule);
+}
+
+.sort-index {
+  margin: 0 0 0.45rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--metal);
+}
+
+.sort h3 {
+  margin: 0 0 0.6rem;
+  font-size: 1.2rem;
+  color: var(--proof);
+}
+
+.sort-sub {
   font-weight: 400;
-  color: var(--muted);
+  color: var(--metal);
+}
+
+.sort p {
+  margin: 0 0 0.75rem;
+  color: var(--proof-dim);
+  max-width: 42rem;
+}
+
+.stack {
+  font-size: 0.88rem;
+  color: var(--metal) !important;
+  letter-spacing: 0.02em;
 }
 
 .links {
   display: flex;
-  gap: 1rem;
+  gap: 1.25rem;
+  margin: 0 !important;
 }
 
 .links a,
-#contact a {
-  color: var(--accent);
+.contact-line a {
+  color: var(--ember);
+  text-decoration: none;
+  font-weight: 600;
+  border-bottom: 1px solid color-mix(in srgb, var(--ember) 40%, transparent);
 }
 
-#contact p:first-of-type {
-  max-width: 36rem;
-  color: var(--muted);
+.links a:hover,
+.contact-line a:hover {
+  color: var(--ember-hot);
+  border-bottom-color: var(--ember-hot);
+}
+
+/* Alloy matrix */
+.alloy-list {
+  margin: 0;
+  display: grid;
+  gap: 0;
+  border: 1px solid var(--rule);
+}
+
+.alloy-list > div {
+  display: grid;
+  grid-template-columns: 8rem 1fr;
+  gap: 1rem;
+  padding: 0.95rem 1.15rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+.alloy-list > div:last-child {
+  border-bottom: none;
+}
+
+.alloy-list dt {
+  margin: 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ember);
+  padding-top: 0.15rem;
+}
+
+.alloy-list dd {
+  margin: 0;
+  color: var(--proof-dim);
+}
+
+.contact-line {
+  margin: 1.5rem 0 0;
+  color: var(--metal);
+  font-size: 1.05rem;
+}
+
+/* Specimen slide on scroll */
+.specimen-reveal {
+  opacity: 0;
+  transform: translateX(-28px);
+  transition:
+    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.specimen-reveal.is-cast {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.specimen-reveal.is-cast .punch,
+.specimen-reveal.is-cast .casting,
+.specimen-reveal.is-cast .sort {
+  animation: specimen-slide 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(var(--i, 0) * 0.08s);
+}
+
+@keyframes specimen-slide {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@media (max-width: 800px) {
+  .punch-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .punch {
+    border-right: none;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .punch:last-child {
+    border-bottom: none;
+  }
+
+  .alloy-list > div {
+    grid-template-columns: 1fr;
+    gap: 0.35rem;
+  }
+
+  .brand {
+    font-size: clamp(2.6rem, 14vw, 4.2rem);
+  }
+
+  .hero {
+    min-height: 92vh;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stamp-settle,
+  .specimen-reveal,
+  .specimen-reveal.is-cast .punch,
+  .specimen-reveal.is-cast .casting,
+  .specimen-reveal.is-cast .sort,
+  .ember-rule {
+    animation: none !important;
+    transition: none !important;
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
 }
