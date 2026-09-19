@@ -16,6 +16,14 @@ function useGalleryMotion() {
     const labels = document.querySelectorAll('.fade-up')
     const rooms = document.querySelectorAll('.gallery-room')
 
+    // Reveal anything already on screen immediately (hero), then observe the rest.
+    labels.forEach((node) => {
+      const rect = node.getBoundingClientRect()
+      if (rect.top < window.innerHeight * 0.92 && rect.bottom > 0) {
+        node.classList.add('is-visible')
+      }
+    })
+
     const reveal = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -25,10 +33,12 @@ function useGalleryMotion() {
           }
         })
       },
-      { rootMargin: '0px 0px -10% 0px', threshold: 0.08 },
+      { rootMargin: '0px 0px -6% 0px', threshold: 0.05 },
     )
 
-    labels.forEach((node) => reveal.observe(node))
+    labels.forEach((node) => {
+      if (!node.classList.contains('is-visible')) reveal.observe(node)
+    })
 
     const onScroll = () => {
       const vh = window.innerHeight || 1
