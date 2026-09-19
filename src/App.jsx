@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import {
   person,
   positioning,
@@ -5,51 +6,102 @@ import {
   projects,
   skills,
   cta,
+  nav,
 } from './data/content.js'
 
-/**
- * Base shell — each design-language branch replaces layout + CSS.
- * Keep importing from ./data/content.js so copy stays identical.
- */
+function usePressReveal() {
+  useEffect(() => {
+    const nodes = document.querySelectorAll('.press-reveal')
+    if (!nodes.length) return undefined
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-pressed')
+            observer.unobserve(entry.target)
+          }
+        })
+      },
+      { rootMargin: '0px 0px -8% 0px', threshold: 0.12 },
+    )
+
+    nodes.forEach((node) => observer.observe(node))
+    return () => observer.disconnect()
+  }, [])
+}
+
 export default function App() {
+  usePressReveal()
+
   return (
     <div className="page">
+      <div className="paper-grain" aria-hidden="true" />
+
+      <nav className="masthead" aria-label="Primary">
+        <a className="masthead-mark press-link" href="#top">
+          A.V.S.
+        </a>
+        <ul>
+          {nav.map((item) => (
+            <li key={item.id}>
+              <a className="press-link" href={`#${item.id}`}>
+                {item.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
       <header className="hero" id="top">
-        <p className="brand">{person.name}</p>
-        <h1>{person.headline}</h1>
-        <p className="lede">{person.tagline}</p>
-        <div className="cta-row">
-          <a className="cta" href={`mailto:${person.email}`}>
+        <p className="brand ink-bleed">{person.name}</p>
+        <h1 className="ink-bleed delay-1">{person.headline}</h1>
+        <p className="lede ink-bleed delay-2">{person.tagline}</p>
+        <div className="cta-row ink-bleed delay-3">
+          <a className="cta press-link" href={`mailto:${person.email}`}>
             {cta.primary}
           </a>
-          <a className="cta ghost" href={person.github} target="_blank" rel="noreferrer">
+          <a
+            className="cta secondary press-link"
+            href={person.github}
+            target="_blank"
+            rel="noreferrer"
+          >
             {cta.secondary}
           </a>
         </div>
+        <p className="folio ink-bleed delay-4" aria-hidden="true">
+          Bangalore · Impression 01
+        </p>
       </header>
 
-      <section className="proof" aria-label="Proof points">
-        {positioning.proofPoints.map((p) => (
-          <figure key={p.label}>
-            <strong>{p.value}</strong>
-            <figcaption>
-              <span>{p.label}</span>
-              <em>{p.detail}</em>
-            </figcaption>
-          </figure>
-        ))}
+      <section className="imprint press-reveal" aria-label="Proof points">
+        <p className="kicker">From the press</p>
+        <div className="imprint-row">
+          {positioning.proofPoints.map((p) => (
+            <figure key={p.label}>
+              <strong>{p.value}</strong>
+              <figcaption>
+                <span>{p.label}</span>
+                <em>{p.detail}</em>
+              </figcaption>
+            </figure>
+          ))}
+        </div>
       </section>
 
-      <section id="work">
+      <section id="work" className="press-reveal">
         <h2>Work</h2>
         <p className="section-lede">{positioning.thesis}</p>
         {experience.map((job) => (
           <article key={`${job.company}-${job.start}`} className="job">
             <header>
               <h3>
-                {job.role} · {job.company}
+                {job.role}
+                <span className="sep"> · </span>
+                {job.company}
               </h3>
-              <p>
+              <p className="meta">
                 {job.start} – {job.end} · {job.location}
               </p>
             </header>
@@ -62,7 +114,7 @@ export default function App() {
         ))}
       </section>
 
-      <section id="projects">
+      <section id="projects" className="press-reveal">
         <h2>Projects</h2>
         {projects.map((project) => (
           <article key={project.name} className="project">
@@ -74,12 +126,17 @@ export default function App() {
             <p className="stack">{project.stack.join(' · ')}</p>
             <p className="links">
               {project.link ? (
-                <a href={project.link} target="_blank" rel="noreferrer">
+                <a className="press-link" href={project.link} target="_blank" rel="noreferrer">
                   Live
                 </a>
               ) : null}
               {project.github ? (
-                <a href={project.github} target="_blank" rel="noreferrer">
+                <a
+                  className="press-link"
+                  href={project.github}
+                  target="_blank"
+                  rel="noreferrer"
+                >
                   GitHub
                 </a>
               ) : null}
@@ -88,32 +145,55 @@ export default function App() {
         ))}
       </section>
 
-      <section id="skills">
+      <section id="skills" className="press-reveal">
         <h2>Capabilities</h2>
-        <p>{skills.languages.join(' · ')}</p>
-        <p>{skills.frameworks.join(' · ')}</p>
-        <p>{skills.ai.join(' · ')}</p>
-        <p>{skills.databases.join(' · ')}</p>
-        <p>{skills.cicd.join(' · ')}</p>
+        <dl className="type-drawer">
+          <div>
+            <dt>Languages</dt>
+            <dd>{skills.languages.join(' · ')}</dd>
+          </div>
+          <div>
+            <dt>Frameworks</dt>
+            <dd>{skills.frameworks.join(' · ')}</dd>
+          </div>
+          <div>
+            <dt>AI</dt>
+            <dd>{skills.ai.join(' · ')}</dd>
+          </div>
+          <div>
+            <dt>Data</dt>
+            <dd>{skills.databases.join(' · ')}</dd>
+          </div>
+          <div>
+            <dt>Delivery</dt>
+            <dd>{skills.cicd.join(' · ')}</dd>
+          </div>
+        </dl>
       </section>
 
-      <section id="contact">
+      <section id="contact" className="press-reveal">
         <h2>Contact</h2>
-        <p>{cta.consultingNote}</p>
-        <p>
-          <a href={`mailto:${person.email}`}>{person.email}</a>
-          {' · '}
-          <a href={person.linkedin} target="_blank" rel="noreferrer">
+        <p className="section-lede">{cta.consultingNote}</p>
+        <p className="contact-line">
+          <a className="press-link" href={`mailto:${person.email}`}>
+            {person.email}
+          </a>
+          <span className="sep"> · </span>
+          <a className="press-link" href={person.linkedin} target="_blank" rel="noreferrer">
             LinkedIn
           </a>
-          {' · '}
-          <a href={person.github} target="_blank" rel="noreferrer">
+          <span className="sep"> · </span>
+          <a className="press-link" href={person.github} target="_blank" rel="noreferrer">
             GitHub
           </a>
-          {' · '}
+          <span className="sep"> · </span>
           {person.location}
         </p>
       </section>
+
+      <footer className="colophon">
+        <p>Set in Playfair Display & Libre Franklin · Printed on screen stock</p>
+      </footer>
     </div>
   )
 }
