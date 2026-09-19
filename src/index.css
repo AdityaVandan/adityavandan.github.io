@@ -1,12 +1,18 @@
-/* Base placeholder styles — each variation branch replaces this file entirely. */
+/* Museum Gallery / Wall Labels — quiet white walls, brass accents */
+
 :root {
-  --bg: #f2efe8;
-  --ink: #1a1a1a;
-  --muted: #5c5a55;
-  --accent: #0b4f4a;
-  --line: #d4cfc4;
-  --font-display: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
-  --font-body: 'Segoe UI', 'Helvetica Neue', sans-serif;
+  --wall: #f5f3ef;
+  --wall-deep: #ebe7df;
+  --ink: #222222;
+  --muted: #5a564e;
+  --brass: #9a7b4f;
+  --brass-soft: rgba(154, 123, 79, 0.35);
+  --shadow: rgba(34, 34, 34, 0.18);
+  --shadow-soft: rgba(34, 34, 34, 0.08);
+  --frame: #2a2a2a;
+  --font-display: 'Cormorant Garamond', 'Palatino Linotype', Palatino, Georgia, serif;
+  --font-body: 'Work Sans', 'Helvetica Neue', sans-serif;
+  --room-opacity: 1;
 }
 
 * {
@@ -20,156 +26,736 @@ html {
 body {
   margin: 0;
   font-family: var(--font-body);
+  font-weight: 400;
   color: var(--ink);
-  background: var(--bg);
-  line-height: 1.55;
+  background: var(--wall);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
 }
 
 .page {
-  max-width: 920px;
-  margin: 0 auto;
-  padding: 2rem 1.25rem 4rem;
+  position: relative;
+  overflow-x: clip;
 }
 
-.hero {
-  min-height: 70vh;
+/* —— Nav —— */
+.gallery-nav {
+  position: sticky;
+  top: 0;
+  z-index: 20;
   display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
+  align-items: center;
+  justify-content: space-between;
   gap: 1rem;
-  padding-bottom: 2rem;
-  border-bottom: 1px solid var(--line);
+  padding: 0.85rem clamp(1.25rem, 4vw, 3rem);
+  background: color-mix(in srgb, var(--wall) 88%, transparent);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid color-mix(in srgb, var(--ink) 8%, transparent);
 }
 
-.brand {
+.nav-mark {
   font-family: var(--font-display);
-  font-size: clamp(2.5rem, 8vw, 4.5rem);
-  line-height: 0.95;
-  margin: 0;
-  letter-spacing: -0.02em;
-}
-
-.hero h1 {
-  font-size: clamp(1.1rem, 2.5vw, 1.4rem);
-  font-weight: 600;
-  margin: 0;
-  color: var(--accent);
-}
-
-.lede {
-  max-width: 38rem;
-  color: var(--muted);
-  margin: 0;
-}
-
-.cta-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  margin-top: 0.5rem;
-}
-
-.cta {
-  display: inline-block;
-  padding: 0.7rem 1.1rem;
-  background: var(--accent);
-  color: #fff;
+  font-size: 1.15rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
   text-decoration: none;
-  font-size: 0.95rem;
 }
 
-.cta.ghost {
-  background: transparent;
-  color: var(--accent);
-  outline: 1px solid var(--accent);
-}
-
-.proof {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 1.25rem;
-  padding: 2rem 0;
-  border-bottom: 1px solid var(--line);
-}
-
-.proof strong {
-  display: block;
-  font-family: var(--font-display);
-  font-size: 1.75rem;
-}
-
-.proof figcaption {
+.gallery-nav ul {
   display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-  font-size: 0.9rem;
-  color: var(--muted);
+  gap: 1.5rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
-.proof em {
-  font-style: normal;
+.gallery-nav a {
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+/* —— Brass underline grow —— */
+.brass-link {
+  position: relative;
+  display: inline-block;
+  text-decoration: none;
   color: var(--ink);
 }
 
-section {
-  padding: 2.5rem 0;
-  border-bottom: 1px solid var(--line);
+.brass-link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -0.12em;
+  width: 100%;
+  height: 1px;
+  background: var(--brass);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-section h2 {
+.brass-link:hover::after,
+.brass-link:focus-visible::after {
+  transform: scaleX(1);
+}
+
+.cta-primary {
+  color: var(--brass);
+  font-weight: 500;
+}
+
+.cta-primary::after {
+  transform: scaleX(1);
+  opacity: 0.7;
+}
+
+.cta-primary:hover::after,
+.cta-primary:focus-visible::after {
+  opacity: 1;
+}
+
+/* —— Fade-up labels —— */
+.fade-up {
+  opacity: 0;
+  transform: translateY(1.1rem);
+  transition:
+    opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.fade-up.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.hero-ceiling .fade-up:nth-child(1) {
+  transition-delay: 0.05s;
+}
+
+.hero-ceiling .fade-up:nth-child(2) {
+  transition-delay: 0.18s;
+}
+
+.wall-work.fade-up {
+  transition-delay: 0.28s;
+}
+
+.wall-label.fade-up {
+  transition-delay: 0.42s;
+}
+
+/* —— Hero: full-bleed gallery wall —— */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(1.5rem, 4vw, 3rem) clamp(1.25rem, 4vw, 3rem) 3rem;
+  background: var(--wall);
+}
+
+.wall-texture {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(34, 34, 34, 0.035), transparent 60%),
+    radial-gradient(ellipse 40% 30% at 85% 70%, rgba(154, 123, 79, 0.04), transparent 50%),
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 3px,
+      rgba(34, 34, 34, 0.012) 3px,
+      rgba(34, 34, 34, 0.012) 4px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 4px,
+      rgba(34, 34, 34, 0.01) 4px,
+      rgba(34, 34, 34, 0.01) 5px
+    );
+  opacity: 0.9;
+}
+
+.hero-ceiling,
+.hero-hang {
+  position: relative;
+  z-index: 1;
+}
+
+.hero-ceiling {
+  margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+.exhibition-kicker {
+  margin: 0 0 0.5rem;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--brass);
+}
+
+.brand {
+  margin: 0;
   font-family: var(--font-display);
-  font-size: 1.75rem;
-  margin: 0 0 0.75rem;
+  font-size: clamp(2.75rem, 9vw, 5.5rem);
+  font-weight: 500;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  color: var(--ink);
 }
 
-.section-lede {
+.hero-hang {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(16rem, 0.75fr);
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  align-items: end;
+  min-height: 0;
+}
+
+/* Wall-mounted work — dominant plane, soft shadow pool */
+.wall-work {
+  margin: 0;
+  position: relative;
+}
+
+.work-plane {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  max-height: min(72vh, 780px);
+  background: var(--wall-deep);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.4) inset,
+    0 28px 60px -20px var(--shadow),
+    0 8px 24px -8px var(--shadow-soft),
+    0 2px 4px rgba(34, 34, 34, 0.06);
+}
+
+.work-plane::before {
+  content: '';
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  width: 2px;
+  height: 14px;
+  background: linear-gradient(to bottom, transparent, rgba(34, 34, 34, 0.25));
+  transform: translateX(-50%);
+}
+
+.work-plane img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+
+.work-caption {
+  margin-top: 0.65rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   color: var(--muted);
+}
+
+/* Wall label plaque */
+.wall-label {
+  padding: 0 0 0.5rem;
+  max-width: 22rem;
+  border-left: 2px solid var(--brass);
+  padding-left: 1.25rem;
+}
+
+.label-acc {
+  margin: 0 0 0.75rem;
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--brass);
+}
+
+.label-title {
+  margin: 0 0 0.75rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 2.5vw, 1.75rem);
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--ink);
+}
+
+.label-lede {
+  margin: 0 0 1.5rem;
+  font-size: 0.95rem;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.label-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.85rem;
+  font-size: 0.88rem;
+}
+
+/* —— Shared room / section language —— */
+.gallery-room {
+  opacity: var(--room-opacity);
+  transition: opacity 0.45s ease;
+}
+
+.room-sign {
+  margin: 0 0 0.4rem;
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--brass);
+}
+
+.wing-head,
+.didactic .room-inner,
+.vestibule-inner,
+.loan-grid {
+  max-width: 52rem;
+}
+
+.wing-head h2,
+.didactic h2,
+.materials h2,
+.loan h2,
+.vestibule h2 {
+  margin: 0 0 0.75rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.85rem, 4vw, 2.6rem);
+  font-weight: 500;
+  line-height: 1.1;
+}
+
+.wing-lede {
+  margin: 0;
+  max-width: 38rem;
+  color: var(--muted);
+  font-size: 1.02rem;
+}
+
+section {
+  padding: clamp(3rem, 8vw, 5.5rem) clamp(1.25rem, 4vw, 3rem);
+  position: relative;
+}
+
+section::before {
+  content: '';
+  position: absolute;
+  left: clamp(1.25rem, 4vw, 3rem);
+  right: clamp(1.25rem, 4vw, 3rem);
+  top: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--ink) 12%, transparent) 20%,
+    color-mix(in srgb, var(--ink) 12%, transparent) 80%,
+    transparent
+  );
+}
+
+/* —— Didactic wall text (metrics in prose) —— */
+.didactic {
+  background:
+    radial-gradient(ellipse 60% 40% at 20% 30%, rgba(34, 34, 34, 0.03), transparent 55%),
+    var(--wall);
+}
+
+.thesis {
+  margin: 0 0 0.75rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 2.8vw, 1.65rem);
+  font-weight: 400;
+  line-height: 1.4;
   max-width: 40rem;
 }
 
-.job,
-.project {
-  margin-top: 1.75rem;
-}
-
-.job h3,
-.project h3 {
-  margin: 0 0 0.35rem;
-  font-size: 1.15rem;
-}
-
-.job header p,
-.stack {
+.audience {
+  margin: 0 0 2.5rem;
+  font-size: 0.85rem;
+  letter-spacing: 0.02em;
   color: var(--muted);
-  font-size: 0.9rem;
-  margin: 0 0 0.75rem;
 }
 
-.job ul {
+.didactic-flow {
+  display: flex;
+  flex-direction: column;
+  gap: 1.35rem;
+  max-width: 40rem;
+}
+
+.didactic-line {
   margin: 0;
-  padding-left: 1.1rem;
+  padding-left: 2.5rem;
+  position: relative;
+  color: var(--ink);
+  font-size: 1.02rem;
 }
 
-.job li {
-  margin-bottom: 0.45rem;
+.didactic-marker {
+  position: absolute;
+  left: 0;
+  top: 0.15em;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--brass);
 }
 
-.project span {
+.metric {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.15em;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+
+.didactic-aside {
+  color: var(--muted);
+  font-size: 0.92em;
+}
+
+/* —— Exhibition rooms (work) —— */
+.work-wing {
+  background: var(--wall);
+}
+
+.work-wing .wing-head {
+  margin-bottom: 2.5rem;
+}
+
+.room {
+  display: grid;
+  grid-template-columns: minmax(12rem, 18rem) minmax(0, 1fr);
+  gap: clamp(1.25rem, 3vw, 2.5rem);
+  padding: 2.25rem 0;
+  border-top: 1px solid color-mix(in srgb, var(--ink) 8%, transparent);
+}
+
+.room:last-child {
+  border-bottom: 1px solid color-mix(in srgb, var(--ink) 8%, transparent);
+}
+
+.room-plaque {
+  position: relative;
+}
+
+.plaque-no {
+  margin: 0 0 0.5rem;
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--brass);
+}
+
+.room-plaque h3 {
+  margin: 0 0 0.4rem;
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.plaque-venue {
   font-weight: 400;
   color: var(--muted);
 }
 
-.links {
+.plaque-meta {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.room-notes {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.room-notes li {
+  position: relative;
+  padding: 0 0 0.85rem 1rem;
+  font-size: 0.95rem;
+  color: var(--ink);
+}
+
+.room-notes li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 0.35rem;
+  height: 1px;
+  background: var(--brass);
+}
+
+/* —— Catalog entries —— */
+.catalog {
+  background:
+    radial-gradient(ellipse 50% 35% at 80% 20%, rgba(154, 123, 79, 0.05), transparent 55%),
+    var(--wall-deep);
+}
+
+.catalog-list {
+  list-style: none;
+  margin: 2rem 0 0;
+  padding: 0;
+  max-width: 48rem;
+}
+
+.catalog-entry {
+  padding: 1.75rem 0;
+  border-top: 1px solid color-mix(in srgb, var(--ink) 10%, transparent);
+}
+
+.catalog-entry:last-child {
+  border-bottom: 1px solid color-mix(in srgb, var(--ink) 10%, transparent);
+}
+
+.catalog-head {
   display: flex;
   gap: 1rem;
+  align-items: baseline;
+  margin-bottom: 0.65rem;
 }
 
-.links a,
-#contact a {
-  color: var(--accent);
+.cat-no {
+  flex-shrink: 0;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  color: var(--brass);
 }
 
-#contact p:first-of-type {
+.catalog-head h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+.cat-sub {
+  font-weight: 400;
+  color: var(--muted);
+}
+
+.cat-about {
+  margin: 0 0 0.5rem;
+  color: var(--ink);
+  max-width: 40rem;
+}
+
+.cat-medium {
+  margin: 0 0 0.75rem;
+  font-size: 0.82rem;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+}
+
+.cat-links {
+  display: flex;
+  gap: 1.25rem;
+  margin: 0;
+  font-size: 0.88rem;
+}
+
+/* —— Materials —— */
+.materials {
+  background: var(--wall);
+}
+
+.material-board {
+  margin: 1.5rem 0 0;
+  max-width: 42rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.material-board > div {
+  display: grid;
+  grid-template-columns: 7rem minmax(0, 1fr);
+  gap: 1rem;
+  padding-bottom: 1.1rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--ink) 8%, transparent);
+}
+
+.material-board dt {
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--brass);
+  padding-top: 0.15rem;
+}
+
+.material-board dd {
+  margin: 0;
+  font-size: 0.98rem;
+  color: var(--ink);
+}
+
+/* —— Loan / education —— */
+.loan {
+  background: var(--wall);
+}
+
+.loan-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: clamp(2rem, 5vw, 4rem);
+}
+
+.loan-list {
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.loan-list li {
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+
+.loan-list a {
+  color: var(--ink);
+}
+
+.edu {
+  margin: 1rem 0 0;
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  line-height: 1.45;
+}
+
+.edu span {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+/* —— Vestibule / contact —— */
+.vestibule {
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 100%, rgba(34, 34, 34, 0.04), transparent 60%),
+    var(--wall-deep);
+  padding-bottom: 4rem;
+}
+
+.consult {
+  margin: 0 0 1.5rem;
   max-width: 36rem;
   color: var(--muted);
+  font-size: 1.02rem;
+}
+
+.contact-line {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.colophon {
+  padding: 1.25rem clamp(1.25rem, 4vw, 3rem) 2rem;
+  text-align: center;
+}
+
+.colophon p {
+  margin: 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* —— Responsive —— */
+@media (max-width: 860px) {
+  .hero-hang {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+
+  .work-plane {
+    max-height: none;
+    aspect-ratio: 3 / 4;
+    width: 100%;
+  }
+
+  .wall-label {
+    max-width: none;
+    margin-top: 0.5rem;
+  }
+
+  .room {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .loan-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .material-board > div {
+    grid-template-columns: 1fr;
+    gap: 0.35rem;
+  }
+}
+
+@media (max-width: 520px) {
+  .gallery-nav ul {
+    gap: 0.9rem;
+  }
+
+  .gallery-nav a {
+    font-size: 0.68rem;
+  }
+
+  .brand {
+    font-size: clamp(2.4rem, 12vw, 3.2rem);
+  }
+
+  .label-cta {
+    gap: 0.7rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .fade-up {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .brass-link::after {
+    transition: none;
+  }
+
+  .gallery-room {
+    opacity: 1 !important;
+  }
 }
