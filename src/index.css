@@ -306,7 +306,7 @@ body {
 
 /* Metal stamp settle — keyframes only so content stays visible if motion is off */
 .stamp-settle {
-  animation: stamp-settle 0.75s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: stamp-settle 0.75s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .stamp-settle.delay-1 {
