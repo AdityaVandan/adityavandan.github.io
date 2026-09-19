@@ -86,13 +86,20 @@ body {
   padding: 0 1.25rem 5rem;
 }
 
-/* Nav */
+/* Nav — overlaid on hero so the cast stays in the first viewport */
 .site-nav {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding: 1.1rem 0 0.75rem;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 1.1rem 1.25rem;
   color: var(--metal);
   font-size: 0.8rem;
   letter-spacing: 0.08em;
@@ -127,7 +134,8 @@ body {
   min-height: 100vh;
   min-height: 100dvh;
   display: flex;
-  align-items: flex-end;
+  flex-direction: column;
+  justify-content: flex-end;
   margin: 0 -1.25rem;
   padding: 0;
   overflow: hidden;
@@ -178,7 +186,7 @@ body {
   width: 100%;
   max-width: 1080px;
   margin: 0 auto;
-  padding: 5rem 1.25rem 3.5rem;
+  padding: 5.5rem 1.25rem 2.75rem;
 }
 
 .specimen-meta {
@@ -223,7 +231,7 @@ body {
 .brand {
   margin: 0;
   font-family: var(--font-brand);
-  font-size: clamp(3.2rem, 12vw, 7.5rem);
+  font-size: clamp(2.75rem, 11vw, 6.5rem);
   line-height: 0.88;
   letter-spacing: -0.02em;
   text-transform: uppercase;
@@ -296,23 +304,25 @@ body {
   background: color-mix(in srgb, var(--metal) 12%, transparent);
 }
 
-/* Metal stamp settle */
+/* Metal stamp settle — keyframes only so content stays visible if motion is off */
 .stamp-settle {
-  opacity: 0;
-  transform: translateY(-18px) scale(1.04);
-  animation: stamp-settle 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: stamp-settle 0.75s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .stamp-settle.delay-1 {
-  animation-delay: 0.12s;
+  animation-delay: 0.1s;
 }
 
 .stamp-settle.delay-2 {
-  animation-delay: 0.24s;
+  animation-delay: 0.2s;
 }
 
 .stamp-settle.delay-3 {
-  animation-delay: 0.36s;
+  animation-delay: 0.3s;
+}
+
+.stamp-settle.delay-4 {
+  animation-delay: 0.4s;
 }
 
 @keyframes stamp-settle {
@@ -632,11 +642,16 @@ section h2 {
   }
 
   .brand {
-    font-size: clamp(2.6rem, 14vw, 4.2rem);
+    font-size: clamp(2.4rem, 13vw, 3.6rem);
   }
 
-  .hero {
-    min-height: 92vh;
+  .lede {
+    font-size: 0.98rem;
+  }
+
+  .cta {
+    padding: 0.75rem 1rem;
+    font-size: 0.88rem;
   }
 }
 

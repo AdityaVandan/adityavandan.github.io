@@ -38,34 +38,33 @@ export default function App() {
     <div className="page">
       <div className="foundry-floor" aria-hidden="true" />
 
-      <nav className="site-nav" aria-label="Primary">
-        <a className="nav-mark" href="#top">
-          AVS · Foundry
-        </a>
-        <ul>
-          {nav.map((item) => (
-            <li key={item.id}>
-              <a href={`#${item.id}`}>{item.label}</a>
-            </li>
-          ))}
-        </ul>
-      </nav>
-
       <header className="hero" id="top">
         <div className="hero-atmosphere" aria-hidden="true" />
+        <nav className="site-nav" aria-label="Primary">
+          <a className="nav-mark" href="#top">
+            AVS · Foundry
+          </a>
+          <ul>
+            {nav.map((item) => (
+              <li key={item.id}>
+                <a href={`#${item.id}`}>{item.label}</a>
+              </li>
+            ))}
+          </ul>
+        </nav>
         <div className="hero-cast">
-          <p className="specimen-meta">
+          <p className="specimen-meta stamp-settle">
             <span>Specimen No. 01</span>
             <span className="ember-rule" aria-hidden="true" />
             <span>{person.location}</span>
           </p>
-          <p className="brand stamp-settle">
+          <p className="brand stamp-settle delay-1">
             <span className="brand-line">{person.firstName}</span>
             <span className="brand-line">{person.lastName}</span>
           </p>
-          <h1 className="specimen-label stamp-settle delay-1">{person.headline}</h1>
-          <p className="lede stamp-settle delay-2">{person.tagline}</p>
-          <div className="cta-row stamp-settle delay-3">
+          <h1 className="specimen-label stamp-settle delay-2">{person.headline}</h1>
+          <p className="lede stamp-settle delay-3">{person.tagline}</p>
+          <div className="cta-row stamp-settle delay-4">
             <a className="cta" href={`mailto:${person.email}`}>
               {cta.primary}
             </a>
