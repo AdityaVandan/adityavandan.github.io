@@ -54,25 +54,43 @@ export default function App() {
       </nav>
 
       <header className="hero" id="top">
-        <p className="brand ink-bleed">{person.name}</p>
-        <h1 className="ink-bleed delay-1">{person.headline}</h1>
-        <p className="lede ink-bleed delay-2">{person.tagline}</p>
-        <div className="cta-row ink-bleed delay-3">
-          <a className="cta press-link" href={`mailto:${person.email}`}>
-            {cta.primary}
-          </a>
-          <a
-            className="cta secondary press-link"
-            href={person.github}
-            target="_blank"
-            rel="noreferrer"
-          >
-            {cta.secondary}
-          </a>
+        <div className="hero-copy">
+          <p className="brand ink-bleed">{person.name}</p>
+          <h1 className="ink-bleed delay-1">{person.headline}</h1>
+          <p className="lede ink-bleed delay-2">{person.tagline}</p>
+          <div className="cta-row ink-bleed delay-3">
+            <a className="cta press-link" href={`mailto:${person.email}`}>
+              {cta.primary}
+            </a>
+            <a
+              className="cta secondary press-link"
+              href={person.resume}
+              download="Aditya-Vandan-Sharma.pdf"
+            >
+              {cta.resume}
+            </a>
+            <a
+              className="cta secondary press-link"
+              href={person.github}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {cta.secondary}
+            </a>
+          </div>
+          <p className="folio ink-bleed delay-4" aria-hidden="true">
+            Bangalore · Impression 01
+          </p>
         </div>
-        <p className="folio ink-bleed delay-4" aria-hidden="true">
-          Bangalore · Impression 01
-        </p>
+        <figure className="hero-plate ink-bleed delay-2">
+          <img
+            src={person.profileImage}
+            alt={`${person.name}, full-stack AI software engineer`}
+            width={800}
+            height={800}
+          />
+          <figcaption>Plate 01 · Portrait</figcaption>
+        </figure>
       </header>
 
       <section className="imprint press-reveal" aria-label="Proof points">
@@ -177,6 +195,14 @@ export default function App() {
         <p className="contact-line">
           <a className="press-link" href={`mailto:${person.email}`}>
             {person.email}
+          </a>
+          <span className="sep"> · </span>
+          <a
+            className="press-link"
+            href={person.resume}
+            download="Aditya-Vandan-Sharma.pdf"
+          >
+            Resume (PDF)
           </a>
           <span className="sep"> · </span>
           <a className="press-link" href={person.linkedin} target="_blank" rel="noreferrer">
