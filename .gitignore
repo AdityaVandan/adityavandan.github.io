@@ -23,7 +23,7 @@ dist-ssr
 *.sln
 *.sw?
 
-# Legacy Angular build leftovers
-assets/
-*.map
+# Intermediate Vite output only — production assets/ at repo root ARE
+# committed so GitHub Pages (master /) can serve the site.
 dist/
+*.map

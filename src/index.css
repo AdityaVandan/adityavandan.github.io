@@ -1,12 +1,18 @@
-/* Base placeholder styles — each variation branch replaces this file entirely. */
+/* Letterpress / print-shop design language */
 :root {
-  --bg: #f2efe8;
-  --ink: #1a1a1a;
-  --muted: #5c5a55;
-  --accent: #0b4f4a;
-  --line: #d4cfc4;
-  --font-display: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
-  --font-body: 'Segoe UI', 'Helvetica Neue', sans-serif;
+  --paper: #f3ebd8;
+  --paper-cool: #ebe4d2;
+  --ink: #1a1208;
+  --ink-soft: #3d3428;
+  --muted: #5e5548;
+  --oxblood: #6b2e2a;
+  --oxblood-deep: #4a1f1c;
+  --rule: color-mix(in srgb, var(--ink) 18%, transparent);
+  --grain: color-mix(in srgb, var(--ink) 7%, transparent);
+  --font-brand: 'Playfair Display', 'Times New Roman', Georgia, serif;
+  --font-body: 'Libre Franklin', 'Helvetica Neue', sans-serif;
+  --ink-spread: 0.4px 0 0 color-mix(in srgb, var(--ink) 35%, transparent),
+    -0.3px 0.2px 0 color-mix(in srgb, var(--ink) 22%, transparent);
 }
 
 * {
@@ -21,137 +27,395 @@ body {
   margin: 0;
   font-family: var(--font-body);
   color: var(--ink);
-  background: var(--bg);
-  line-height: 1.55;
+  background: var(--paper);
+  line-height: 1.6;
+  letter-spacing: 0.01em;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Full-bleed paper grain / press texture */
+.paper-grain {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 120% 80% at 12% 8%, color-mix(in srgb, #c5c0b0 35%, transparent), transparent 55%),
+    radial-gradient(ellipse 90% 70% at 88% 92%, color-mix(in srgb, #b8b2a0 28%, transparent), transparent 50%),
+    linear-gradient(168deg, var(--paper) 0%, var(--paper-cool) 48%, #e6dfcc 100%);
+}
+
+.paper-grain::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.55;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 240 240' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.08 0 0 0 0 0.07 0 0 0 0 0.04 0 0 0 0.55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+  mix-blend-mode: multiply;
+}
+
+.paper-grain::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.12;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 3px,
+      color-mix(in srgb, var(--ink) 8%, transparent) 3px,
+      color-mix(in srgb, var(--ink) 8%, transparent) 4px
+    );
+  mix-blend-mode: multiply;
 }
 
 .page {
-  max-width: 920px;
+  position: relative;
+  z-index: 1;
+  max-width: 980px;
   margin: 0 auto;
-  padding: 2rem 1.25rem 4rem;
+  padding: 1.25rem 1.35rem 4.5rem;
 }
 
+/* Masthead — restrained print-shop nav */
+.masthead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.35rem 0 1rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+.masthead-mark {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--ink);
+}
+
+.masthead ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.1rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.masthead a {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--ink-soft);
+}
+
+/* Hero: name dominates on full-bleed grain */
 .hero {
-  min-height: 70vh;
+  min-height: calc(100vh - 4rem);
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  gap: 1rem;
-  padding-bottom: 2rem;
-  border-bottom: 1px solid var(--line);
+  gap: 1.1rem;
+  padding: 3.5rem 0 2.75rem;
+  border-bottom: 2px solid var(--ink);
 }
 
 .brand {
-  font-family: var(--font-display);
-  font-size: clamp(2.5rem, 8vw, 4.5rem);
-  line-height: 0.95;
+  font-family: var(--font-brand);
+  font-weight: 900;
+  font-size: clamp(3.2rem, 11.5vw, 6.75rem);
+  line-height: 0.9;
   margin: 0;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  text-shadow: var(--ink-spread);
+  max-width: 14ch;
 }
 
 .hero h1 {
-  font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+  font-family: var(--font-body);
+  font-size: clamp(1rem, 2.2vw, 1.2rem);
   font-weight: 600;
   margin: 0;
-  color: var(--accent);
+  letter-spacing: 0.04em;
+  color: var(--oxblood);
+  text-transform: uppercase;
 }
 
 .lede {
-  max-width: 38rem;
-  color: var(--muted);
+  max-width: 36rem;
   margin: 0;
+  color: var(--muted);
+  font-size: 1.02rem;
+  font-weight: 400;
+}
+
+.folio {
+  margin: 0.75rem 0 0;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
 }
 
 .cta-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
-  margin-top: 0.5rem;
+  gap: 1.25rem 1.75rem;
+  margin-top: 0.35rem;
+  align-items: baseline;
 }
 
 .cta {
-  display: inline-block;
-  padding: 0.7rem 1.1rem;
-  background: var(--accent);
-  color: #fff;
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
   text-decoration: none;
-  font-size: 0.95rem;
+  color: var(--paper);
+  background: var(--ink);
+  padding: 0.85rem 1.2rem;
+  border: 1px solid var(--ink);
+  box-shadow: 2px 2px 0 color-mix(in srgb, var(--ink) 25%, transparent);
 }
 
-.cta.ghost {
+.cta.secondary {
   background: transparent;
-  color: var(--accent);
-  outline: 1px solid var(--accent);
+  color: var(--oxblood);
+  border: none;
+  box-shadow: none;
+  padding: 0.85rem 0;
+  text-decoration: underline;
+  text-underline-offset: 0.28em;
+  text-decoration-thickness: 1px;
 }
 
-.proof {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 1.25rem;
-  padding: 2rem 0;
-  border-bottom: 1px solid var(--line);
+/* Press offset on interactive links */
+.press-link {
+  transition: transform 160ms ease, box-shadow 160ms ease, color 160ms ease;
 }
 
-.proof strong {
-  display: block;
-  font-family: var(--font-display);
-  font-size: 1.75rem;
+.press-link:hover {
+  transform: translate(1px, 1px);
 }
 
-.proof figcaption {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-  font-size: 0.9rem;
-  color: var(--muted);
+.cta.press-link:hover {
+  box-shadow: 1px 1px 0 color-mix(in srgb, var(--ink) 20%, transparent);
+  background: var(--ink-soft);
 }
 
-.proof em {
-  font-style: normal;
-  color: var(--ink);
+.cta.secondary.press-link:hover,
+.masthead a.press-link:hover,
+.links a.press-link:hover,
+.contact-line a.press-link:hover {
+  color: var(--oxblood-deep);
+  box-shadow: none;
 }
 
+.press-link:focus-visible {
+  outline: 2px solid var(--oxblood);
+  outline-offset: 3px;
+}
+
+/* Ink bleed-in on load */
+@keyframes ink-bleed {
+  from {
+    opacity: 0;
+    filter: blur(3px);
+    letter-spacing: 0.06em;
+    transform: translateY(0.35rem);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    letter-spacing: inherit;
+    transform: translateY(0);
+  }
+}
+
+.ink-bleed {
+  animation: ink-bleed 0.95s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+.ink-bleed.delay-1 {
+  animation-delay: 0.12s;
+}
+
+.ink-bleed.delay-2 {
+  animation-delay: 0.24s;
+}
+
+.ink-bleed.delay-3 {
+  animation-delay: 0.38s;
+}
+
+.ink-bleed.delay-4 {
+  animation-delay: 0.5s;
+}
+
+/* Section reveal — platen press */
+.press-reveal {
+  opacity: 0;
+  transform: translateY(1.1rem);
+  filter: blur(1.5px);
+  transition:
+    opacity 0.7s cubic-bezier(0.22, 0.61, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1),
+    filter 0.7s ease;
+}
+
+.press-reveal.is-pressed {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ink-bleed,
+  .press-reveal {
+    animation: none;
+    transition: none;
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+
+  .press-link:hover {
+    transform: none;
+  }
+}
+
+/* Sections */
 section {
-  padding: 2.5rem 0;
-  border-bottom: 1px solid var(--line);
+  padding: 3rem 0 2.75rem;
+  border-bottom: 1px solid var(--rule);
 }
 
 section h2 {
-  font-family: var(--font-display);
-  font-size: 1.75rem;
-  margin: 0 0 0.75rem;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  margin: 0 0 1rem;
+  color: var(--ink);
+  text-shadow: var(--ink-spread);
 }
 
 .section-lede {
-  color: var(--muted);
   max-width: 40rem;
+  margin: 0 0 2rem;
+  color: var(--ink-soft);
+  font-size: 1.08rem;
+  line-height: 1.55;
 }
 
+.kicker {
+  margin: 0 0 1.25rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--oxblood);
+}
+
+/* Proof as imprint marks — not cards */
+.imprint-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.75rem 2rem;
+}
+
+.imprint figure {
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: none;
+}
+
+.imprint strong {
+  display: block;
+  font-family: var(--font-body);
+  font-size: clamp(1.35rem, 3vw, 1.85rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  text-shadow: var(--ink-spread);
+  margin-bottom: 0.45rem;
+}
+
+.imprint figcaption {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.88rem;
+  color: var(--muted);
+}
+
+.imprint figcaption span {
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.imprint em {
+  font-style: normal;
+  color: var(--muted);
+}
+
+/* Work / projects — open type, no cards */
 .job,
 .project {
-  margin-top: 1.75rem;
+  margin-top: 2.25rem;
+  padding-top: 1.75rem;
+  border-top: 1px solid var(--rule);
+}
+
+.job:first-of-type,
+.project:first-of-type {
+  margin-top: 0.5rem;
 }
 
 .job h3,
 .project h3 {
-  margin: 0 0 0.35rem;
-  font-size: 1.15rem;
+  margin: 0 0 0.3rem;
+  font-family: var(--font-body);
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--ink);
 }
 
-.job header p,
-.stack {
+.job .sep,
+.contact-line .sep {
   color: var(--muted);
-  font-size: 0.9rem;
-  margin: 0 0 0.75rem;
+  font-weight: 400;
+}
+
+.meta,
+.stack {
+  margin: 0 0 0.85rem;
+  font-size: 0.88rem;
+  color: var(--muted);
+  letter-spacing: 0.02em;
 }
 
 .job ul {
   margin: 0;
-  padding-left: 1.1rem;
+  padding-left: 1.05rem;
 }
 
 .job li {
-  margin-bottom: 0.45rem;
+  margin-bottom: 0.5rem;
+  color: var(--ink-soft);
 }
 
 .project span {
@@ -159,17 +423,109 @@ section h2 {
   color: var(--muted);
 }
 
+.project p {
+  margin: 0 0 0.65rem;
+  max-width: 42rem;
+  color: var(--ink-soft);
+}
+
 .links {
   display: flex;
+  gap: 1.35rem;
+  margin: 0;
+}
+
+.links a {
+  font-size: 0.88rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--oxblood);
+  border-bottom: 1px solid color-mix(in srgb, var(--oxblood) 45%, transparent);
+  padding-bottom: 0.1rem;
+}
+
+/* Type drawer — skills as composition tray */
+.type-drawer {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
   gap: 1rem;
 }
 
-.links a,
-#contact a {
-  color: var(--accent);
+.type-drawer div {
+  display: grid;
+  grid-template-columns: 7.5rem 1fr;
+  gap: 0.75rem 1.25rem;
+  align-items: baseline;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid var(--rule);
 }
 
-#contact p:first-of-type {
-  max-width: 36rem;
+.type-drawer dt {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--oxblood);
+}
+
+.type-drawer dd {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+}
+
+.contact-line {
+  margin: 0;
+  font-size: 1.05rem;
+  color: var(--ink-soft);
+}
+
+.contact-line a {
+  color: var(--oxblood);
+  text-decoration: none;
+  font-weight: 600;
+  border-bottom: 1px solid color-mix(in srgb, var(--oxblood) 40%, transparent);
+}
+
+.colophon {
+  padding: 1.75rem 0 0;
+}
+
+.colophon p {
+  margin: 0;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
   color: var(--muted);
+}
+
+@media (max-width: 720px) {
+  .imprint-row {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .type-drawer div {
+    grid-template-columns: 1fr;
+    gap: 0.25rem;
+  }
+
+  .hero {
+    min-height: calc(100svh - 3.5rem);
+    padding-top: 2.5rem;
+  }
+
+  .brand {
+    max-width: none;
+  }
+
+  .cta-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
 }
