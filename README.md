@@ -1,9 +1,28 @@
-# Aditya Vandan Sharma — Portfolio (React + Vite)
+# Aditya Vandan Sharma — Portfolio
 
-Design-language variations of the same portfolio content.
+Letterpress design-language variation. React 19 + Vite 8.
 
-- **Stack:** React 19 + Vite 8
-- **Content:** `src/data/content.js` (from resume)
-- **Story:** Expert full-stack AI software engineer
+## Live site
 
-See `VARIATIONS.md` for the variation rules.
+GitHub Pages serves this repository from the **master** branch root:
+
+**https://adityavandan.github.io/**
+
+Production static files (`index.html`, `assets/`, images, `.nojekyll`) are
+committed at the repo root. Source lives in `src/` + `index.source.html`.
+
+## Develop
+
+```bash
+npm install
+npm run dev          # opens /index.source.html
+```
+
+## Publish to GitHub Pages
+
+```bash
+npm run build:pages  # vite build + sync dist/ → repo root
+git add -A && git commit -m "Update Pages build" && git push
+```
+
+Then merge to `master` (or push to master) for the live site to update.
