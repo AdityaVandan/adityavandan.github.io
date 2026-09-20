@@ -17,7 +17,8 @@ export const person = {
   website: 'https://adityavandan.github.io/',
   linkedin: 'https://www.linkedin.com/in/aditya-vandan-sharma/',
   github: 'https://github.com/AdityaVandan',
-  profileImage: '/images/profilepic.jpg',
+  profileImage: '/images/profile.png',
+  resume: '/Aditya-Vandan-Sharma.pdf',
 }
 
 export const positioning = {
@@ -156,6 +157,7 @@ export const nav = [
 export const cta = {
   primary: 'Discuss a role or consulting engagement',
   secondary: 'View GitHub',
+  resume: 'Download resume',
   consultingNote:
     'Open to full-time roles and selective consulting where AI agents need to ship inside production systems — not demos.',
 }

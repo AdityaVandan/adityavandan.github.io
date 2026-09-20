@@ -117,15 +117,53 @@ body {
   color: var(--ink-soft);
 }
 
-/* Hero: name dominates on full-bleed grain */
+/* Hero: name dominates on full-bleed grain; portrait as print plate */
 .hero {
   min-height: calc(100vh - 4rem);
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(12rem, 0.75fr);
+  align-items: end;
+  gap: clamp(1.5rem, 4vw, 3rem);
+  padding: 3.5rem 0 2.75rem;
+  border-bottom: 2px solid var(--ink);
+}
+
+.hero-copy {
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   gap: 1.1rem;
-  padding: 3.5rem 0 2.75rem;
-  border-bottom: 2px solid var(--ink);
+  min-width: 0;
+}
+
+.hero-plate {
+  margin: 0;
+  justify-self: end;
+  width: min(100%, 22rem);
+  position: relative;
+}
+
+.hero-plate img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: cover;
+  object-position: center top;
+  border: 1px solid var(--ink);
+  box-shadow:
+    3px 3px 0 color-mix(in srgb, var(--ink) 18%, transparent),
+    inset 0 0 0 1px color-mix(in srgb, var(--paper) 35%, transparent);
+  filter: contrast(1.04) saturate(0.92);
+}
+
+.hero-plate figcaption {
+  margin-top: 0.55rem;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
 }
 
 .brand {
@@ -515,8 +553,16 @@ section h2 {
   }
 
   .hero {
-    min-height: calc(100svh - 3.5rem);
+    grid-template-columns: 1fr;
+    min-height: auto;
     padding-top: 2.5rem;
+    gap: 1.75rem;
+  }
+
+  .hero-plate {
+    justify-self: start;
+    width: min(100%, 16rem);
+    order: -1;
   }
 
   .brand {
