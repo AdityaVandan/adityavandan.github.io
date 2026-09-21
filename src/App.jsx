@@ -11,23 +11,44 @@ import {
 
 function usePressReveal() {
   useEffect(() => {
-    const nodes = document.querySelectorAll('.press-reveal')
+    const nodes = [...document.querySelectorAll('.press-reveal')]
     if (!nodes.length) return undefined
 
+    const reveal = (node) => node.classList.add('is-pressed')
+
+    // Mobile Safari / short viewports: negative rootMargin + threshold often
+    // never intersects, leaving headings stuck at opacity 0.
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('is-pressed')
+          if (entry.isIntersecting || entry.intersectionRatio > 0) {
+            reveal(entry.target)
             observer.unobserve(entry.target)
           }
         })
       },
-      { rootMargin: '0px 0px -8% 0px', threshold: 0.12 },
+      { root: null, rootMargin: '0px 0px -5% 0px', threshold: 0 },
     )
 
-    nodes.forEach((node) => observer.observe(node))
-    return () => observer.disconnect()
+    nodes.forEach((node) => {
+      const rect = node.getBoundingClientRect()
+      const inView = rect.top < window.innerHeight && rect.bottom > 0
+      if (inView) {
+        reveal(node)
+      } else {
+        observer.observe(node)
+      }
+    })
+
+    // Safety net: never leave content invisible
+    const fallback = window.setTimeout(() => {
+      nodes.forEach(reveal)
+    }, 1800)
+
+    return () => {
+      observer.disconnect()
+      window.clearTimeout(fallback)
+    }
   }, [])
 }
 
@@ -35,9 +56,9 @@ export default function App() {
   usePressReveal()
 
   return (
-    <div className="page">
+    <>
       <div className="paper-grain" aria-hidden="true" />
-
+      <div className="page">
       <nav className="masthead" aria-label="Primary">
         <a className="masthead-mark press-link" href="#top">
           A.V.S.
@@ -220,6 +241,7 @@ export default function App() {
       <footer className="colophon">
         <p>Set in Playfair Display & Libre Franklin · Printed on screen stock</p>
       </footer>
-    </div>
+      </div>
+    </>
   )
 }
