@@ -56,9 +56,9 @@ export default function App() {
   usePressReveal()
 
   return (
-    <div className="page">
+    <>
       <div className="paper-grain" aria-hidden="true" />
-
+      <div className="page">
       <nav className="masthead" aria-label="Primary">
         <a className="masthead-mark press-link" href="#top">
           A.V.S.
@@ -241,6 +241,7 @@ export default function App() {
       <footer className="colophon">
         <p>Set in Playfair Display & Libre Franklin · Printed on screen stock</p>
       </footer>
-    </div>
+      </div>
+    </>
   )
 }

@@ -34,12 +34,14 @@ body {
 }
 
 /* Full-bleed paper grain / press texture
-   Avoid mix-blend-mode here — on mobile Safari/WebKit it can composite
-   over page content and make headings appear missing. */
+   z-index must stay negative: a fixed layer at z-index:0 paints AFTER
+   in-flow content and hides hero text when ink-bleed animations are off
+   (mobile). Avoid mix-blend-mode — it can further composite over text
+   on mobile Safari/WebKit. */
 .paper-grain {
   position: fixed;
   inset: 0;
-  z-index: 0;
+  z-index: -1;
   pointer-events: none;
   background:
     radial-gradient(ellipse 120% 80% at 12% 8%, color-mix(in srgb, #c5c0b0 35%, transparent), transparent 55%),
