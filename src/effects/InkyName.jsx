@@ -27,7 +27,7 @@ export default function InkyName({ text }) {
       return {
         id: spillSeq,
         x: Math.min(94, Math.max(6, base + (i - (count - 1) / 2) * 7)),
-        h: 68 + ((spillSeq * 17) % 56),
+        h: 110 + ((spillSeq * 17) % 70),
       }
     })
     setSpills((list) => [...list, ...next].slice(-12))

@@ -671,8 +671,8 @@ section h2 {
   position: absolute;
   left: 50%;
   top: 0;
-  width: 3px;
-  margin-left: -1.5px;
+  width: 6px;
+  margin-left: -3px;
   height: 100%;
   background: var(--ink);
   border-radius: 2px;
