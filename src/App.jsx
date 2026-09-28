@@ -66,9 +66,26 @@ export default function App() {
         node.classList.toggle('is-hot', inside)
       })
     }
+    const onClick = (event) => {
+      const img = document.querySelector('.hero-plate img')
+      if (!img) return
+      const rect = img.getBoundingClientRect()
+      const inside =
+        event.clientX >= rect.left &&
+        event.clientX <= rect.right &&
+        event.clientY >= rect.top &&
+        event.clientY <= rect.bottom
+      if (!inside) return
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+      img.classList.remove('is-reprint')
+      void img.offsetWidth
+      img.classList.add('is-reprint')
+    }
     window.addEventListener('mousemove', onMove)
+    window.addEventListener('click', onClick)
     return () => {
       window.removeEventListener('mousemove', onMove)
+      window.removeEventListener('click', onClick)
       delete document.documentElement.dataset.gesture
     }
   }, [])
