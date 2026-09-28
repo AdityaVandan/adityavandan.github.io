@@ -8,15 +8,14 @@ export default function InkStamp() {
 
   useEffect(() => {
     document.documentElement.dataset.gesture = 'ink-stamp'
-    const fine = window.matchMedia('(pointer: fine)').matches
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    if (!fine || reduce) {
+    if (reduce) {
       return () => {
         delete document.documentElement.dataset.gesture
       }
     }
 
-    document.documentElement.classList.add('has-stamp-cursor')
+    const armCursor = () => document.documentElement.classList.add('has-stamp-cursor')
     let x = window.innerWidth * 0.7
     let y = window.innerHeight * 0.35
     let cx = x
@@ -34,12 +33,14 @@ export default function InkStamp() {
     raf = requestAnimationFrame(tick)
 
     const onMove = (event) => {
+      if (event.pointerType === 'mouse') armCursor()
       x = event.clientX
       y = event.clientY
     }
 
     const onDown = (event) => {
       if (event.button !== 0) return
+      if (event.pointerType === 'mouse') armCursor()
       x = event.clientX
       y = event.clientY
       const layer = layerRef.current
