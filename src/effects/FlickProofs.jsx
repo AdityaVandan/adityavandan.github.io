@@ -61,8 +61,11 @@ export default function FlickProofs({ points }) {
       <div
         className={`flick-deck${dragging ? ' is-dragging' : ''}`}
         onPointerDown={onPointerDown}
+        onMouseDown={onPointerDown}
         onPointerMove={onPointerMove}
+        onMouseMove={onPointerMove}
         onPointerUp={(event) => settle(event.clientX)}
+        onMouseUp={(event) => settle(event.clientX)}
         onPointerCancel={(event) => settle(event.clientX)}
         onKeyDown={onKeyDown}
         tabIndex={0}
