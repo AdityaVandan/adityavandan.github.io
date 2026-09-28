@@ -44,8 +44,8 @@ export default function InkBrush() {
     const stroke = (from, to, heavy) => {
       const dist = Math.hypot(to.x - from.x, to.y - from.y)
       const speed = Math.min(dist, 48)
-      const lineWidth = heavy ? Math.max(3.5, 14 - speed * 0.18) : Math.max(1.4, 3.6 - speed * 0.04)
-      ctx.strokeStyle = heavy ? 'rgba(26, 18, 8, 0.92)' : 'rgba(26, 18, 8, 0.45)'
+      const lineWidth = heavy ? Math.max(8, 22 - speed * 0.2) : Math.max(2.2, 5 - speed * 0.04)
+      ctx.strokeStyle = heavy ? 'rgba(26, 18, 8, 0.95)' : 'rgba(26, 18, 8, 0.55)'
       ctx.lineWidth = lineWidth
       ctx.lineCap = 'round'
       ctx.lineJoin = 'round'
@@ -57,7 +57,7 @@ export default function InkBrush() {
 
     const loop = () => {
       ctx.globalCompositeOperation = 'destination-out'
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.012)'
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.004)'
       ctx.fillRect(0, 0, width, height)
       ctx.globalCompositeOperation = 'source-over'
       raf = requestAnimationFrame(loop)

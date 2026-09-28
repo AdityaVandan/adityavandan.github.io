@@ -616,8 +616,11 @@ section h2 {
 
 /* Gesture: a wet pen follows the pointer and dries into the sheet */
 
-body {
-  user-select: none;
+*,
+*::before,
+*::after {
+  user-select: none !important;
+  -webkit-user-select: none !important;
 }
 
 html[data-gesture='ink-brush'] img {
