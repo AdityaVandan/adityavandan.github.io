@@ -52,8 +52,67 @@ function usePressReveal() {
   }, [])
 }
 
+
+function usePaperTilt() {
+  useEffect(() => {
+    document.documentElement.dataset.gesture = 'paper-tilt'
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const page = document.querySelector('.page')
+    if (!page || reduce) {
+      return () => {
+        delete document.documentElement.dataset.gesture
+      }
+    }
+
+    document.documentElement.classList.add('paper-tilt-on')
+    let tx = 0
+    let ty = 0
+    let cx = 0
+    let cy = 0
+    let raf = 0
+
+    const tick = () => {
+      cx += (tx - cx) * 0.16
+      cy += (ty - cy) * 0.16
+      const rx = (-cy * 18).toFixed(2)
+      const ry = (cx * 28).toFixed(2)
+      page.style.transform = `perspective(1280px) rotateX(${rx}deg) rotateY(${ry}deg)`
+      const shadowX = (-cx * 46).toFixed(1)
+      const shadowY = (22 + cy * 28).toFixed(1)
+      page.style.boxShadow = `${shadowX}px ${shadowY}px 0 0 color-mix(in srgb, #8a6a3d 55%, transparent), ${shadowX}px ${shadowY}px 36px color-mix(in srgb, var(--ink) 28%, transparent)`
+      raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+
+    const onMove = (event) => {
+      if (typeof event.clientX !== 'number') return
+      tx = event.clientX / window.innerWidth - 0.5
+      ty = event.clientY / window.innerHeight - 0.5
+    }
+    const onLeave = () => {
+      tx = 0
+      ty = 0
+    }
+
+    window.addEventListener('pointermove', onMove, { passive: true })
+    window.addEventListener('mousemove', onMove, { passive: true })
+    document.documentElement.addEventListener('pointerleave', onLeave)
+    return () => {
+      cancelAnimationFrame(raf)
+      window.removeEventListener('pointermove', onMove)
+      window.removeEventListener('mousemove', onMove)
+      document.documentElement.removeEventListener('pointerleave', onLeave)
+      document.documentElement.classList.remove('paper-tilt-on')
+      page.style.transform = ''
+      page.style.boxShadow = ''
+      delete document.documentElement.dataset.gesture
+    }
+  }, [])
+}
+
 export default function App() {
   usePressReveal()
+  usePaperTilt()
 
   return (
     <>
@@ -100,7 +159,7 @@ export default function App() {
             </a>
           </div>
           <p className="folio ink-bleed delay-4" aria-hidden="true">
-            Bangalore · Impression 01
+            Bangalore · Move to tilt the sheet
           </p>
         </div>
         <figure className="hero-plate ink-bleed delay-2">

@@ -613,3 +613,34 @@ section h2 {
     transform: none;
   }
 }
+
+/* Gesture: the sheet tilts under the pointer */
+
+html.paper-tilt-on body {
+  background: #c9b48f;
+  perspective: 1100px;
+  perspective-origin: 50% 30%;
+}
+
+html.paper-tilt-on .paper-grain {
+  background:
+    radial-gradient(ellipse 90% 70% at 50% 18%, #e6d6b6 0%, transparent 58%),
+    linear-gradient(168deg, #d9c6a4 0%, #c4ae86 55%, #b89a72 100%);
+}
+
+html.paper-tilt-on .page {
+  background: var(--paper);
+  margin: 1.4rem auto 2.5rem;
+  padding: 1.35rem 1.5rem 4.5rem;
+  transform-style: preserve-3d;
+  transform-origin: center 28%;
+  will-change: transform;
+  box-shadow: 0 22px 48px color-mix(in srgb, var(--ink) 22%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.paper-tilt-on .page {
+    transform: none !important;
+    box-shadow: none !important;
+  }
+}
