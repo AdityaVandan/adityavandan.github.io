@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import InkyName from './effects/InkyName.jsx'
 import {
   person,
   positioning,
@@ -76,7 +77,7 @@ export default function App() {
 
       <header className="hero" id="top">
         <div className="hero-copy">
-          <p className="brand ink-bleed">{person.name}</p>
+          <InkyName text={person.name} />
           <h1 className="ink-bleed delay-1">{person.headline}</h1>
           <p className="lede ink-bleed delay-2">{person.tagline}</p>
           <div className="cta-row ink-bleed delay-3">
@@ -100,7 +101,7 @@ export default function App() {
             </a>
           </div>
           <p className="folio ink-bleed delay-4" aria-hidden="true">
-            Bangalore · Impression 01
+            Bangalore · Hover the name, click to spill ink
           </p>
         </div>
         <figure className="hero-plate ink-bleed delay-2">
