@@ -24,6 +24,25 @@ export default function TypeBlock({ word }) {
       ref={ref}
       className={`type-block${live ? ' is-live' : ''}`}
       style={{ ...style, '--rest': `${rest}deg` }}
+      onMouseDown={(event) => {
+        if (event.button !== 0) return
+        event.preventDefault()
+        drag.current = { x: event.clientX, y: event.clientY, rot: rest }
+        setLive(true)
+        setStyle({ transform: `translate3d(0px, 0px, 0) rotate(${rest}deg)`, transition: 'none' })
+      }}
+      onMouseMove={(event) => {
+        if (!drag.current) return
+        const dx = event.clientX - drag.current.x
+        const dy = event.clientY - drag.current.y
+        const rot = Math.max(-14, Math.min(14, drag.current.rot + dx * 0.06))
+        setStyle({
+          transform: `translate3d(${dx}px, ${dy}px, 0) rotate(${rot}deg)`,
+          transition: 'none',
+          zIndex: 5,
+        })
+      }}
+      onMouseUp={end}
       onPointerDown={(event) => {
         if (event.button !== 0) return
         event.preventDefault()
