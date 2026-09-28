@@ -613,3 +613,28 @@ section h2 {
     transform: none;
   }
 }
+
+/* Gesture: the sheet tilts under the pointer */
+
+html.paper-tilt-on,
+html.paper-tilt-on body {
+  overflow-x: hidden;
+}
+
+html.paper-tilt-on body {
+  perspective: 1600px;
+  perspective-origin: 50% 28%;
+}
+
+html.paper-tilt-on .page {
+  transform-style: preserve-3d;
+  transform-origin: center 22%;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.paper-tilt-on .page {
+    transform: none !important;
+    box-shadow: none !important;
+  }
+}

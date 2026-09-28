@@ -52,8 +52,65 @@ function usePressReveal() {
   }, [])
 }
 
+
+function usePaperTilt() {
+  useEffect(() => {
+    document.documentElement.dataset.gesture = 'paper-tilt'
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const fine = window.matchMedia('(pointer: fine)').matches
+    const page = document.querySelector('.page')
+    if (!page || reduce || !fine) {
+      return () => {
+        delete document.documentElement.dataset.gesture
+      }
+    }
+
+    document.documentElement.classList.add('paper-tilt-on')
+    let tx = 0
+    let ty = 0
+    let cx = 0
+    let cy = 0
+    let raf = 0
+
+    const tick = () => {
+      cx += (tx - cx) * 0.075
+      cy += (ty - cy) * 0.075
+      const rx = (-cy * 6.5).toFixed(2)
+      const ry = (cx * 8).toFixed(2)
+      page.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`
+      const shadowX = (-cx * 28).toFixed(1)
+      const shadowY = (16 + cy * 18).toFixed(1)
+      page.style.boxShadow = `${shadowX}px ${shadowY}px 48px color-mix(in srgb, var(--ink) 14%, transparent)`
+      raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+
+    const onMove = (event) => {
+      tx = event.clientX / window.innerWidth - 0.5
+      ty = event.clientY / window.innerHeight - 0.5
+    }
+    const onLeave = () => {
+      tx = 0
+      ty = 0
+    }
+
+    window.addEventListener('pointermove', onMove, { passive: true })
+    document.documentElement.addEventListener('pointerleave', onLeave)
+    return () => {
+      cancelAnimationFrame(raf)
+      window.removeEventListener('pointermove', onMove)
+      document.documentElement.removeEventListener('pointerleave', onLeave)
+      document.documentElement.classList.remove('paper-tilt-on')
+      page.style.transform = ''
+      page.style.boxShadow = ''
+      delete document.documentElement.dataset.gesture
+    }
+  }, [])
+}
+
 export default function App() {
   usePressReveal()
+  usePaperTilt()
 
   return (
     <>
@@ -100,7 +157,7 @@ export default function App() {
             </a>
           </div>
           <p className="folio ink-bleed delay-4" aria-hidden="true">
-            Bangalore · Impression 01
+            Bangalore · Move to tilt the sheet
           </p>
         </div>
         <figure className="hero-plate ink-bleed delay-2">
