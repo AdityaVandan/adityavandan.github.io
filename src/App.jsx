@@ -93,10 +93,16 @@ export default function App() {
       <header className="hero" id="top">
         <div className="hero-copy">
           <p className="brand ink-bleed">
-            <span className="misreg-text">{person.name}</span>
+            <span className="misreg-text">
+              <span className="misreg-ghost" aria-hidden="true">{person.name}</span>
+              {person.name}
+            </span>
           </p>
           <h1 className="ink-bleed delay-1">
-            <span className="misreg-text">{person.headline}</span>
+            <span className="misreg-text">
+              <span className="misreg-ghost" aria-hidden="true">{person.headline}</span>
+              {person.headline}
+            </span>
           </h1>
           <p className="lede ink-bleed delay-2">{person.tagline}</p>
           <div className="cta-row ink-bleed delay-3">
