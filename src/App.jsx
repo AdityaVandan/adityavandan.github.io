@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import FlickProofs from './effects/FlickProofs.jsx'
 import {
   person,
   positioning,
@@ -100,7 +101,7 @@ export default function App() {
             </a>
           </div>
           <p className="folio ink-bleed delay-4" aria-hidden="true">
-            Bangalore · Impression 01
+            Bangalore · Drag the proof cards
           </p>
         </div>
         <figure className="hero-plate ink-bleed delay-2">
@@ -116,17 +117,7 @@ export default function App() {
 
       <section className="imprint press-reveal" aria-label="Proof points">
         <p className="kicker">From the press</p>
-        <div className="imprint-row">
-          {positioning.proofPoints.map((p) => (
-            <figure key={p.label}>
-              <strong>{p.value}</strong>
-              <figcaption>
-                <span>{p.label}</span>
-                <em>{p.detail}</em>
-              </figcaption>
-            </figure>
-          ))}
-        </div>
+        <FlickProofs points={positioning.proofPoints} />
       </section>
 
       <section id="work" className="press-reveal">
