@@ -89,9 +89,11 @@ export default function MagneticName({ text }) {
     }
 
     window.addEventListener('pointermove', onMove, { passive: true })
+    window.addEventListener('mousemove', onMove, { passive: true })
     return () => {
       cancelAnimationFrame(raf)
       window.removeEventListener('pointermove', onMove)
+      window.removeEventListener('mousemove', onMove)
       window.removeEventListener('resize', measure)
       delete document.documentElement.dataset.gesture
     }
