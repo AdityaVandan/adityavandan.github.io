@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import TypeBlock from './effects/TypeBlock.jsx'
 import {
   person,
   positioning,
@@ -53,6 +54,12 @@ function usePressReveal() {
 }
 
 export default function App() {
+  useEffect(() => {
+    document.documentElement.dataset.gesture = 'type-blocks'
+    return () => {
+      delete document.documentElement.dataset.gesture
+    }
+  }, [])
   usePressReveal()
 
   return (
@@ -100,7 +107,7 @@ export default function App() {
             </a>
           </div>
           <p className="folio ink-bleed delay-4" aria-hidden="true">
-            Bangalore · Impression 01
+            Bangalore · Scroll down and drag the type
           </p>
         </div>
         <figure className="hero-plate ink-bleed delay-2">
@@ -186,26 +193,47 @@ export default function App() {
 
       <section id="skills" className="press-reveal">
         <h2>Capabilities</h2>
+        <p className="gesture-hint">Pull a sort from the drawer — it springs home.</p>
         <dl className="type-drawer">
           <div>
             <dt>Languages</dt>
-            <dd>{skills.languages.join(' · ')}</dd>
+            <dd>
+              {skills.languages.map((word) => (
+                <TypeBlock key={word} word={word} />
+              ))}
+            </dd>
           </div>
           <div>
             <dt>Frameworks</dt>
-            <dd>{skills.frameworks.join(' · ')}</dd>
+            <dd>
+              {skills.frameworks.map((word) => (
+                <TypeBlock key={word} word={word} />
+              ))}
+            </dd>
           </div>
           <div>
             <dt>AI</dt>
-            <dd>{skills.ai.join(' · ')}</dd>
+            <dd>
+              {skills.ai.map((word) => (
+                <TypeBlock key={word} word={word} />
+              ))}
+            </dd>
           </div>
           <div>
             <dt>Data</dt>
-            <dd>{skills.databases.join(' · ')}</dd>
+            <dd>
+              {skills.databases.map((word) => (
+                <TypeBlock key={word} word={word} />
+              ))}
+            </dd>
           </div>
           <div>
             <dt>Delivery</dt>
-            <dd>{skills.cicd.join(' · ')}</dd>
+            <dd>
+              {skills.cicd.map((word) => (
+                <TypeBlock key={word} word={word} />
+              ))}
+            </dd>
           </div>
         </dl>
       </section>
