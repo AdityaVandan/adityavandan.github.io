@@ -57,9 +57,8 @@ function usePaperTilt() {
   useEffect(() => {
     document.documentElement.dataset.gesture = 'paper-tilt'
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    const fine = window.matchMedia('(pointer: fine)').matches
     const page = document.querySelector('.page')
-    if (!page || reduce || !fine) {
+    if (!page || reduce) {
       return () => {
         delete document.documentElement.dataset.gesture
       }
@@ -86,6 +85,7 @@ function usePaperTilt() {
     raf = requestAnimationFrame(tick)
 
     const onMove = (event) => {
+      if (event.pointerType && event.pointerType !== 'mouse') return
       tx = event.clientX / window.innerWidth - 0.5
       ty = event.clientY / window.innerHeight - 0.5
     }
