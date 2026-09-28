@@ -85,7 +85,7 @@ function usePaperTilt() {
     raf = requestAnimationFrame(tick)
 
     const onMove = (event) => {
-      if (event.pointerType && event.pointerType !== 'mouse') return
+      if (typeof event.clientX !== 'number') return
       tx = event.clientX / window.innerWidth - 0.5
       ty = event.clientY / window.innerHeight - 0.5
     }
@@ -95,10 +95,12 @@ function usePaperTilt() {
     }
 
     window.addEventListener('pointermove', onMove, { passive: true })
+    window.addEventListener('mousemove', onMove, { passive: true })
     document.documentElement.addEventListener('pointerleave', onLeave)
     return () => {
       cancelAnimationFrame(raf)
       window.removeEventListener('pointermove', onMove)
+      window.removeEventListener('mousemove', onMove)
       document.documentElement.removeEventListener('pointerleave', onLeave)
       document.documentElement.classList.remove('paper-tilt-on')
       page.style.transform = ''
