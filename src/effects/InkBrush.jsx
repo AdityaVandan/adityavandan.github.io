@@ -83,8 +83,11 @@ export default function InkBrush() {
     }
 
     window.addEventListener('pointermove', onMove, { passive: true })
+    window.addEventListener('mousemove', onMove, { passive: true })
     window.addEventListener('pointerdown', onDown)
+    window.addEventListener('mousedown', onDown)
     window.addEventListener('pointerup', onUp)
+    window.addEventListener('mouseup', onUp)
     window.addEventListener('pointercancel', onUp)
     document.documentElement.addEventListener('pointerleave', onUp)
 
@@ -92,8 +95,11 @@ export default function InkBrush() {
       cancelAnimationFrame(raf)
       window.removeEventListener('resize', resize)
       window.removeEventListener('pointermove', onMove)
+      window.removeEventListener('mousemove', onMove)
       window.removeEventListener('pointerdown', onDown)
+      window.removeEventListener('mousedown', onDown)
       window.removeEventListener('pointerup', onUp)
+      window.removeEventListener('mouseup', onUp)
       window.removeEventListener('pointercancel', onUp)
       document.documentElement.removeEventListener('pointerleave', onUp)
       delete document.documentElement.dataset.gesture
