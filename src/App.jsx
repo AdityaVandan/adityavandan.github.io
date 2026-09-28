@@ -55,7 +55,15 @@ function usePressReveal() {
 export default function App() {
   useEffect(() => {
     document.documentElement.dataset.gesture = 'misregister'
+    const onMove = (event) => {
+      const hit = document.elementFromPoint(event.clientX, event.clientY)
+      document.querySelectorAll('.misreg-text').forEach((node) => {
+        node.classList.toggle('is-hot', !!(hit && node.contains(hit)))
+      })
+    }
+    window.addEventListener('mousemove', onMove)
     return () => {
+      window.removeEventListener('mousemove', onMove)
       delete document.documentElement.dataset.gesture
     }
   }, [])

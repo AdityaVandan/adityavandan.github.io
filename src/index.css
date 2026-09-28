@@ -642,8 +642,9 @@ section h2:hover,
   animation: slam-register 1.35s cubic-bezier(0.16, 0.84, 0.3, 1) both;
 }
 
-.misreg-text:hover .misreg-ghost {
-  animation-name: ghost-slip;
+.misreg-text.is-hot .misreg-ghost {
+  opacity: 0.95;
+  transform: translate(18px, 6px);
 }
 
 @keyframes ghost-slip {
