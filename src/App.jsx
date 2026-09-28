@@ -56,9 +56,14 @@ export default function App() {
   useEffect(() => {
     document.documentElement.dataset.gesture = 'misregister'
     const onMove = (event) => {
-      const hit = document.elementFromPoint(event.clientX, event.clientY)
       document.querySelectorAll('.misreg-text').forEach((node) => {
-        node.classList.toggle('is-hot', !!(hit && node.contains(hit)))
+        const rect = node.getBoundingClientRect()
+        const inside =
+          event.clientX >= rect.left - 12 &&
+          event.clientX <= rect.right + 12 &&
+          event.clientY >= rect.top - 8 &&
+          event.clientY <= rect.bottom + 8
+        node.classList.toggle('is-hot', inside)
       })
     }
     window.addEventListener('mousemove', onMove)

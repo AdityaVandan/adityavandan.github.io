@@ -643,8 +643,9 @@ section h2:hover,
 }
 
 .misreg-text.is-hot .misreg-ghost {
-  opacity: 0.95;
-  transform: translate(18px, 6px);
+  opacity: 1;
+  transform: translate(28px, 10px);
+  color: #8f2d28;
 }
 
 @keyframes ghost-slip {
