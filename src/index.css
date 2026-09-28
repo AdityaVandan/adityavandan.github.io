@@ -613,3 +613,139 @@ section h2 {
     transform: none;
   }
 }
+
+/* Gesture: proof points are a stack of cards you can flick */
+
+.flick-stage {
+  min-height: 19rem;
+}
+
+.flick-folio {
+  margin: 0 0 0.85rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--oxblood);
+}
+
+.flick-folio span {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.flick-deck {
+  position: relative;
+  height: 15.5rem;
+  touch-action: pan-y;
+  cursor: grab;
+  outline: none;
+  user-select: none;
+}
+
+.flick-deck:focus-visible {
+  outline: 2px solid var(--oxblood);
+  outline-offset: 6px;
+}
+
+.flick-deck.is-dragging {
+  cursor: grabbing;
+}
+
+.flick-deck.is-dragging .flick-card {
+  transition: none;
+}
+
+.flick-card {
+  position: absolute;
+  left: 0;
+  right: 8%;
+  top: 0;
+  height: 14.25rem;
+  margin: 0;
+  padding: 1.35rem 1.4rem 1.15rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 0.4rem;
+  border: 1px solid var(--ink);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, white 28%, var(--paper)), var(--paper));
+  box-shadow:
+    0 0 0 1px var(--ink),
+    6px 6px 0 color-mix(in srgb, var(--ink) 14%, transparent);
+  transition: transform 0.48s cubic-bezier(0.16, 1.2, 0.32, 1);
+}
+
+.flick-card strong {
+  font-family: var(--font-brand);
+  font-weight: 900;
+  font-size: clamp(2.1rem, 5vw, 3.35rem);
+  letter-spacing: -0.03em;
+  line-height: 0.92;
+  text-shadow: var(--ink-spread);
+}
+
+.flick-card span {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--oxblood);
+}
+
+.flick-card em {
+  font-style: normal;
+  color: var(--muted);
+  max-width: 34rem;
+  font-size: 0.98rem;
+}
+
+.flick-nav {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 0.35rem;
+}
+
+.flick-btn {
+  appearance: none;
+  background: none;
+  border: none;
+  padding: 0.2rem 0;
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--oxblood);
+  cursor: pointer;
+  border-bottom: 1px solid color-mix(in srgb, var(--oxblood) 45%, transparent);
+}
+
+.flick-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.flick-btn:focus-visible {
+  outline: 2px solid var(--oxblood);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flick-card {
+    transition: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .flick-card {
+    right: 0;
+    height: auto;
+    min-height: 12.5rem;
+  }
+
+  .flick-deck {
+    height: 14.5rem;
+  }
+}
