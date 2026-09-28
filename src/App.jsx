@@ -14,7 +14,10 @@ function usePressReveal() {
     const nodes = [...document.querySelectorAll('.press-reveal')]
     if (!nodes.length) return undefined
 
-    const reveal = (node) => node.classList.add('is-pressed')
+    const reveal = (node, strike) => {
+      node.classList.add('is-pressed')
+      if (strike) node.classList.add('is-striking')
+    }
 
     // Mobile Safari / short viewports: negative rootMargin + threshold often
     // never intersects, leaving headings stuck at opacity 0.
@@ -22,7 +25,7 @@ function usePressReveal() {
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting || entry.intersectionRatio > 0) {
-            reveal(entry.target)
+            reveal(entry.target, true)
             observer.unobserve(entry.target)
           }
         })
@@ -34,7 +37,7 @@ function usePressReveal() {
       const rect = node.getBoundingClientRect()
       const inView = rect.top < window.innerHeight && rect.bottom > 0
       if (inView) {
-        reveal(node)
+        reveal(node, true)
       } else {
         observer.observe(node)
       }
@@ -42,7 +45,7 @@ function usePressReveal() {
 
     // Safety net: never leave content invisible
     const fallback = window.setTimeout(() => {
-      nodes.forEach(reveal)
+      nodes.forEach((node) => reveal(node, false))
     }, 1800)
 
     return () => {
@@ -54,6 +57,18 @@ function usePressReveal() {
 
 export default function App() {
   usePressReveal()
+  useEffect(() => {
+    const hero = document.querySelector('.hero.platen')
+    if (!hero) return undefined
+    let inner = 0
+    const outer = requestAnimationFrame(() => {
+      inner = requestAnimationFrame(() => hero.classList.add('is-striking'))
+    })
+    return () => {
+      cancelAnimationFrame(outer)
+      cancelAnimationFrame(inner)
+    }
+  }, [])
 
   return (
     <>
