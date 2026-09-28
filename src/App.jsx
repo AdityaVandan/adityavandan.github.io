@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import InkStamp from './effects/InkStamp.jsx'
 import {
   person,
   positioning,
@@ -57,6 +58,7 @@ export default function App() {
 
   return (
     <>
+      <InkStamp />
       <div className="paper-grain" aria-hidden="true" />
       <div className="page">
       <nav className="masthead" aria-label="Primary">
@@ -100,7 +102,7 @@ export default function App() {
             </a>
           </div>
           <p className="folio ink-bleed delay-4" aria-hidden="true">
-            Bangalore · Impression 01
+            Bangalore · Click the sheet to stamp
           </p>
         </div>
         <figure className="hero-plate ink-bleed delay-2">
