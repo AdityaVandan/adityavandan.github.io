@@ -613,3 +613,101 @@ section h2 {
     transform: none;
   }
 }
+
+/* Gesture: the name sweats ink. Hover blooms, click spills. */
+
+.inky-name {
+  position: relative;
+  cursor: pointer;
+}
+
+.ink-well {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 86%;
+  height: 0;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.ink-bloom {
+  position: absolute;
+  left: 2%;
+  width: 78%;
+  top: -8px;
+  height: 16px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, var(--ink) 0%, color-mix(in srgb, var(--ink) 55%, transparent) 42%, transparent 72%);
+  opacity: 0;
+  transform: scaleX(0.25);
+  transform-origin: center;
+}
+
+.inky-name.is-hot .ink-bloom {
+  animation: ink-bloom 0.65s ease forwards;
+}
+
+@keyframes ink-bloom {
+  0% {
+    opacity: 0;
+    transform: scaleX(0.2);
+  }
+  100% {
+    opacity: 0.78;
+    transform: scaleX(1);
+  }
+}
+
+.ink-drip {
+  position: absolute;
+  top: 0;
+  width: 16px;
+  margin-left: -8px;
+  pointer-events: none;
+}
+
+.ink-drip-stem {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 3px;
+  margin-left: -1.5px;
+  height: 100%;
+  background: var(--ink);
+  border-radius: 2px;
+  transform: scaleY(0);
+  transform-origin: top center;
+  animation: ink-stem 0.95s cubic-bezier(0.4, 0.05, 0.35, 1) forwards;
+}
+
+.ink-drip-blob {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 11px;
+  height: 14px;
+  margin-left: -5.5px;
+  background: var(--ink);
+  border-radius: 50% 50% 48% 52% / 32% 32% 68% 68%;
+  animation: ink-blob 0.95s cubic-bezier(0.4, 0.05, 0.35, 1) forwards;
+}
+
+@keyframes ink-stem {
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes ink-blob {
+  to {
+    top: calc(100% - 8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ink-bloom,
+  .ink-drip {
+    display: none;
+  }
+}
