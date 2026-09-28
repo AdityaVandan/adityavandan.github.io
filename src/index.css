@@ -613,3 +613,80 @@ section h2 {
     transform: none;
   }
 }
+
+/* Gesture: a platen bar strikes each section into register */
+
+.platen {
+  position: relative;
+}
+
+.platen-bar {
+  position: absolute;
+  left: -1.25rem;
+  right: -1.25rem;
+  height: 8px;
+  border-radius: 1px;
+  background: linear-gradient(180deg, #3a3228 0%, var(--ink) 42%, #241c14 100%);
+  box-shadow:
+    0 1px 0 color-mix(in srgb, var(--paper) 55%, transparent),
+    0 7px 0 color-mix(in srgb, var(--oxblood) 42%, transparent);
+  pointer-events: none;
+  z-index: 4;
+  opacity: 0;
+}
+
+.hero.platen .platen-bar {
+  animation: platen-strike 1.15s cubic-bezier(0.62, 0.04, 0.28, 1) 0.2s both;
+}
+
+.hero.platen > *:not(.platen-bar) {
+  animation: press-squash 0.8s cubic-bezier(0.16, 0.84, 0.32, 1) 0.18s both;
+}
+
+.platen.is-pressed .platen-bar {
+  animation: platen-strike 0.85s cubic-bezier(0.62, 0.04, 0.28, 1) both;
+}
+
+.platen.is-pressed > *:not(.platen-bar) {
+  animation: press-squash 0.62s cubic-bezier(0.16, 0.84, 0.32, 1) both;
+}
+
+@keyframes platen-strike {
+  0% {
+    top: 0;
+    opacity: 0;
+    transform: scaleX(0.92);
+  }
+  10% {
+    opacity: 1;
+  }
+  100% {
+    top: calc(100% - 8px);
+    opacity: 0;
+    transform: scaleX(1);
+  }
+}
+
+@keyframes press-squash {
+  0% {
+    transform: translateY(16px) scaleY(1.045);
+    text-shadow:
+      6px 1px 0 color-mix(in srgb, var(--oxblood) 72%, transparent),
+      -4px 0 0 color-mix(in srgb, var(--ink) 30%, transparent);
+  }
+  48% {
+    transform: translateY(0) scaleY(0.978);
+  }
+  100% {
+    transform: none;
+    text-shadow: var(--ink-spread);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .platen-bar,
+  .hero.platen > *:not(.platen-bar),
+  .platen.is-pressed > *:not(.platen-bar) {
+    animation: none !important;
+  }
+}
