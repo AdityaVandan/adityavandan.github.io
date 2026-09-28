@@ -100,7 +100,7 @@ export default function App() {
             </a>
           </div>
           <p className="folio ink-bleed delay-4" aria-hidden="true">
-            Bangalore · Impression 01
+            Bangalore · Scroll — the sheet tears open
           </p>
         </div>
         <figure className="hero-plate ink-bleed delay-2">
@@ -114,7 +114,8 @@ export default function App() {
         </figure>
       </header>
 
-      <section className="imprint press-reveal" aria-label="Proof points">
+      <section className="imprint press-reveal tear-reveal" aria-label="Proof points">
+        <div className="tear-sheet">
         <p className="kicker">From the press</p>
         <div className="imprint-row">
           {positioning.proofPoints.map((p) => (
@@ -127,9 +128,11 @@ export default function App() {
             </figure>
           ))}
         </div>
+              </div>
       </section>
 
-      <section id="work" className="press-reveal">
+      <section id="work" className="press-reveal tear-reveal">
+        <div className="tear-sheet">
         <h2>Work</h2>
         <p className="section-lede">{positioning.thesis}</p>
         {experience.map((job) => (
@@ -151,9 +154,11 @@ export default function App() {
             </ul>
           </article>
         ))}
+              </div>
       </section>
 
-      <section id="projects" className="press-reveal">
+      <section id="projects" className="press-reveal tear-reveal">
+        <div className="tear-sheet">
         <h2>Projects</h2>
         {projects.map((project) => (
           <article key={project.name} className="project">
@@ -182,9 +187,11 @@ export default function App() {
             </p>
           </article>
         ))}
+              </div>
       </section>
 
-      <section id="skills" className="press-reveal">
+      <section id="skills" className="press-reveal tear-reveal">
+        <div className="tear-sheet">
         <h2>Capabilities</h2>
         <dl className="type-drawer">
           <div>
@@ -208,9 +215,11 @@ export default function App() {
             <dd>{skills.cicd.join(' · ')}</dd>
           </div>
         </dl>
+              </div>
       </section>
 
-      <section id="contact" className="press-reveal">
+      <section id="contact" className="press-reveal tear-reveal">
+        <div className="tear-sheet">
         <h2>Contact</h2>
         <p className="section-lede">{cta.consultingNote}</p>
         <p className="contact-line">
@@ -236,6 +245,7 @@ export default function App() {
           <span className="sep"> · </span>
           {person.location}
         </p>
+              </div>
       </section>
 
       <footer className="colophon">
