@@ -613,3 +613,85 @@ section h2 {
     transform: none;
   }
 }
+
+/* Gesture: type knocks out of register, then slams back. Click the plate to reprint. */
+
+.misreg-text {
+  display: inline-block;
+  text-shadow: var(--ink-spread);
+  cursor: default;
+}
+
+.misreg-text:hover,
+section h2:hover,
+.job h3:hover,
+.project h3:hover,
+.imprint strong:hover {
+  animation: slam-register 0.62s cubic-bezier(0.16, 0.84, 0.3, 1) both;
+}
+
+@keyframes slam-register {
+  0% {
+    text-shadow:
+      8px 2px 0 color-mix(in srgb, var(--oxblood) 82%, transparent),
+      -6px -1px 0 color-mix(in srgb, var(--ink) 38%, transparent);
+    transform: translate(2px, 0) rotate(-0.5deg);
+  }
+  38% {
+    text-shadow:
+      -4px 1px 0 color-mix(in srgb, var(--oxblood) 60%, transparent),
+      3px 0 0 color-mix(in srgb, var(--ink) 28%, transparent);
+    transform: translate(-1px, 0) rotate(0.35deg);
+  }
+  70% {
+    text-shadow: 1px 0 0 color-mix(in srgb, var(--oxblood) 45%, transparent);
+    transform: rotate(-0.15deg);
+  }
+  100% {
+    text-shadow: var(--ink-spread);
+    transform: none;
+  }
+}
+
+.hero-plate.is-printable {
+  cursor: pointer;
+}
+
+.hero-plate.is-printable:focus-visible {
+  outline: 2px solid var(--oxblood);
+  outline-offset: 4px;
+}
+
+.hero-plate img.is-reprint {
+  animation: reprint-plate 0.72s cubic-bezier(0.16, 0.84, 0.3, 1) both;
+}
+
+@keyframes reprint-plate {
+  0% {
+    transform: translate(11px, 3px) rotate(-0.7deg);
+    box-shadow:
+      -10px 2px 0 color-mix(in srgb, var(--oxblood) 58%, transparent),
+      7px -1px 0 color-mix(in srgb, var(--ink) 28%, transparent);
+  }
+  46% {
+    transform: translate(-4px, 0) rotate(0.35deg);
+    box-shadow: 4px 0 0 color-mix(in srgb, var(--oxblood) 42%, transparent);
+  }
+  100% {
+    transform: none;
+    box-shadow:
+      3px 3px 0 color-mix(in srgb, var(--ink) 18%, transparent),
+      inset 0 0 0 1px color-mix(in srgb, var(--paper) 35%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .misreg-text:hover,
+  section h2:hover,
+  .job h3:hover,
+  .project h3:hover,
+  .imprint strong:hover,
+  .hero-plate img.is-reprint {
+    animation: none;
+  }
+}

@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import {
   person,
   positioning,
@@ -53,7 +53,23 @@ function usePressReveal() {
 }
 
 export default function App() {
+  useEffect(() => {
+    document.documentElement.dataset.gesture = 'misregister'
+    return () => {
+      delete document.documentElement.dataset.gesture
+    }
+  }, [])
   usePressReveal()
+  const plateRef = useRef(null)
+  const reprintPlate = () => {
+    const img = plateRef.current
+    if (!img) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    img.classList.remove('is-reprint')
+    void img.offsetWidth
+    img.classList.add('is-reprint')
+  }
+
 
   return (
     <>
@@ -76,8 +92,12 @@ export default function App() {
 
       <header className="hero" id="top">
         <div className="hero-copy">
-          <p className="brand ink-bleed">{person.name}</p>
-          <h1 className="ink-bleed delay-1">{person.headline}</h1>
+          <p className="brand ink-bleed">
+            <span className="misreg-text">{person.name}</span>
+          </p>
+          <h1 className="ink-bleed delay-1">
+            <span className="misreg-text">{person.headline}</span>
+          </h1>
           <p className="lede ink-bleed delay-2">{person.tagline}</p>
           <div className="cta-row ink-bleed delay-3">
             <a className="cta press-link" href={`mailto:${person.email}`}>
@@ -100,17 +120,31 @@ export default function App() {
             </a>
           </div>
           <p className="folio ink-bleed delay-4" aria-hidden="true">
-            Bangalore · Impression 01
+            Bangalore · Hover the type · click the plate
           </p>
         </div>
-        <figure className="hero-plate ink-bleed delay-2">
+        <figure
+          className="hero-plate ink-bleed delay-2 is-printable"
+          onClick={reprintPlate}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault()
+              reprintPlate()
+            }
+          }}
+          role="button"
+          tabIndex={0}
+          aria-label="Reprint portrait"
+        >
           <img
+            ref={plateRef}
             src={person.profileImage}
             alt={`${person.name}, full-stack AI software engineer`}
             width={800}
             height={800}
+            draggable={false}
           />
-          <figcaption>Plate 01 · Portrait</figcaption>
+          <figcaption>Plate 01 · Click to reprint</figcaption>
         </figure>
       </header>
 
