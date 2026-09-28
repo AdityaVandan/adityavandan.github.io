@@ -74,8 +74,8 @@ function usePaperTilt() {
     const tick = () => {
       cx += (tx - cx) * 0.075
       cy += (ty - cy) * 0.075
-      const rx = (-cy * 10).toFixed(2)
-      const ry = (cx * 14).toFixed(2)
+      const rx = (-cy * 16).toFixed(2)
+      const ry = (cx * 26).toFixed(2)
       page.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`
       const shadowX = (-cx * 28).toFixed(1)
       const shadowY = (16 + cy * 18).toFixed(1)
