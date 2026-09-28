@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 let spillSeq = 0
 
 export default function InkyName({ text }) {
   const [hot, setHot] = useState(false)
   const [spills, setSpills] = useState([])
+  const lastSpawn = useRef(0)
 
   useEffect(() => {
     document.documentElement.dataset.gesture = 'ink-drip'
@@ -16,6 +17,9 @@ export default function InkyName({ text }) {
   const spawn = (clientX, el, count) => {
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (reduce) return
+    const now = performance.now()
+    if (now - lastSpawn.current < 160) return
+    lastSpawn.current = now
     const rect = el.getBoundingClientRect()
     const base = ((clientX - rect.left) / Math.max(rect.width, 1)) * 100
     const next = Array.from({ length: count }, (_, i) => {
@@ -36,8 +40,17 @@ export default function InkyName({ text }) {
         setHot(true)
         spawn(event.clientX, event.currentTarget, 2)
       }}
+      onMouseEnter={(event) => {
+        setHot(true)
+        spawn(event.clientX, event.currentTarget, 2)
+      }}
       onPointerLeave={() => setHot(false)}
+      onMouseLeave={() => setHot(false)}
       onPointerDown={(event) => {
+        event.preventDefault()
+        spawn(event.clientX, event.currentTarget, 1)
+      }}
+      onMouseDown={(event) => {
         event.preventDefault()
         spawn(event.clientX, event.currentTarget, 1)
       }}
