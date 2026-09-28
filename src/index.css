@@ -613,3 +613,27 @@ section h2 {
     transform: none;
   }
 }
+
+/* Gesture: loose metal type leans toward the hand */
+
+.magnet-name {
+  cursor: grab;
+  position: relative;
+}
+
+.magnet-letter {
+  display: inline-block;
+  text-shadow: var(--ink-spread);
+  will-change: transform;
+}
+
+.magnet-space {
+  display: inline-block;
+  width: 0.28em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .magnet-letter {
+    transform: none !important;
+  }
+}
