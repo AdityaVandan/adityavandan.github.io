@@ -35,17 +35,17 @@ export default function InkBrush() {
     let raf = 0
 
     const blot = (x, y, heavy) => {
-      ctx.fillStyle = heavy ? 'rgba(26, 18, 8, 0.62)' : 'rgba(107, 46, 42, 0.28)'
+      ctx.fillStyle = heavy ? 'rgba(26, 18, 8, 0.9)' : 'rgba(74, 31, 28, 0.55)'
       ctx.beginPath()
-      ctx.ellipse(x, y, heavy ? 4.2 : 2.1, heavy ? 5 : 2.4, 0.4, 0, Math.PI * 2)
+      ctx.ellipse(x, y, heavy ? 7 : 3.2, heavy ? 8 : 3.6, 0.4, 0, Math.PI * 2)
       ctx.fill()
     }
 
     const stroke = (from, to, heavy) => {
       const dist = Math.hypot(to.x - from.x, to.y - from.y)
       const speed = Math.min(dist, 48)
-      const lineWidth = heavy ? Math.max(1.6, 9 - speed * 0.16) : Math.max(0.7, 2.4 - speed * 0.035)
-      ctx.strokeStyle = heavy ? 'rgba(26, 18, 8, 0.72)' : 'rgba(26, 18, 8, 0.28)'
+      const lineWidth = heavy ? Math.max(3.5, 14 - speed * 0.18) : Math.max(1.4, 3.6 - speed * 0.04)
+      ctx.strokeStyle = heavy ? 'rgba(26, 18, 8, 0.92)' : 'rgba(26, 18, 8, 0.45)'
       ctx.lineWidth = lineWidth
       ctx.lineCap = 'round'
       ctx.lineJoin = 'round'
@@ -73,6 +73,8 @@ export default function InkBrush() {
     }
 
     const onDown = (event) => {
+      const interactive = event.target?.closest?.('a, button')
+      if (!interactive && event.cancelable) event.preventDefault()
       const point = { x: event.clientX, y: event.clientY }
       blot(point.x, point.y, true)
       last = point
@@ -85,7 +87,7 @@ export default function InkBrush() {
     window.addEventListener('pointermove', onMove, { passive: true })
     window.addEventListener('mousemove', onMove, { passive: true })
     window.addEventListener('pointerdown', onDown)
-    window.addEventListener('mousedown', onDown)
+    window.addEventListener('mousedown', onDown, { passive: false })
     window.addEventListener('pointerup', onUp)
     window.addEventListener('mouseup', onUp)
     window.addEventListener('pointercancel', onUp)
