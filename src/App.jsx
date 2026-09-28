@@ -14,7 +14,10 @@ function usePressReveal() {
     const nodes = [...document.querySelectorAll('.press-reveal')]
     if (!nodes.length) return undefined
 
-    const reveal = (node) => node.classList.add('is-pressed')
+    const reveal = (node, strike) => {
+      node.classList.add('is-pressed')
+      if (strike) node.classList.add('is-striking')
+    }
 
     // Mobile Safari / short viewports: negative rootMargin + threshold often
     // never intersects, leaving headings stuck at opacity 0.
@@ -22,7 +25,7 @@ function usePressReveal() {
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting || entry.intersectionRatio > 0) {
-            reveal(entry.target)
+            reveal(entry.target, true)
             observer.unobserve(entry.target)
           }
         })
@@ -34,7 +37,7 @@ function usePressReveal() {
       const rect = node.getBoundingClientRect()
       const inView = rect.top < window.innerHeight && rect.bottom > 0
       if (inView) {
-        reveal(node)
+        reveal(node, true)
       } else {
         observer.observe(node)
       }
@@ -42,7 +45,7 @@ function usePressReveal() {
 
     // Safety net: never leave content invisible
     const fallback = window.setTimeout(() => {
-      nodes.forEach(reveal)
+      nodes.forEach((node) => reveal(node, false))
     }, 1800)
 
     return () => {
@@ -54,6 +57,18 @@ function usePressReveal() {
 
 export default function App() {
   usePressReveal()
+  useEffect(() => {
+    const hero = document.querySelector('.hero.platen')
+    if (!hero) return undefined
+    let inner = 0
+    const outer = requestAnimationFrame(() => {
+      inner = requestAnimationFrame(() => hero.classList.add('is-striking'))
+    })
+    return () => {
+      cancelAnimationFrame(outer)
+      cancelAnimationFrame(inner)
+    }
+  }, [])
 
   return (
     <>
@@ -74,7 +89,8 @@ export default function App() {
         </ul>
       </nav>
 
-      <header className="hero" id="top">
+      <header className="hero platen" id="top">
+        <div className="platen-bar" aria-hidden="true" />
         <div className="hero-copy">
           <p className="brand ink-bleed">{person.name}</p>
           <h1 className="ink-bleed delay-1">{person.headline}</h1>
@@ -100,7 +116,7 @@ export default function App() {
             </a>
           </div>
           <p className="folio ink-bleed delay-4" aria-hidden="true">
-            Bangalore · Impression 01
+            Bangalore · Scroll — the platen strikes
           </p>
         </div>
         <figure className="hero-plate ink-bleed delay-2">
@@ -114,7 +130,8 @@ export default function App() {
         </figure>
       </header>
 
-      <section className="imprint press-reveal" aria-label="Proof points">
+      <section className="imprint press-reveal platen" aria-label="Proof points">
+        <div className="platen-bar" aria-hidden="true" />
         <p className="kicker">From the press</p>
         <div className="imprint-row">
           {positioning.proofPoints.map((p) => (
@@ -129,7 +146,8 @@ export default function App() {
         </div>
       </section>
 
-      <section id="work" className="press-reveal">
+      <section id="work" className="press-reveal platen">
+        <div className="platen-bar" aria-hidden="true" />
         <h2>Work</h2>
         <p className="section-lede">{positioning.thesis}</p>
         {experience.map((job) => (
@@ -153,7 +171,8 @@ export default function App() {
         ))}
       </section>
 
-      <section id="projects" className="press-reveal">
+      <section id="projects" className="press-reveal platen">
+        <div className="platen-bar" aria-hidden="true" />
         <h2>Projects</h2>
         {projects.map((project) => (
           <article key={project.name} className="project">
@@ -184,7 +203,8 @@ export default function App() {
         ))}
       </section>
 
-      <section id="skills" className="press-reveal">
+      <section id="skills" className="press-reveal platen">
+        <div className="platen-bar" aria-hidden="true" />
         <h2>Capabilities</h2>
         <dl className="type-drawer">
           <div>
@@ -210,7 +230,8 @@ export default function App() {
         </dl>
       </section>
 
-      <section id="contact" className="press-reveal">
+      <section id="contact" className="press-reveal platen">
+        <div className="platen-bar" aria-hidden="true" />
         <h2>Contact</h2>
         <p className="section-lede">{cta.consultingNote}</p>
         <p className="contact-line">
