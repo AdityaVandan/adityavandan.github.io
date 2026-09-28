@@ -55,6 +55,7 @@ function usePressReveal() {
 export default function App() {
   useEffect(() => {
     document.documentElement.dataset.gesture = 'misregister'
+    let overPlate = false
     const onMove = (event) => {
       document.querySelectorAll('.misreg-text').forEach((node) => {
         const rect = node.getBoundingClientRect()
@@ -65,27 +66,29 @@ export default function App() {
           event.clientY <= rect.bottom + 8
         node.classList.toggle('is-hot', inside)
       })
-    }
-    const onClick = (event) => {
       const img = document.querySelector('.hero-plate img')
       if (!img) return
       const rect = img.getBoundingClientRect()
-      const inside =
+      const over =
         event.clientX >= rect.left &&
         event.clientX <= rect.right &&
         event.clientY >= rect.top &&
         event.clientY <= rect.bottom
-      if (!inside) return
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-      img.classList.remove('is-reprint')
-      void img.offsetWidth
-      img.classList.add('is-reprint')
+      const caption = document.querySelector('.hero-plate figcaption')
+      if (caption) caption.textContent = over ? 'Plate 01 · Reprinting' : 'Plate 01 · Hover to reprint'
+      if (over && !overPlate) {
+        overPlate = true
+        if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          img.classList.remove('is-reprint')
+          void img.offsetWidth
+          img.classList.add('is-reprint')
+        }
+      }
+      if (!over) overPlate = false
     }
     window.addEventListener('mousemove', onMove)
-    window.addEventListener('click', onClick)
     return () => {
       window.removeEventListener('mousemove', onMove)
-      window.removeEventListener('click', onClick)
       delete document.documentElement.dataset.gesture
     }
   }, [])
@@ -156,7 +159,7 @@ export default function App() {
             </a>
           </div>
           <p className="folio ink-bleed delay-4" aria-hidden="true">
-            Bangalore · Hover the type · click the plate
+            Bangalore · Hover the type · hover the plate
           </p>
         </div>
         <figure
@@ -170,7 +173,7 @@ export default function App() {
           }}
           role="button"
           tabIndex={0}
-          aria-label="Reprint portrait"
+          aria-label="Reprint portrait on hover"
         >
           <img
             ref={plateRef}
@@ -180,7 +183,7 @@ export default function App() {
             height={800}
             draggable={false}
           />
-          <figcaption>Plate 01 · Click to reprint</figcaption>
+          <figcaption>Plate 01 · Hover to reprint</figcaption>
         </figure>
       </header>
 

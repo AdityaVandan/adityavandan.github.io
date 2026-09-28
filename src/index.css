@@ -701,10 +701,10 @@ section h2:hover,
 
 @keyframes reprint-plate {
   0% {
-    transform: translate(22px, 6px) rotate(-1.2deg);
+    transform: translate(72px, 18px) rotate(-2deg);
     box-shadow:
-      -18px 4px 0 color-mix(in srgb, var(--oxblood) 70%, transparent),
-      12px -2px 0 color-mix(in srgb, var(--ink) 35%, transparent);
+      -28px 8px 0 #8f2d28,
+      16px -4px 0 rgba(26, 18, 8, 0.45);
   }
   46% {
     transform: translate(-10px, 0) rotate(0.6deg);
