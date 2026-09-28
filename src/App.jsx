@@ -72,14 +72,14 @@ function usePaperTilt() {
     let raf = 0
 
     const tick = () => {
-      cx += (tx - cx) * 0.075
-      cy += (ty - cy) * 0.075
-      const rx = (-cy * 16).toFixed(2)
-      const ry = (cx * 26).toFixed(2)
-      page.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`
-      const shadowX = (-cx * 28).toFixed(1)
-      const shadowY = (16 + cy * 18).toFixed(1)
-      page.style.boxShadow = `${shadowX}px ${shadowY}px 48px color-mix(in srgb, var(--ink) 14%, transparent)`
+      cx += (tx - cx) * 0.16
+      cy += (ty - cy) * 0.16
+      const rx = (-cy * 18).toFixed(2)
+      const ry = (cx * 28).toFixed(2)
+      page.style.transform = `perspective(1280px) rotateX(${rx}deg) rotateY(${ry}deg)`
+      const shadowX = (-cx * 46).toFixed(1)
+      const shadowY = (22 + cy * 28).toFixed(1)
+      page.style.boxShadow = `${shadowX}px ${shadowY}px 0 0 color-mix(in srgb, #8a6a3d 55%, transparent), ${shadowX}px ${shadowY}px 36px color-mix(in srgb, var(--ink) 28%, transparent)`
       raf = requestAnimationFrame(tick)
     }
     raf = requestAnimationFrame(tick)
