@@ -257,7 +257,8 @@ body {
 .cta.secondary.press-link:hover,
 .masthead a.press-link:hover,
 .links a.press-link:hover,
-.contact-line a.press-link:hover {
+.contact-line a.press-link:hover,
+.github-status a.press-link:hover {
   color: var(--oxblood-deep);
   box-shadow: none;
 }
@@ -537,6 +538,180 @@ section h2 {
   color: var(--muted);
 }
 
+/* GitHub plate — same hierarchy as a contribution card, set in press type */
+.github-sheet {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(8.75rem, 13.5rem);
+  gap: 1.25rem 1.75rem;
+  align-items: start;
+}
+
+.github-dateline {
+  margin: 0 0 0.85rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--oxblood);
+}
+
+.github-dateline .sep {
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.github-hero-value {
+  margin: 0;
+  font-family: var(--font-brand);
+  font-weight: 900;
+  font-size: clamp(4.2rem, 12vw, 6.4rem);
+  line-height: 0.84;
+  letter-spacing: -0.04em;
+  color: var(--ink);
+  text-shadow: var(--ink-spread);
+}
+
+.github-hero-label {
+  margin: 0.35rem 0 0;
+  font-size: clamp(1.15rem, 2.4vw, 1.55rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.github-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.1rem 2.1rem;
+  margin: 1.35rem 0 0;
+}
+
+.github-metrics p {
+  margin: 0;
+}
+
+.github-metrics strong {
+  display: block;
+  font-size: clamp(1.55rem, 3vw, 2.05rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: var(--ink);
+  text-shadow: var(--ink-spread);
+}
+
+.github-metrics span {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.github-plate {
+  margin-top: 0.2rem;
+}
+
+.github-cal {
+  display: grid;
+  grid-template-columns: 1.7rem minmax(0, 1fr);
+  column-gap: 0.4rem;
+  row-gap: 0.28rem;
+  margin-top: 1.6rem;
+  max-width: 100%;
+  overflow-x: auto;
+  padding-bottom: 0.2rem;
+}
+
+.github-months,
+.github-weeks {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 11px;
+  gap: 3px;
+  width: max-content;
+}
+
+.github-months span {
+  display: block;
+  height: 0.85rem;
+  overflow: visible;
+  font-size: 0.62rem;
+  line-height: 0.85rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.github-wdays,
+.github-week {
+  display: grid;
+  grid-template-rows: repeat(7, 11px);
+  gap: 3px;
+}
+
+.github-wdays span {
+  font-size: 0.58rem;
+  line-height: 11px;
+  color: var(--muted);
+}
+
+.github-day {
+  display: block;
+  width: 11px;
+  height: 11px;
+  background: color-mix(in srgb, var(--ink) 10%, transparent);
+}
+
+.github-day.lvl-1 {
+  background: color-mix(in srgb, var(--oxblood) 38%, var(--paper));
+}
+
+.github-day.lvl-2 {
+  background: color-mix(in srgb, var(--oxblood) 62%, var(--paper));
+}
+
+.github-day.lvl-3 {
+  background: color-mix(in srgb, var(--oxblood) 82%, var(--ink));
+}
+
+.github-day.lvl-4 {
+  background: var(--oxblood-deep);
+}
+
+.github-day.pad {
+  background: transparent;
+}
+
+.github-day:not(.pad):hover {
+  outline: 1px solid var(--ink);
+  outline-offset: 1px;
+}
+
+.github-note {
+  max-width: 40rem;
+  margin: 0.95rem 0 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.github-status {
+  margin: 0.85rem 0 0;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.github-status a {
+  color: var(--oxblood);
+  text-decoration: none;
+  border-bottom: 1px solid color-mix(in srgb, var(--oxblood) 45%, transparent);
+}
+
+.github-status .sep {
+  font-weight: 400;
+}
+
 /* Mobile / coarse pointer: never leave content invisible if animation stalls */
 @media (max-width: 720px) {
   .ink-bleed {
@@ -611,5 +786,21 @@ section h2 {
   .press-reveal {
     opacity: 1;
     transform: none;
+  }
+
+  .github-sheet {
+    grid-template-columns: 1fr;
+  }
+
+  .github-plate {
+    display: none;
+  }
+
+  .github-hero-value {
+    font-size: clamp(3.4rem, 18vw, 4.6rem);
+  }
+
+  .github-dateline {
+    letter-spacing: 0.08em;
   }
 }
