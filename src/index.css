@@ -552,6 +552,63 @@ section h2 {
   border-bottom: 1px solid var(--rule);
 }
 
+.essay-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: 1.75rem;
+  align-items: start;
+}
+
+.essay-copy {
+  grid-column: 1;
+  grid-row: 1;
+  min-width: 0;
+}
+
+.read-progress {
+  grid-column: 2;
+  grid-row: 1;
+  position: sticky;
+  top: 0.85rem;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.4rem;
+  width: 6.75rem;
+  margin-top: 0.15rem;
+  padding: 0.15rem 0 0.35rem 0.65rem;
+  background: var(--paper);
+}
+
+.read-progress-value {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  font-variant-numeric: tabular-nums;
+  color: var(--oxblood);
+}
+
+.read-progress-track {
+  display: block;
+  width: 100%;
+  height: 4px;
+  background: var(--rule);
+}
+
+.read-progress-bar {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: var(--ink);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .read-progress-bar {
+    transition: width 80ms linear;
+  }
+}
+
 .essay h1 {
   font-family: var(--font-brand);
   font-weight: 700;
@@ -700,6 +757,16 @@ section h2 {
     flex-wrap: wrap;
     row-gap: 0.65rem;
     padding-bottom: 0.85rem;
+  }
+
+  .essay-layout {
+    column-gap: 0.85rem;
+  }
+
+  .read-progress {
+    top: 0.65rem;
+    width: 5.1rem;
+    padding-left: 0.4rem;
   }
 
   .hero {
