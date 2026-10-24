@@ -8,6 +8,7 @@
     "build": "vite build",
     "build:pages": "node scripts/build-pages.mjs",
     "lint": "oxlint",
+    "test": "node --test src/github/model.test.mjs",
     "preview": "vite preview"
   },
   "dependencies": {

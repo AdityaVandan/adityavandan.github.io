@@ -8,6 +8,7 @@ import {
   cta,
   nav,
 } from './data/content.js'
+import GithubActivity from './GithubActivity.jsx'
 
 function usePressReveal() {
   useEffect(() => {
@@ -182,6 +183,10 @@ export default function App() {
             </p>
           </article>
         ))}
+      </section>
+
+      <section id="github" className="press-reveal" aria-label="GitHub activity">
+        <GithubActivity />
       </section>
 
       <section id="skills" className="press-reveal">
