@@ -8,6 +8,7 @@ import {
   cta,
   nav,
 } from './data/content.js'
+import ExperienceTimeline from './ExperienceTimeline.jsx'
 import GithubActivity from './GithubActivity.jsx'
 
 function usePressReveal() {
@@ -130,28 +131,10 @@ export default function App() {
         </div>
       </section>
 
-      <section id="work" className="press-reveal">
+      <section id="work">
         <h2>Work</h2>
         <p className="section-lede">{positioning.thesis}</p>
-        {experience.map((job) => (
-          <article key={`${job.company}-${job.start}`} className="job">
-            <header>
-              <h3>
-                {job.role}
-                <span className="sep"> · </span>
-                {job.company}
-              </h3>
-              <p className="meta">
-                {job.start} – {job.end} · {job.location}
-              </p>
-            </header>
-            <ul>
-              {job.highlights.map((h) => (
-                <li key={h.slice(0, 48)}>{h}</li>
-              ))}
-            </ul>
-          </article>
-        ))}
+        <ExperienceTimeline jobs={experience} />
       </section>
 
       <section id="projects" className="press-reveal">
