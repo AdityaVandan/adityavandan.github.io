@@ -151,6 +151,7 @@ export const education = {
 export const nav = [
   { id: 'work', label: 'Work' },
   { id: 'projects', label: 'Projects' },
+  { id: 'writing', label: 'Writing' },
   { id: 'contact', label: 'Contact' },
 ]
 
