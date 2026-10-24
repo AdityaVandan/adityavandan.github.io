@@ -541,7 +541,7 @@ section h2 {
 /* GitHub plate — same hierarchy as a contribution card, set in press type */
 .github-sheet {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(8.75rem, 13.5rem);
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: 1.25rem 1.75rem;
   align-items: start;
 }
@@ -607,8 +607,12 @@ section h2 {
   color: var(--muted);
 }
 
-.github-plate {
-  margin-top: 0.2rem;
+.github-mark {
+  display: block;
+  width: min(7.75rem, 22vw);
+  height: auto;
+  margin-top: 0.15rem;
+  justify-self: end;
 }
 
 .github-cal {
@@ -789,11 +793,13 @@ section h2 {
   }
 
   .github-sheet {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: 0.85rem;
   }
 
-  .github-plate {
-    display: none;
+  .github-mark {
+    width: 3.75rem;
+    margin-top: 0.35rem;
   }
 
   .github-hero-value {

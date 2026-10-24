@@ -67,10 +67,13 @@ export default function GithubActivity() {
             </p>
           </div>
         </div>
-        <figure className="hero-plate github-plate">
-          <img src={person.profileImage} alt="" width={800} height={800} />
-          <figcaption>Plate 02 · Portrait</figcaption>
-        </figure>
+        <img
+          className="github-mark"
+          src="/images/github-mark.png"
+          alt="GitHub mark"
+          width={512}
+          height={512}
+        />
       </div>
 
       <div className="github-cal" aria-hidden="true">
