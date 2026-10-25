@@ -9,7 +9,7 @@
     "build:pages": "node scripts/build-pages.mjs",
     "snapshot": "node scripts/fetch-medium.mjs",
     "lint": "oxlint",
-    "test": "node --test src/github/model.test.mjs src/timeline/progress.test.mjs",
+    "test": "node --test src/github/model.test.mjs src/timeline/progress.test.mjs src/seo/metadata.test.mjs",
     "preview": "vite preview"
   },
   "dependencies": {

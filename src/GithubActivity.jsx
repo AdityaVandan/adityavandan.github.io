@@ -118,7 +118,7 @@ export default function GithubActivity() {
       <p className="github-status">
         {live ? 'Live from GitHub' : `Last printed ${printed}`}
         <span className="sep"> · </span>
-        <a className="press-link" href={person.github} target="_blank" rel="noreferrer">
+        <a className="press-link" href={person.github} target="_blank" rel="me noreferrer">
           View profile
         </a>
       </p>

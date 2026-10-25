@@ -1,12 +1,8 @@
 import { useEffect, useState } from 'react'
 import Home from './pages/Home.jsx'
 import { Essay, EssayMissing } from './pages/Essay.jsx'
+import { applyRouteMeta, essayMeta, homeMeta, missingMeta } from './seo/metadata.js'
 import { essayFromPath } from './writing.js'
-
-const HOME_TITLE = 'Aditya Vandan Sharma — Full-stack AI Software Engineer'
-const HOME_DESCRIPTION =
-  'Aditya Vandan Sharma — Full-stack AI software engineer. Tesco, Rippling, Groww.'
-const HOME_CANONICAL = 'https://adityavandan.github.io/'
 
 function usePathname() {
   const [pathname, setPathname] = useState(() => window.location.pathname)
@@ -20,21 +16,6 @@ function usePathname() {
   return pathname
 }
 
-function setMeta(name, content) {
-  const node = document.querySelector(`meta[name="${name}"]`)
-  if (node) node.setAttribute('content', content)
-}
-
-function setCanonical(href) {
-  let node = document.querySelector('link[rel="canonical"]')
-  if (!node) {
-    node = document.createElement('link')
-    node.setAttribute('rel', 'canonical')
-    document.head.append(node)
-  }
-  node.setAttribute('href', href)
-}
-
 export default function App() {
   const pathname = usePathname()
   const route = essayFromPath(pathname)
@@ -42,21 +23,9 @@ export default function App() {
 
   useEffect(() => {
     const current = essayFromPath(window.location.pathname)
-    if (current.kind === 'essay') {
-      document.title = `${current.post.title} — Aditya Vandan Sharma`
-      setMeta('description', current.post.excerpt || current.post.title)
-      setCanonical(current.post.url)
-      return
-    }
-    if (current.kind === 'missing') {
-      document.title = 'Essay not found — Aditya Vandan Sharma'
-      setMeta('description', 'This essay is not in the snapshot.')
-      setCanonical(HOME_CANONICAL)
-      return
-    }
-    document.title = HOME_TITLE
-    setMeta('description', HOME_DESCRIPTION)
-    setCanonical(HOME_CANONICAL)
+    if (current.kind === 'essay') applyRouteMeta(essayMeta(current.post))
+    else if (current.kind === 'missing') applyRouteMeta(missingMeta())
+    else applyRouteMeta(homeMeta())
   }, [routeKey])
 
   useEffect(() => {

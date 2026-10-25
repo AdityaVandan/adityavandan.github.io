@@ -11,6 +11,7 @@
 import { copyFileSync, cpSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { spawnSync } from 'node:child_process'
+import { applySeoBlock, essayMeta, stripHomeFallback } from '../src/seo/metadata.js'
 
 const root = process.cwd()
 const dist = join(root, 'dist')
@@ -22,9 +23,11 @@ if (!existsSync(sourceHtml)) {
   process.exit(1)
 }
 
-const refresh = spawnSync('node', ['scripts/fetch-github-stats.mjs'], { stdio: 'inherit' })
-if (refresh.status !== 0) {
-  console.warn('Continuing with the committed GitHub snapshot')
+if (process.env.SKIP_GITHUB_REFRESH !== '1') {
+  const refresh = spawnSync('node', ['scripts/fetch-github-stats.mjs'], { stdio: 'inherit' })
+  if (refresh.status !== 0) {
+    console.warn('Continuing with the committed GitHub snapshot')
+  }
 }
 
 // Vite expects index.html at project root during build
@@ -63,29 +66,8 @@ for (const entry of readdirSync(dist, { withFileTypes: true })) {
 writeFileSync(join(root, '.nojekyll'), '')
 console.log('Synced dist/ → repo root for GitHub Pages (index.html is production build)')
 
-function escapeHtml(value) {
-  return String(value)
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;')
-}
-
 function essayShell(template, post) {
-  const title = `${post.title} — Aditya Vandan Sharma`
-  const description = post.excerpt || post.title
-  let html = template.replace(/<title>[\s\S]*?<\/title>/, `<title>${escapeHtml(title)}</title>`)
-  html = html.replace(
-    /(name="description"\s+content=")[\s\S]*?(")/,
-    `$1${escapeHtml(description)}$2`,
-  )
-  const canonical = `<link rel="canonical" href="${escapeHtml(post.url)}" />`
-  if (html.includes('rel="canonical"')) {
-    html = html.replace(/[ \t]*<link rel="canonical"[^>]*>/, `    ${canonical}`)
-  } else {
-    html = html.replace('</head>', `    ${canonical}\n  </head>`)
-  }
-  return html
+  return stripHomeFallback(applySeoBlock(template, essayMeta(post)))
 }
 
 function writeEssayShells(distDir) {

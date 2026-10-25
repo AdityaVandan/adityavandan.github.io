@@ -41,7 +41,7 @@ export default function Home() {
               className="cta secondary press-link"
               href={person.github}
               target="_blank"
-              rel="noreferrer"
+              rel="me noreferrer"
             >
               {cta.secondary}
             </a>
@@ -190,11 +190,11 @@ export default function Home() {
             Resume (PDF)
           </a>
           <span className="sep"> · </span>
-          <a className="press-link" href={person.linkedin} target="_blank" rel="noreferrer">
+          <a className="press-link" href={person.linkedin} target="_blank" rel="me noreferrer">
             LinkedIn
           </a>
           <span className="sep"> · </span>
-          <a className="press-link" href={person.github} target="_blank" rel="noreferrer">
+          <a className="press-link" href={person.github} target="_blank" rel="me noreferrer">
             GitHub
           </a>
           <span className="sep"> · </span>
