@@ -2,10 +2,11 @@
  * Build for GitHub Pages (master branch, path /).
  *
  * Flow:
- * 1. Restore Vite entry from index.source.html → index.html
- * 2. vite build → dist/
- * 3. Sync dist/ to repo root (committed static site)
- * 4. Restore index.source.html as the durable Vite entry; keep built index.html for Pages
+ * 1. Refresh the committed GitHub snapshot (keeps going if GitHub is quiet)
+ * 2. Restore Vite entry from index.source.html → index.html
+ * 3. vite build → dist/
+ * 4. Sync dist/ to repo root (committed static site)
+ * 5. Restore index.source.html as the durable Vite entry; keep built index.html for Pages
  */
 import { copyFileSync, cpSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
@@ -19,6 +20,11 @@ const rootHtml = join(root, 'index.html')
 if (!existsSync(sourceHtml)) {
   console.error('Missing index.source.html')
   process.exit(1)
+}
+
+const refresh = spawnSync('node', ['scripts/fetch-github-stats.mjs'], { stdio: 'inherit' })
+if (refresh.status !== 0) {
+  console.warn('Continuing with the committed GitHub snapshot')
 }
 
 // Vite expects index.html at project root during build
