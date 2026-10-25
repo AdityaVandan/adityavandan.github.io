@@ -26,3 +26,16 @@ git add -A && git commit -m "Update Pages build" && git push
 ```
 
 Then merge to `master` (or push to master) for the live site to update.
+
+## Writing
+
+Essays are a snapshot of [Medium](https://medium.com/@van13heisenberg), rendered in this page’s type. `src/data/writing.json` is the archive. Images live in `public/images/writing/`.
+
+```bash
+npm run snapshot     # fetch the feed and merge it into the archive
+npm run build:pages  # bundle the essays and emit /writing/<slug>/
+```
+
+Medium’s public feed returns the latest stories, and member-only stories arrive as previews. The snapshot keeps stories after they drop out of that list, and a later run fills in the full text if the feed starts including it.
+
+The **Medium writing snapshot** action (Actions → Medium writing snapshot → Run workflow) fetches the feed, rebuilds the Pages bundle, and opens a pull request. Merge that pull request to publish.

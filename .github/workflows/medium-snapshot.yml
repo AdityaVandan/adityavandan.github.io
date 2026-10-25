@@ -1,0 +1,61 @@
+name: Medium writing snapshot
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: medium-snapshot
+  cancel-in-progress: false
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Fetch Medium archive
+        run: npm run snapshot
+
+      - name: Detect snapshot changes
+        id: diff
+        run: |
+          if [ -n "$(git status --porcelain -- src/data/writing.json public/images/writing)" ]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "Archive already matches the Medium feed."
+          fi
+
+      - name: Build GitHub Pages bundle
+        if: steps.diff.outputs.changed == 'true'
+        run: npm run build:pages
+
+      - name: Open pull request
+        if: steps.diff.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: writing/medium-snapshot
+          base: master
+          delete-branch: true
+          commit-message: Refresh Medium writing snapshot
+          title: Refresh Medium writing snapshot
+          body: |
+            Updates the committed Medium archive and the GitHub Pages bundle.
+
+            The public feed returns the latest stories. This job merges them into `src/data/writing.json`, so older stories stay in the bundle after they drop out of Medium’s list. Member-only stories are stored as previews with a link back to Medium, because that feed does not include their full text.
+
+            Merge to publish to https://adityavandan.github.io/

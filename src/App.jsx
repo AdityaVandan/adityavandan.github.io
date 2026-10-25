@@ -1,235 +1,78 @@
-import { useEffect } from 'react'
-import {
-  person,
-  positioning,
-  experience,
-  projects,
-  skills,
-  cta,
-  nav,
-} from './data/content.js'
-import ExperienceTimeline from './ExperienceTimeline.jsx'
-import GithubActivity from './GithubActivity.jsx'
+import { useEffect, useState } from 'react'
+import Home from './pages/Home.jsx'
+import { Essay, EssayMissing } from './pages/Essay.jsx'
+import { essayFromPath } from './writing.js'
 
-function usePressReveal() {
+const HOME_TITLE = 'Aditya Vandan Sharma — Full-stack AI Software Engineer'
+const HOME_DESCRIPTION =
+  'Aditya Vandan Sharma — Full-stack AI software engineer. Tesco, Rippling, Groww.'
+const HOME_CANONICAL = 'https://adityavandan.github.io/'
+
+function usePathname() {
+  const [pathname, setPathname] = useState(() => window.location.pathname)
+
   useEffect(() => {
-    const nodes = [...document.querySelectorAll('.press-reveal')]
-    if (!nodes.length) return undefined
-
-    const reveal = (node) => node.classList.add('is-pressed')
-
-    // Mobile Safari / short viewports: negative rootMargin + threshold often
-    // never intersects, leaving headings stuck at opacity 0.
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting || entry.intersectionRatio > 0) {
-            reveal(entry.target)
-            observer.unobserve(entry.target)
-          }
-        })
-      },
-      { root: null, rootMargin: '0px 0px -5% 0px', threshold: 0 },
-    )
-
-    nodes.forEach((node) => {
-      const rect = node.getBoundingClientRect()
-      const inView = rect.top < window.innerHeight && rect.bottom > 0
-      if (inView) {
-        reveal(node)
-      } else {
-        observer.observe(node)
-      }
-    })
-
-    // Safety net: never leave content invisible
-    const fallback = window.setTimeout(() => {
-      nodes.forEach(reveal)
-    }, 1800)
-
-    return () => {
-      observer.disconnect()
-      window.clearTimeout(fallback)
-    }
+    const onPop = () => setPathname(window.location.pathname)
+    window.addEventListener('popstate', onPop)
+    return () => window.removeEventListener('popstate', onPop)
   }, [])
+
+  return pathname
+}
+
+function setMeta(name, content) {
+  const node = document.querySelector(`meta[name="${name}"]`)
+  if (node) node.setAttribute('content', content)
+}
+
+function setCanonical(href) {
+  let node = document.querySelector('link[rel="canonical"]')
+  if (!node) {
+    node = document.createElement('link')
+    node.setAttribute('rel', 'canonical')
+    document.head.append(node)
+  }
+  node.setAttribute('href', href)
 }
 
 export default function App() {
-  usePressReveal()
+  const pathname = usePathname()
+  const route = essayFromPath(pathname)
+  const routeKey = route.kind === 'essay' ? `essay:${route.post.slug}` : route.kind
 
-  return (
-    <>
-      <div className="paper-grain" aria-hidden="true" />
-      <div className="page">
-      <nav className="masthead" aria-label="Primary">
-        <a className="masthead-mark press-link" href="#top">
-          A.V.S.
-        </a>
-        <ul>
-          {nav.map((item) => (
-            <li key={item.id}>
-              <a className="press-link" href={`#${item.id}`}>
-                {item.label}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </nav>
+  useEffect(() => {
+    const current = essayFromPath(window.location.pathname)
+    if (current.kind === 'essay') {
+      document.title = `${current.post.title} — Aditya Vandan Sharma`
+      setMeta('description', current.post.excerpt || current.post.title)
+      setCanonical(current.post.url)
+      return
+    }
+    if (current.kind === 'missing') {
+      document.title = 'Essay not found — Aditya Vandan Sharma'
+      setMeta('description', 'This essay is not in the snapshot.')
+      setCanonical(HOME_CANONICAL)
+      return
+    }
+    document.title = HOME_TITLE
+    setMeta('description', HOME_DESCRIPTION)
+    setCanonical(HOME_CANONICAL)
+  }, [routeKey])
 
-      <header className="hero" id="top">
-        <div className="hero-copy">
-          <p className="brand ink-bleed">{person.name}</p>
-          <h1 className="ink-bleed delay-1">{person.headline}</h1>
-          <p className="lede ink-bleed delay-2">{person.tagline}</p>
-          <div className="cta-row ink-bleed delay-3">
-            <a className="cta press-link" href={`mailto:${person.email}`}>
-              {cta.primary}
-            </a>
-            <a
-              className="cta secondary press-link"
-              href={person.resume}
-              download="Aditya-Vandan-Sharma.pdf"
-            >
-              {cta.resume}
-            </a>
-            <a
-              className="cta secondary press-link"
-              href={person.github}
-              target="_blank"
-              rel="noreferrer"
-            >
-              {cta.secondary}
-            </a>
-          </div>
-          <p className="folio ink-bleed delay-4" aria-hidden="true">
-            Bangalore · Impression 01
-          </p>
-        </div>
-        <figure className="hero-plate ink-bleed delay-2">
-          <img
-            src={person.profileImage}
-            alt={`${person.name}, full-stack AI software engineer`}
-            width={800}
-            height={800}
-          />
-          <figcaption>Plate 01 · Portrait</figcaption>
-        </figure>
-      </header>
+  useEffect(() => {
+    if (route.kind === 'essay' || route.kind === 'missing') return undefined
+    const id = route.kind === 'index' ? 'writing' : window.location.hash.replace('#', '')
+    if (!id) return undefined
+    const scroll = () => document.getElementById(id)?.scrollIntoView({ block: 'start' })
+    const frame = window.requestAnimationFrame(scroll)
+    const later = window.setTimeout(scroll, 60)
+    return () => {
+      window.cancelAnimationFrame(frame)
+      window.clearTimeout(later)
+    }
+  }, [route.kind, pathname])
 
-      <section className="imprint press-reveal" aria-label="Proof points">
-        <p className="kicker">From the press</p>
-        <div className="imprint-row">
-          {positioning.proofPoints.map((p) => (
-            <figure key={p.label}>
-              <strong>{p.value}</strong>
-              <figcaption>
-                <span>{p.label}</span>
-                <em>{p.detail}</em>
-              </figcaption>
-            </figure>
-          ))}
-        </div>
-      </section>
-
-      <section id="work">
-        <h2>Work</h2>
-        <p className="section-lede">{positioning.thesis}</p>
-        <ExperienceTimeline jobs={experience} />
-      </section>
-
-      <section id="projects" className="press-reveal">
-        <h2>Projects</h2>
-        {projects.map((project) => (
-          <article key={project.name} className="project">
-            <h3>
-              {project.name}
-              {project.subtitle ? <span> — {project.subtitle}</span> : null}
-            </h3>
-            <p>{project.about}</p>
-            <p className="stack">{project.stack.join(' · ')}</p>
-            <p className="links">
-              {project.link ? (
-                <a className="press-link" href={project.link} target="_blank" rel="noreferrer">
-                  Live
-                </a>
-              ) : null}
-              {project.github ? (
-                <a
-                  className="press-link"
-                  href={project.github}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  GitHub
-                </a>
-              ) : null}
-            </p>
-          </article>
-        ))}
-      </section>
-
-      <section id="github" className="press-reveal" aria-label="GitHub activity">
-        <GithubActivity />
-      </section>
-
-      <section id="skills" className="press-reveal">
-        <h2>Capabilities</h2>
-        <dl className="type-drawer">
-          <div>
-            <dt>Languages</dt>
-            <dd>{skills.languages.join(' · ')}</dd>
-          </div>
-          <div>
-            <dt>Frameworks</dt>
-            <dd>{skills.frameworks.join(' · ')}</dd>
-          </div>
-          <div>
-            <dt>AI</dt>
-            <dd>{skills.ai.join(' · ')}</dd>
-          </div>
-          <div>
-            <dt>Data</dt>
-            <dd>{skills.databases.join(' · ')}</dd>
-          </div>
-          <div>
-            <dt>Delivery</dt>
-            <dd>{skills.cicd.join(' · ')}</dd>
-          </div>
-        </dl>
-      </section>
-
-      <section id="contact" className="press-reveal">
-        <h2>Contact</h2>
-        <p className="section-lede">{cta.consultingNote}</p>
-        <p className="contact-line">
-          <a className="press-link" href={`mailto:${person.email}`}>
-            {person.email}
-          </a>
-          <span className="sep"> · </span>
-          <a
-            className="press-link"
-            href={person.resume}
-            download="Aditya-Vandan-Sharma.pdf"
-          >
-            Resume (PDF)
-          </a>
-          <span className="sep"> · </span>
-          <a className="press-link" href={person.linkedin} target="_blank" rel="noreferrer">
-            LinkedIn
-          </a>
-          <span className="sep"> · </span>
-          <a className="press-link" href={person.github} target="_blank" rel="noreferrer">
-            GitHub
-          </a>
-          <span className="sep"> · </span>
-          {person.location}
-        </p>
-      </section>
-
-      <footer className="colophon">
-        <p>Set in Playfair Display & Libre Franklin · Printed on screen stock</p>
-      </footer>
-      </div>
-    </>
-  )
+  if (route.kind === 'essay') return <Essay post={route.post} />
+  if (route.kind === 'missing') return <EssayMissing />
+  return <Home />
 }

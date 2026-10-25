@@ -1,47 +1,12 @@
 {
-  "fetchedAt": "2026-10-24T11:44:56.007Z",
+  "fetchedAt": "2026-10-25T05:54:01.289Z",
   "login": "AdityaVandan",
   "repos": 32,
-  "mergedPullRequests": 35,
+  "mergedPullRequests": 39,
   "mergedPullRequestsCapped": false,
-  "commits": 67,
+  "commits": 71,
   "commitsCapped": false,
   "contributions": [
-    {
-      "date": "2025-10-19",
-      "count": 0,
-      "level": 0
-    },
-    {
-      "date": "2025-10-20",
-      "count": 0,
-      "level": 0
-    },
-    {
-      "date": "2025-10-21",
-      "count": 0,
-      "level": 0
-    },
-    {
-      "date": "2025-10-22",
-      "count": 7,
-      "level": 3
-    },
-    {
-      "date": "2025-10-23",
-      "count": 0,
-      "level": 0
-    },
-    {
-      "date": "2025-10-24",
-      "count": 0,
-      "level": 0
-    },
-    {
-      "date": "2025-10-25",
-      "count": 0,
-      "level": 0
-    },
     {
       "date": "2025-10-26",
       "count": 0,
@@ -1854,13 +1819,18 @@
     },
     {
       "date": "2026-10-23",
-      "count": 1,
+      "count": 2,
       "level": 1
     },
     {
       "date": "2026-10-24",
-      "count": 0,
-      "level": 0
+      "count": 11,
+      "level": 4
+    },
+    {
+      "date": "2026-10-25",
+      "count": 2,
+      "level": 1
     }
   ]
 }

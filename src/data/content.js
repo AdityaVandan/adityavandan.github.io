@@ -152,6 +152,7 @@ export const nav = [
   { id: 'work', label: 'Work' },
   { id: 'projects', label: 'Projects' },
   { id: 'github', label: 'GitHub' },
+  { id: 'writing', label: 'Writing' },
   { id: 'contact', label: 'Contact' },
 ]
 
