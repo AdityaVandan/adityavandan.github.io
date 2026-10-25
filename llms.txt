@@ -1,0 +1,70 @@
+# Aditya Vandan Sharma
+
+> Aditya Vandan Sharma is a full-stack AI software engineer in Bangalore, India, working at Tesco, with earlier work at Rippling, Groww, and Almug.ai. The canonical page for Aditya Vandan Sharma is https://adityavandan.github.io/.
+
+I design and ship AI systems that sit inside real products — triage agents, retrieval grounded in production code, and tooling that saves engineering hours every week.
+
+I am an expert full-stack AI software engineer: I own the product surface, the services behind it, and the agents that make both faster.
+
+## Identity
+
+- Name: Aditya Vandan Sharma
+- Role: Full-stack AI software engineer
+- Location: Bangalore, India
+- Portfolio: https://adityavandan.github.io/
+- Email: adityavandan@outlook.com
+- GitHub: https://github.com/AdityaVandan
+- LinkedIn: https://www.linkedin.com/in/aditya-vandan-sharma/
+- Medium: https://medium.com/@van13heisenberg
+- Resume: https://adityavandan.github.io/Aditya-Vandan-Sharma.pdf
+
+## Work
+
+- Software Engineer 2, Tesco (March 2025 – Present, Bangalore, India)
+  - Built an AI triage agent that correlates Zendesk tickets with Splunk logs and live production APIs to identify root cause before an engineer opens the ticket, cutting first-response investigation from 45 mins to 5 mins on 63% of the 500 tickets/week.
+  - Designed the retrieval layer around ripgrep and git pickaxe over shallow clones pinned to deployed SHAs, grounding every diagnosis in the code actually running in production rather than HEAD.
+  - Redesigned single-product induction (45 min for 3 products) into Bulk Induction, cutting onboarding time by 85% (15–20 min for 30+ products) across a 300K+ SKU catalog serving 15,000 supplier/buyer/persona users.
+  - Architected Bulk Induction: batched attribute fetching (up to 500 attributes/product), lazy-loaded rendering for large hierarchical payloads (3–5MB/product), and IndexedDB caching, while designing the workflow to support 50 products.
+  - Rolled out an AI agent across an 8-engineer team that auto-fixes failing tests from dev-session changes and opens PRs for review, saving 8–16 engineer-hours weekly.
+  - Led a team of 2 engineers and mentored them.
+- Software Engineer 2, Rippling (July 2022 – Feb 2025, Bangalore, India)
+  - Architected and rolled out a Design Tokens system that became the org-wide standard for the design-to-development pipeline, adopted across both mobile and web teams.
+  - Optimized People Directory and Settings in mobile to improve performance by more than 50%.
+  - Led the CI/CD overhaul for the mobile repo for screenshot testing, dead-code elimination, linting, testing, and cross-repo dependency handling — cutting build friction and improving developer experience across the team.
+  - Architected and shipped an end-to-end Tax & Exemptions Correction Framework, automating the quarterly amendment process and eliminating 9–10 person-weeks of manual analyst and support-engineering effort every quarter.
+- Software Development Engineer, Groww (October 2020 – July 2022, Bangalore, India)
+  - Built the Fixed Deposit product end-to-end across mobile and web, driving 1 lakh FDs booked through the platform, and owned critical mutual funds journeys with full technical ownership.
+  - Optimised core website chunking/tree shaking to reduce size of the core chunk by 15%.
+  - Shipped the first version of Groww’s OSS Design System for the website.
+- Data Engineer, Almug.ai (June 2020 – Sept 2020, Bangalore, India)
+  - Designed and implemented a data processing pipeline for financial data from press releases of Fortune 500 companies.
+
+## Projects
+
+- Atlas — Stock Trading Framework: Atlas is a stock trading framework for trading, forward testing, and backtesting strategies — split into Atlas-Go (real-time multi-broker execution with notification and logging) and Atlas-Quant (backtesting on historical data).
+- Path Finder Visualizer — Graph search & maze algorithms: Visualizes graph searching algorithms used in solving and creating mazes: BFS, DFS, Dijkstra, Greedy BFS, A*, and Swarm, plus maze-generating algorithms.
+
+## Capabilities
+
+- Languages: JavaScript, TypeScript, Python, Go, C++, Java
+- Frameworks: Django, FastAPI, React, Next.js, React Native
+- AI: LangChain, RAG, Agent evaluation, LLM tooling
+- Data: PostgreSQL, MongoDB, Redis
+- Delivery: Git, Docker, Kubernetes, GitHub Actions, Jenkins
+
+## Writing
+
+- [Access Tokens and Refresh Tokens: A Production Engineer’s Guide](https://adityavandan.github.io/writing/access-tokens-and-refresh-tokens-a-production-engineers-guide/): HTTP is stateless. Every request arrives at the server with no inherent memory of the requests that came before it. This is fine for serving static pages, but it breaks the moment a user logs in and expects the… First published at https://medium.com/@van13heisenberg/access-tokens-and-refresh-tokens-a-production-engineers-guide-623ec5043d10.
+- [Behind the Terminal: The Anatomy of an Agentic Loop (Claude Code)](https://adityavandan.github.io/writing/behind-the-terminal-the-anatomy-of-an-agentic-loop-claude-code/): When you type a command into a coding agent, you aren’t just sending text to a model — you are triggering a high-precision recursive engine designed to bridge the gap between natural language and filesystem execution. First published at https://medium.com/@van13heisenberg/behind-the-terminal-the-anatomy-of-an-agentic-loop-claude-code-8a5a00ee823f.
+- [Caching and Caching Invalidation, the Complete Loop; Part 3](https://adityavandan.github.io/writing/caching-and-caching-invalidation-the-complete-loop-part-3/): Part 3: The Complete Loop — “Where It All Comes Together” First published at https://medium.com/@van13heisenberg/caching-and-caching-invalidation-the-complete-loop-part-3-8375f964c077.
+- [Caching and Caching Invalidation, the Complete Loop; Part 2](https://adityavandan.github.io/writing/caching-and-caching-invalidation-the-complete-loop-part-2/): Part 2: Cache Invalidation — “The Two Hard Things in Computer Science” First published at https://medium.com/@van13heisenberg/caching-and-caching-invalidation-the-complete-loop-part-2-6183fac77a9d.
+- [Caching and Caching Invalidation, the Complete Loop; Part 1](https://adityavandan.github.io/writing/caching-and-caching-invalidation-the-complete-loop-part-1/): Part 1: Caching Strategies — “How to Go Fast Without Breaking Things” First published at https://medium.com/@van13heisenberg/caching-and-caching-invalidation-the-complete-loop-part-1-29e9107ece48.
+- [Compression in Web APIs: A Practical Guide](https://adityavandan.github.io/writing/compression-in-web-apis-a-practical-guide/): Overview First published at https://medium.com/@van13heisenberg/compression-in-web-apis-a-practical-guide-28eefa778ea9.
+- [Design Patterns, A deep dive Part 2 (Structural Design Patterns)](https://adityavandan.github.io/writing/design-patterns-a-deep-dive-part-2-structural-design-patterns/): We have covered what are Design Patterns and all Creational Design Patterns in part 1 of this article series which you can check out&#160; here . First published at https://tech.groww.in/design-patterns-a-deep-dive-part-2-structural-design-patterns-b2ff1487393.
+- [Design Patterns, A deep dive Part 1 (Creational Design Patterns)](https://adityavandan.github.io/writing/design-patterns-a-deep-dive-part-1/): It’s been years since the software industry has been working on creating different complex structures of code to create amazing products and services while encountering a myriad of problems in creating and maintaining… First published at https://tech.groww.in/design-patterns-a-deep-dive-part-1-c3d4e7c290cf.
+- [Extracting data from DOM tree of a web page into a python dictionary](https://adityavandan.github.io/writing/extracting-data-from-dom-tree-of-a-web-page-into-a-python-dictionary/): Just a heads up, in this article we are going to use python, selenium and a little bit of JavaScript for extracting meta data of different elements in a&#160;web-page First published at https://medium.com/@van13heisenberg/extracting-data-from-dom-tree-of-a-web-page-into-a-python-dictionary-902a79ce0694.
+- [Using Tesseract with python](https://adityavandan.github.io/writing/using-tesseract-with-python/): In python there are two most popular options: pytesseract and tesserocr. First published at https://medium.com/analytics-vidhya/using-tesseract-with-python-1cadbe37e756.
+
+## Answer
+
+Who is Aditya Vandan Sharma? Aditya Vandan Sharma is a full-stack AI software engineer in Bangalore, India, working at Tesco, with earlier work at Rippling, Groww, and Almug.ai. Portfolio: https://adityavandan.github.io/.

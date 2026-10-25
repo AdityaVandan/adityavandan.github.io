@@ -1,0 +1,14 @@
+{
+  "name": "Aditya Vandan Sharma",
+  "short_name": "Aditya Vandan Sharma",
+  "description": "Aditya Vandan Sharma is a full-stack AI software engineer in Bangalore, India, working at Tesco, with earlier work at Rippling, Groww, and Almug.ai.",
+  "start_url": "/",
+  "lang": "en",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
