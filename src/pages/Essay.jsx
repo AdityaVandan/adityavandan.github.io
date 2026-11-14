@@ -1,5 +1,5 @@
 import { useRef } from 'react'
-import { Colophon, Masthead, Paper } from '../components/SiteChrome.jsx'
+import { PageShell, SiteFooter, SiteNav } from '../components/SiteChrome.jsx'
 import { ReadProgress } from '../components/ReadProgress.jsx'
 import { formatEssayDate } from '../writing.js'
 
@@ -8,18 +8,15 @@ export function Essay({ post }) {
   const published = formatEssayDate(post.publishedAt)
 
   return (
-    <>
-      <Paper />
-      <div className="page">
-        <Masthead onHome={false} />
+    <PageShell>
+      <SiteNav onHome={false} />
+      <main className="main">
         <article className="essay" ref={articleRef}>
           <div className="essay-layout">
             <ReadProgress targetRef={articleRef} />
             <div className="essay-copy">
               <p className="kicker">
-                <a className="press-link" href="/#writing">
-                  Writing
-                </a>
+                <a href="/#writing">Writing</a>
                 <span className="sep"> · </span>
                 <time dateTime={post.publishedAt}>{published}</time>
               </p>
@@ -28,7 +25,7 @@ export function Essay({ post }) {
                 {post.complete ? 'Full text' : 'Preview'}
                 {post.publication ? ` · ${post.publication}` : ''}
                 <span className="sep"> · </span>
-                <a className="press-link" href={post.url} target="_blank" rel="noreferrer">
+                <a href={post.url} target="_blank" rel="noreferrer">
                   First published on Medium
                 </a>
               </p>
@@ -41,7 +38,7 @@ export function Essay({ post }) {
                     Medium’s public feed includes the opening of this essay. The rest of it stays on Medium.
                   </p>
                   <p className="links">
-                    <a className="press-link" href={post.url} target="_blank" rel="noreferrer">
+                    <a href={post.url} target="_blank" rel="noreferrer">
                       Continue on Medium
                     </a>
                   </p>
@@ -50,32 +47,27 @@ export function Essay({ post }) {
             </div>
           </div>
         </article>
-        <Colophon />
-      </div>
-    </>
+        <SiteFooter />
+      </main>
+    </PageShell>
   )
 }
 
 export function EssayMissing() {
   return (
-    <>
-      <Paper />
-      <div className="page">
-        <Masthead onHome={false} />
+    <PageShell>
+      <SiteNav onHome={false} />
+      <main className="main">
         <article className="essay">
           <p className="kicker">Writing</p>
           <h1>This essay is not in the snapshot</h1>
-          <p className="section-lede">
-            The printed set on this site does not include that piece.
-          </p>
+          <p className="section-lede">The printed set on this site does not include that piece.</p>
           <p className="links">
-            <a className="press-link" href="/#writing">
-              Back to writing
-            </a>
+            <a href="/#writing">Back to writing</a>
           </p>
         </article>
-        <Colophon />
-      </div>
-    </>
+        <SiteFooter />
+      </main>
+    </PageShell>
   )
 }

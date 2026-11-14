@@ -1,6 +1,6 @@
 # Aditya Vandan Sharma — Portfolio
 
-Letterpress design-language variation. React 19 + Vite 8.
+Spotlight design: dark graphite, frosted-glass panels, and a scroll-linked aurora glow. React 19 + Vite 8.
 
 ## Live site
 
@@ -10,6 +10,8 @@ GitHub Pages serves this repository from the **master** branch root:
 
 Production static files (`index.html`, `assets/`, images, `.nojekyll`) are
 committed at the repo root. Source lives in `src/` + `index.source.html`.
+
+Handoff sources of truth for copy and tokens: `src/data/content.json` and `src/data/tokens.json`.
 
 ## Develop
 
