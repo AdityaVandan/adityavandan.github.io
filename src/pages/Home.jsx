@@ -151,8 +151,8 @@ export default function Home() {
         </section>
 
         <ImpactSection />
-        <WritingSection />
         <WorkSection />
+        <WritingSection />
         <ProjectsSection />
         <StackSection />
         <GithubActivity />
