@@ -1,209 +1,176 @@
-import {
-  person,
-  positioning,
-  experience,
-  projects,
-  skills,
-  cta,
-} from '../data/content.js'
-import { Colophon, Masthead, Paper } from '../components/SiteChrome.jsx'
-import ExperienceTimeline from '../ExperienceTimeline.jsx'
+import { site } from '../data/content.js'
+import { PageShell, SiteFooter, SiteNav } from '../components/SiteChrome.jsx'
+import WritingSection from '../components/WritingSection.jsx'
+import WorkSection from '../components/WorkSection.jsx'
 import GithubActivity from '../GithubActivity.jsx'
-import { usePressReveal } from '../usePressReveal.js'
-import { formatEssayDate, writingPosts } from '../writing.js'
+
+function ImpactSection() {
+  return (
+    <section className="section container" aria-label="Impact">
+      <div className="impact-grid">
+        {site.impact.map((tile) =>
+          tile.lead ? (
+            <div key={tile.label} className="glass impact-tile impact-tile-lead">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                <span className="impact-label tint">{tile.label}</span>
+                <span className="impact-value-lead grad">{tile.value}</span>
+              </div>
+              <span className="impact-detail-lead">{tile.detail}</span>
+            </div>
+          ) : (
+            <div key={tile.label} className="glass impact-tile">
+              <span className="impact-label tint">{tile.label}</span>
+              <span className="impact-value grad">{tile.value}</span>
+              <span className="impact-detail">{tile.detail}</span>
+            </div>
+          ),
+        )}
+      </div>
+    </section>
+  )
+}
+
+function ProjectsSection() {
+  return (
+    <section id="projects" className="projects">
+      <h2 className="section-title" style={{ textAlign: 'center' }}>
+        Projects
+      </h2>
+      <div className="projects-grid">
+        {site.projects.map((project) => (
+          <article key={project.name} className="glass project-card">
+            {project.art ? (
+              <div className="project-art">
+                {project.art.map((word, index) => (
+                  <span
+                    key={word}
+                    className={`project-art-word grad${index > 0 ? ' project-art-word-secondary' : ''}`}
+                  >
+                    {word}
+                  </span>
+                ))}
+              </div>
+            ) : (
+              <div className="project-art-image">
+                {project.image ? (
+                  <img
+                    src={project.image.src}
+                    alt={project.image.alt}
+                    onError={(event) => {
+                      event.currentTarget.style.display = 'none'
+                    }}
+                  />
+                ) : null}
+              </div>
+            )}
+            <div className="project-body">
+              <span className="project-kicker tint">{project.kicker}</span>
+              <h3 className="project-name">{project.name}</h3>
+              <p className="project-about">{project.about}</p>
+              <p className="project-stack">{project.stack}</p>
+              {project.links?.length ? (
+                <div className="project-links">
+                  {project.links.map((link) => (
+                    <a
+                      key={link.href}
+                      href={link.href}
+                      className="text-link"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      {link.label}
+                    </a>
+                  ))}
+                </div>
+              ) : null}
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  )
+}
+
+function StackSection() {
+  return (
+    <section id="stack" className="section container" style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+      <h2 className="section-title" style={{ textAlign: 'center' }}>
+        Stack
+      </h2>
+      <div className="stack-grid">
+        {site.stack.map((group) => (
+          <div key={group.label} className="glass stack-tile">
+            <span className="stack-label tint">{group.label}</span>
+            <span className="stack-items">{group.items}</span>
+          </div>
+        ))}
+      </div>
+    </section>
+  )
+}
 
 export default function Home() {
-  usePressReveal()
-
   return (
-    <>
-      <Paper />
-      <div className="page">
-      <Masthead onHome />
-
-      <header className="hero" id="top">
-        <div className="hero-copy">
-          <p className="brand ink-bleed">{person.name}</p>
-          <h1 className="ink-bleed delay-1">{person.headline}</h1>
-          <p className="lede ink-bleed delay-2">{person.tagline}</p>
-          <div className="cta-row ink-bleed delay-3">
-            <a className="cta press-link" href={`mailto:${person.email}`}>
-              {cta.primary}
-            </a>
-            <a
-              className="cta secondary press-link"
-              href={person.resume}
-              download="Aditya-Vandan-Sharma.pdf"
-            >
-              {cta.resume}
-            </a>
-            <a
-              className="cta secondary press-link"
-              href={person.github}
-              target="_blank"
-              rel="me noreferrer"
-            >
-              {cta.secondary}
-            </a>
+    <PageShell>
+      <SiteNav onHome />
+      <main className="main">
+        <section id="top" className="hero">
+          <div className="hero-block">
+            <img
+              src={site.hero.portrait.src}
+              alt={site.hero.portrait.alt}
+              className="portrait"
+              width={152}
+              height={152}
+              onError={(event) => {
+                event.currentTarget.removeAttribute('src')
+              }}
+            />
+            <p className="hero-eyebrow tint">{site.hero.eyebrow}</p>
+            <h1 className="hero-name grad">{site.hero.name}</h1>
+            <p className="hero-tagline">{site.hero.tagline}</p>
+            <div className="cta-row">
+              <a href={site.hero.primaryAction.href} className="btn">
+                {site.hero.primaryAction.label}
+              </a>
+              <a
+                href={site.hero.secondaryAction.href}
+                className="text-link"
+                target="_blank"
+                rel="me noreferrer"
+              >
+                {site.hero.secondaryAction.label}
+              </a>
+            </div>
+            <p className="hero-location">{site.hero.location}</p>
           </div>
-          <p className="folio ink-bleed delay-4" aria-hidden="true">
-            Bangalore · Impression 01
-          </p>
-        </div>
-        <figure className="hero-plate ink-bleed delay-2">
-          <img
-            src={person.profileImage}
-            alt={`${person.name}, full-stack AI software engineer`}
-            width={800}
-            height={800}
-          />
-          <figcaption>Plate 01 · Portrait</figcaption>
-        </figure>
-      </header>
+        </section>
 
-      <section className="imprint press-reveal" aria-label="Proof points">
-        <p className="kicker">From the press</p>
-        <div className="imprint-row">
-          {positioning.proofPoints.map((p) => (
-            <figure key={p.label}>
-              <strong>{p.value}</strong>
-              <figcaption>
-                <span>{p.label}</span>
-                <em>{p.detail}</em>
-              </figcaption>
-            </figure>
-          ))}
-        </div>
-      </section>
+        <section className="statement container-narrow" aria-label="About">
+          <p>{site.statement}</p>
+        </section>
 
-      <section id="work">
-        <h2>Work</h2>
-        <p className="section-lede">{positioning.thesis}</p>
-        <ExperienceTimeline jobs={experience} />
-      </section>
-
-      <section id="projects" className="press-reveal">
-        <h2>Projects</h2>
-        {projects.map((project) => (
-          <article key={project.name} className="project">
-            <h3>
-              {project.name}
-              {project.subtitle ? <span> — {project.subtitle}</span> : null}
-            </h3>
-            <p>{project.about}</p>
-            <p className="stack">{project.stack.join(' · ')}</p>
-            <p className="links">
-              {project.link ? (
-                <a className="press-link" href={project.link} target="_blank" rel="noreferrer">
-                  Live
-                </a>
-              ) : null}
-              {project.github ? (
-                <a
-                  className="press-link"
-                  href={project.github}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  GitHub
-                </a>
-              ) : null}
-            </p>
-          </article>
-        ))}
-      </section>
-
-      <section id="github" className="press-reveal" aria-label="GitHub activity">
+        <ImpactSection />
+        <WritingSection />
+        <WorkSection />
+        <ProjectsSection />
+        <StackSection />
         <GithubActivity />
-      </section>
 
-      <section id="skills" className="press-reveal">
-        <h2>Capabilities</h2>
-        <dl className="type-drawer">
-          <div>
-            <dt>Languages</dt>
-            <dd>{skills.languages.join(' · ')}</dd>
+        <section id="contact" className="contact">
+          <p className="contact-statement grad">{site.contact.statement}</p>
+          <div className="cta-row" style={{ paddingTop: 0 }}>
+            <a href={`mailto:${site.contact.email}`} className="btn">
+              {site.contact.email}
+            </a>
+            <a href={site.contact.resume.href} className="text-link">
+              {site.contact.resume.label}
+            </a>
           </div>
-          <div>
-            <dt>Frameworks</dt>
-            <dd>{skills.frameworks.join(' · ')}</dd>
-          </div>
-          <div>
-            <dt>AI</dt>
-            <dd>{skills.ai.join(' · ')}</dd>
-          </div>
-          <div>
-            <dt>Data</dt>
-            <dd>{skills.databases.join(' · ')}</dd>
-          </div>
-          <div>
-            <dt>Delivery</dt>
-            <dd>{skills.cicd.join(' · ')}</dd>
-          </div>
-        </dl>
-      </section>
+        </section>
 
-      <section id="writing" className="press-reveal">
-        <h2>Writing</h2>
-        <p className="section-lede">
-          Essays on production systems, first published on Medium and set here in the same type.
-        </p>
-        {writingPosts.map((post) => (
-          <article key={post.id} className="project">
-            <h3>
-              <a className="press-link" href={`/writing/${post.slug}`}>
-                {post.title}
-              </a>
-            </h3>
-            <p className="meta">
-              <time dateTime={post.publishedAt}>{formatEssayDate(post.publishedAt)}</time>
-              <span className="sep"> · </span>
-              {post.complete ? 'Full text' : 'Preview'}
-              {post.publication ? ` · ${post.publication}` : ''}
-            </p>
-            {post.excerpt ? <p>{post.excerpt}</p> : null}
-            <p className="links">
-              <a className="press-link" href={`/writing/${post.slug}`}>
-                {post.complete ? 'Read' : 'Preview'}
-              </a>
-              <a className="press-link" href={post.url} target="_blank" rel="noreferrer">
-                Medium
-              </a>
-            </p>
-          </article>
-        ))}
-      </section>
-
-      <section id="contact" className="press-reveal">
-        <h2>Contact</h2>
-        <p className="section-lede">{cta.consultingNote}</p>
-        <p className="contact-line">
-          <a className="press-link" href={`mailto:${person.email}`}>
-            {person.email}
-          </a>
-          <span className="sep"> · </span>
-          <a
-            className="press-link"
-            href={person.resume}
-            download="Aditya-Vandan-Sharma.pdf"
-          >
-            Resume (PDF)
-          </a>
-          <span className="sep"> · </span>
-          <a className="press-link" href={person.linkedin} target="_blank" rel="me noreferrer">
-            LinkedIn
-          </a>
-          <span className="sep"> · </span>
-          <a className="press-link" href={person.github} target="_blank" rel="me noreferrer">
-            GitHub
-          </a>
-          <span className="sep"> · </span>
-          {person.location}
-        </p>
-      </section>
-
-      <Colophon />
-      </div>
-    </>
+        <SiteFooter />
+      </main>
+    </PageShell>
   )
 }

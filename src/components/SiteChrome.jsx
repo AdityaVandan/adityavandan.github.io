@@ -1,34 +1,77 @@
-import { nav } from '../data/content.js'
+import { useRef } from 'react'
+import { site } from '../data/content.js'
+import { useScrollGlow } from '../hooks/useScrollGlow.js'
 
-export function Paper() {
-  return <div className="paper-grain" aria-hidden="true" />
-}
-
-export function Masthead({ onHome }) {
-  const hrefFor = (id) => (onHome ? `#${id}` : `/#${id}`)
+export function PageShell({ children }) {
+  const pageRef = useRef(null)
+  useScrollGlow(pageRef)
 
   return (
-    <nav className="masthead" aria-label="Primary">
-      <a className="masthead-mark press-link" href={onHome ? '#top' : '/#top'}>
-        A.V.S.
-      </a>
-      <ul>
-        {nav.map((item) => (
-          <li key={item.id}>
-            <a className="press-link" href={hrefFor(item.id)}>
-              {item.label}
-            </a>
-          </li>
-        ))}
-      </ul>
-    </nav>
+    <div className="page" ref={pageRef}>
+      <div className="aurora" aria-hidden="true" />
+      {children}
+    </div>
   )
 }
 
-export function Colophon() {
+export function SiteNav({ onHome = true }) {
+  const brandHref = onHome ? '#top' : '/#top'
+  const hrefFor = (href) => (onHome ? href : `/${href}`)
+
   return (
-    <footer className="colophon">
-      <p>Set in Playfair Display & Libre Franklin · Printed on screen stock</p>
+    <header className="site-header">
+      <nav className="site-nav" aria-label="Primary">
+        <a href={brandHref} className="site-nav-brand nolink">
+          {site.nav.name}
+        </a>
+        <div className="site-nav-links">
+          {site.nav.links.map((link) => (
+            <a key={link.href} href={hrefFor(link.href)}>
+              {link.label}
+            </a>
+          ))}
+        </div>
+        <a href={site.nav.resume.href} className="btn btn-nav">
+          {site.nav.resume.label}
+        </a>
+      </nav>
+    </header>
+  )
+}
+
+export function SiteFooter() {
+  return (
+    <footer className="site-footer">
+      <div className="site-footer-inner">
+        <span>{site.footer.copyright}</span>
+        <div className="site-footer-links">
+          {site.footer.links.map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              target="_blank"
+              rel={link.label === 'GitHub' || link.label === 'LinkedIn' ? 'me noreferrer' : 'noreferrer'}
+            >
+              {link.label}
+            </a>
+          ))}
+        </div>
+      </div>
     </footer>
   )
+}
+
+/** @deprecated Prefer SiteNav / SiteFooter / PageShell */
+export function Paper() {
+  return null
+}
+
+/** @deprecated Prefer SiteNav */
+export function Masthead({ onHome }) {
+  return <SiteNav onHome={onHome} />
+}
+
+/** @deprecated Prefer SiteFooter */
+export function Colophon() {
+  return <SiteFooter />
 }

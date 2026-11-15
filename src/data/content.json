@@ -1,0 +1,312 @@
+{
+  "meta": {
+    "title": "Aditya Vandan Sharma — Full-stack AI Software Engineer",
+    "canonical": "https://adityavandan.github.io/",
+    "lang": "en"
+  },
+  "nav": {
+    "name": "Aditya Vandan Sharma",
+    "links": [
+      {
+        "label": "Writing",
+        "href": "#writing"
+      },
+      {
+        "label": "Work",
+        "href": "#work"
+      },
+      {
+        "label": "Projects",
+        "href": "#projects"
+      },
+      {
+        "label": "GitHub",
+        "href": "#github"
+      },
+      {
+        "label": "Contact",
+        "href": "#contact"
+      }
+    ],
+    "resume": {
+      "label": "Resume",
+      "href": "https://adityavandan.github.io/Aditya-Vandan-Sharma.pdf"
+    }
+  },
+  "hero": {
+    "portrait": {
+      "src": "https://adityavandan.github.io/images/profile.png",
+      "alt": "Portrait of Aditya Vandan Sharma"
+    },
+    "eyebrow": "Full-stack AI software engineer",
+    "name": "Aditya Vandan Sharma",
+    "tagline": "I design and ship AI systems that sit inside real products — triage agents, retrieval grounded in production code, and tooling that saves engineering hours every week.",
+    "primaryAction": {
+      "label": "Discuss a role or consulting engagement",
+      "href": "#contact"
+    },
+    "secondaryAction": {
+      "label": "View GitHub ›",
+      "href": "https://github.com/AdityaVandan"
+    },
+    "location": "Bangalore, India. Currently at Tesco."
+  },
+  "statement": "I am an expert full-stack AI software engineer: I own the product surface, the services behind it, and the agents that make both faster.",
+  "impact": [
+    {
+      "label": "AI triage at Tesco",
+      "value": "45 → 5 min",
+      "detail": "Root-cause before an engineer opens the ticket",
+      "lead": true
+    },
+    {
+      "label": "Tickets grounded weekly",
+      "value": "63% of 500",
+      "detail": "Correlated with Splunk logs and live production APIs"
+    },
+    {
+      "label": "AI test-fix agent",
+      "value": "8–16 hrs/wk",
+      "detail": "Auto-fixes failing tests and opens PRs across an 8-engineer team"
+    }
+  ],
+  "writing": {
+    "title": "Writing",
+    "intro": "Essays on production systems, first published on Medium and set here in the same type.",
+    "topics": [
+      "All",
+      "AI agents",
+      "Backend",
+      "Architecture",
+      "Python"
+    ],
+    "posts": [
+      {
+        "date": "May 2026",
+        "topic": "Backend",
+        "source": "Medium",
+        "title": "Access Tokens and Refresh Tokens: A Production Engineer’s Guide",
+        "url": "https://adityavandan.github.io/writing/access-tokens-and-refresh-tokens-a-production-engineers-guide/"
+      },
+      {
+        "date": "Apr 2026",
+        "topic": "AI agents",
+        "source": "Medium",
+        "title": "Behind the Terminal: The Anatomy of an Agentic Loop (Claude Code)",
+        "url": "https://adityavandan.github.io/writing/behind-the-terminal-the-anatomy-of-an-agentic-loop-claude-code/"
+      },
+      {
+        "date": "Mar 2026",
+        "topic": "Backend",
+        "source": "Medium",
+        "title": "Caching and Caching Invalidation, the Complete Loop; Part 3",
+        "url": "https://adityavandan.github.io/writing/caching-and-caching-invalidation-the-complete-loop-part-3/"
+      },
+      {
+        "date": "Mar 2026",
+        "topic": "Backend",
+        "source": "Medium",
+        "title": "Caching and Caching Invalidation, the Complete Loop; Part 2",
+        "url": "https://adityavandan.github.io/writing/caching-and-caching-invalidation-the-complete-loop-part-2/"
+      },
+      {
+        "date": "Mar 2026",
+        "topic": "Backend",
+        "source": "Medium",
+        "title": "Caching and Caching Invalidation, the Complete Loop; Part 1",
+        "url": "https://adityavandan.github.io/writing/caching-and-caching-invalidation-the-complete-loop-part-1/"
+      },
+      {
+        "date": "Feb 2026",
+        "topic": "Backend",
+        "source": "Medium",
+        "title": "Compression in Web APIs: A Practical Guide",
+        "url": "https://adityavandan.github.io/writing/compression-in-web-apis-a-practical-guide/"
+      },
+      {
+        "date": "Jun 2021",
+        "topic": "Architecture",
+        "source": "The Groww Engineering Blog",
+        "title": "Design Patterns, A deep dive Part 2 (Structural Design Patterns)",
+        "url": "https://adityavandan.github.io/writing/design-patterns-a-deep-dive-part-2-structural-design-patterns/"
+      },
+      {
+        "date": "May 2021",
+        "topic": "Architecture",
+        "source": "The Groww Engineering Blog",
+        "title": "Design Patterns, A deep dive Part 1 (Creational Design Patterns)",
+        "url": "https://adityavandan.github.io/writing/design-patterns-a-deep-dive-part-1/"
+      },
+      {
+        "date": "Aug 2020",
+        "topic": "Python",
+        "source": "Medium",
+        "title": "Extracting data from DOM tree of a web page into a python dictionary",
+        "url": "https://adityavandan.github.io/writing/extracting-data-from-dom-tree-of-a-web-page-into-a-python-dictionary/"
+      },
+      {
+        "date": "Jun 2020",
+        "topic": "Python",
+        "source": "Analytics Vidhya",
+        "title": "Using Tesseract with python",
+        "url": "https://adityavandan.github.io/writing/using-tesseract-with-python/"
+      }
+    ]
+  },
+  "work": {
+    "title": "Work",
+    "intro": "June 2020 to now, all in Bangalore.",
+    "defaultSelected": "Tesco",
+    "jobs": [
+      {
+        "role": "Software Engineer 2",
+        "company": "Tesco",
+        "start": "March 2025",
+        "end": "Present",
+        "highlights": [
+          "Built an AI triage agent that correlates Zendesk tickets with Splunk logs and live production APIs to identify root cause before an engineer opens the ticket, cutting first-response investigation from 45 mins to 5 mins on 63% of the 500 tickets/week.",
+          "Designed the retrieval layer around ripgrep and git pickaxe over shallow clones pinned to deployed SHAs, grounding every diagnosis in the code actually running in production rather than HEAD.",
+          "Redesigned single-product induction (45 min for 3 products) into Bulk Induction, cutting onboarding time by 85% (15–20 min for 30+ products) across a 300K+ SKU catalog serving 15,000 supplier/buyer/persona users.",
+          "Architected Bulk Induction: batched attribute fetching (up to 500 attributes/product), lazy-loaded rendering for large hierarchical payloads (3–5MB/product), and IndexedDB caching, while designing the workflow to support 50 products.",
+          "Rolled out an AI agent across an 8-engineer team that auto-fixes failing tests from dev-session changes and opens PRs for review, saving 8–16 engineer-hours weekly.",
+          "Led a team of 2 engineers and mentored them."
+        ]
+      },
+      {
+        "role": "Software Engineer 2",
+        "company": "Rippling",
+        "start": "July 2022",
+        "end": "Feb 2025",
+        "highlights": [
+          "Architected and rolled out a Design Tokens system that became the org-wide standard for the design-to-development pipeline, adopted across both mobile and web teams.",
+          "Optimized People Directory and Settings in mobile to improve performance by more than 50%.",
+          "Led the CI/CD overhaul for the mobile repo for screenshot testing, dead-code elimination, linting, testing, and cross-repo dependency handling — cutting build friction and improving developer experience across the team.",
+          "Architected and shipped an end-to-end Tax & Exemptions Correction Framework, automating the quarterly amendment process and eliminating 9–10 person-weeks of manual analyst and support-engineering effort every quarter."
+        ]
+      },
+      {
+        "role": "Software Development Engineer",
+        "company": "Groww",
+        "start": "October 2020",
+        "end": "July 2022",
+        "highlights": [
+          "Built the Fixed Deposit product end-to-end across mobile and web, driving 1 lakh FDs booked through the platform, and owned critical mutual funds journeys with full technical ownership.",
+          "Optimised core website chunking/tree shaking to reduce size of the core chunk by 15%.",
+          "Shipped the first version of Groww’s OSS Design System for the website."
+        ]
+      },
+      {
+        "role": "Data Engineer",
+        "company": "Almug.ai",
+        "start": "June 2020",
+        "end": "Sept 2020",
+        "highlights": [
+          "Designed and implemented a data processing pipeline for financial data from press releases of Fortune 500 companies."
+        ]
+      }
+    ]
+  },
+  "projects": [
+    {
+      "name": "Atlas",
+      "kicker": "Stock Trading Framework",
+      "art": [
+        "Atlas-Go",
+        "Atlas-Quant"
+      ],
+      "about": "Atlas is a stock trading framework for trading, forward testing, and backtesting strategies — split into Atlas-Go (real-time multi-broker execution with notification and logging) and Atlas-Quant (backtesting on historical data).",
+      "stack": "Go, Zerodha Go SDK, Fyers APIs, PostgreSQL, Python, SQLAlchemy, Quant",
+      "links": []
+    },
+    {
+      "name": "Path Finder Visualizer",
+      "kicker": "Graph search & maze algorithms",
+      "image": {
+        "src": "https://adityavandan.github.io/images/portfolio/pathfinder.jpg",
+        "alt": "Path Finder Visualizer solving a maze"
+      },
+      "about": "Visualizes graph searching algorithms used in solving and creating mazes: BFS, DFS, Dijkstra, Greedy BFS, A*, and Swarm, plus maze-generating algorithms.",
+      "stack": "JavaScript ES6, React, Git",
+      "links": [
+        {
+          "label": "Open the live demo ›",
+          "href": "https://adityavandan.github.io/path-finder"
+        },
+        {
+          "label": "Read the source ›",
+          "href": "https://github.com/AdityaVandan/path-finder"
+        }
+      ]
+    }
+  ],
+  "stack": [
+    {
+      "label": "Languages",
+      "items": "JavaScript, TypeScript, Python, Go, C++, Java"
+    },
+    {
+      "label": "Frameworks",
+      "items": "Django, FastAPI, React, Next.js, React Native"
+    },
+    {
+      "label": "AI",
+      "items": "LangChain, RAG, Agent evaluation, LLM tooling"
+    },
+    {
+      "label": "Databases",
+      "items": "PostgreSQL, MongoDB, Redis"
+    },
+    {
+      "label": "CI/CD",
+      "items": "Git, Docker, Kubernetes, GitHub Actions, Jenkins"
+    }
+  ],
+  "github": {
+    "title": "GitHub",
+    "stats": [
+      {
+        "label": "public repositories",
+        "source": "live"
+      },
+      {
+        "label": "contributions, last year",
+        "source": "live"
+      },
+      {
+        "label": "best day",
+        "source": "live"
+      }
+    ],
+    "note": "This plate counts public repositories. Work at Tesco, Rippling, and Groww stays in private ones.",
+    "link": {
+      "label": "github.com/AdityaVandan ›",
+      "href": "https://github.com/AdityaVandan"
+    },
+    "user": "AdityaVandan"
+  },
+  "contact": {
+    "statement": "Open to full-time roles and selective consulting where AI agents need to ship inside production systems — not demos.",
+    "email": "adityavandan@outlook.com",
+    "resume": {
+      "label": "Download resume ›",
+      "href": "https://adityavandan.github.io/Aditya-Vandan-Sharma.pdf"
+    }
+  },
+  "footer": {
+    "copyright": "Copyright © 2026 Aditya Vandan Sharma. Bangalore, India.",
+    "links": [
+      {
+        "label": "LinkedIn",
+        "href": "https://www.linkedin.com/in/aditya-vandan-sharma/"
+      },
+      {
+        "label": "GitHub",
+        "href": "https://github.com/AdityaVandan"
+      },
+      {
+        "label": "Medium",
+        "href": "https://medium.com/@van13heisenberg"
+      }
+    ]
+  }
+}

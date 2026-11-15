@@ -1,127 +1,131 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import snapshot from './data/github-snapshot.json'
-import { person } from './data/content.js'
+import { site } from './data/content.js'
 import { loadGithubActivity } from './github/load.js'
-import { describeActivity, formatCount, formatDay, formatFetchedAt, mergeActivity } from './github/model.js'
+import {
+  bestDay,
+  describeActivity,
+  formatCount,
+  mergeActivity,
+  toWeeks,
+} from './github/model.js'
 
-const login = person.github.replace(/\/$/, '').split('/').pop()
+const login = site.github.user
+const EMPTY_LEVEL = 0
+const hasSnapshot = Boolean(describeActivity(snapshot))
 
 function dayLevel(day) {
+  if (!day) return EMPTY_LEVEL
   const level = Number(day.level)
   if (level >= 0 && level <= 4) return level
   return day.count > 0 ? 1 : 0
 }
 
+function flattenWeeks(weeks) {
+  const cells = []
+  for (const week of weeks) {
+    for (const day of week) cells.push(day)
+  }
+  return cells
+}
+
 export default function GithubActivity() {
-  const [activity, setActivity] = useState(snapshot)
-  const [live, setLive] = useState(false)
+  const [activity, setActivity] = useState(hasSnapshot ? snapshot : null)
+  const [status, setStatus] = useState(hasSnapshot ? 'ready' : 'loading')
 
   useEffect(() => {
     const controller = new AbortController()
+    if (!hasSnapshot) setStatus('loading')
+
     loadGithubActivity(login, { signal: controller.signal })
       .then((fresh) => {
         setActivity(mergeActivity(snapshot, fresh))
-        setLive(true)
+        setStatus('ready')
       })
       .catch((error) => {
         if (error?.name === 'AbortError') return
-        setLive(false)
+        if (hasSnapshot) {
+          setActivity(snapshot)
+          setStatus('ready')
+          return
+        }
+        setActivity(null)
+        setStatus('failed')
       })
+
     return () => controller.abort()
   }, [])
 
-  const view = describeActivity(activity)
-  if (!view) return null
+  const view = useMemo(() => (activity ? describeActivity(activity) : null), [activity])
 
-  const printed = formatFetchedAt(activity.fetchedAt)
-  const best = view.best
-    ? ` Best day: ${formatCount(view.best.count)} contributions, ${formatDay(view.best.date)}.`
-    : ''
+  const cells = useMemo(() => {
+    if (status === 'loading') {
+      return Array.from({ length: 364 }, () => EMPTY_LEVEL)
+    }
+    if (!view) return []
+    return flattenWeeks(toWeeks(view.days)).map((day) => dayLevel(day))
+  }, [status, view])
+
+  const stats =
+    status === 'failed'
+      ? null
+      : [
+          {
+            label: site.github.stats[0].label,
+            value: status === 'loading' ? '—' : formatCount(activity?.repos),
+          },
+          {
+            label: site.github.stats[1].label,
+            value: status === 'loading' ? '—' : formatCount(view?.total),
+          },
+          {
+            label: site.github.stats[2].label,
+            value:
+              status === 'loading'
+                ? '—'
+                : formatCount(view?.best?.count ?? bestDay(view?.days ?? [])?.count),
+          },
+        ]
 
   return (
-    <>
-      <h2>GitHub</h2>
-      <div className="github-sheet">
-        <div className="github-copy">
-          <p className="github-dateline">
-            {person.name} on GitHub
-            <span className="sep"> · </span>
-            {view.rangeLabel}
-          </p>
-          <p className="github-hero-value">
-            {formatCount(activity.mergedPullRequests, activity.mergedPullRequestsCapped)}
-          </p>
-          <p className="github-hero-label">pull requests merged</p>
-          <div className="github-metrics">
-            <p>
-              <strong>{formatCount(activity.commits, activity.commitsCapped)}</strong>
-              <span>commits</span>
-            </p>
-            <p>
-              <strong>{formatCount(view.streak.value)}</strong>
-              <span>{view.streak.label}</span>
-            </p>
-            <p>
-              <strong>{formatCount(activity.repos)}</strong>
-              <span>public repos</span>
-            </p>
-          </div>
-        </div>
-        <img
-          className="github-mark"
-          src="/images/github-mark.png"
-          alt="GitHub mark"
-          width={512}
-          height={512}
-        />
-      </div>
+    <section id="github" className="github-section" aria-label="GitHub activity">
+      <div className="glass github-panel">
+        <h2 className="section-title">{site.github.title}</h2>
 
-      <div className="github-cal" aria-hidden="true">
-        <span />
-        <div className="github-months">
-          {view.monthLabels.map((label, index) => (
-            <span key={`${label}-${index}`}>{label}</span>
-          ))}
-        </div>
-        <div className="github-wdays">
-          <span />
-          <span>Mon</span>
-          <span />
-          <span>Wed</span>
-          <span />
-          <span>Fri</span>
-          <span />
-        </div>
-        <div className="github-weeks">
-          {view.weeks.map((week, weekIndex) => (
-            <div className="github-week" key={weekIndex}>
-              {week.map((day, dayIndex) =>
-                day ? (
-                  <span
-                    key={day.date}
-                    className={`github-day lvl-${dayLevel(day)}`}
-                    title={`${formatDay(day.date)} · ${day.count} ${day.count === 1 ? 'contribution' : 'contributions'}`}
-                  />
-                ) : (
-                  <span key={`pad-${weekIndex}-${dayIndex}`} className="github-day pad" />
-                ),
-              )}
+        {stats ? (
+          <div className="github-stats">
+            {stats.map((stat) => (
+              <div className="github-stat" key={stat.label}>
+                <span className="github-stat-value grad">{stat.value}</span>
+                <span className="github-stat-label">{stat.label}</span>
+              </div>
+            ))}
+          </div>
+        ) : null}
+
+        {status !== 'failed' ? (
+          <div className="github-cal-wrap">
+            <div className="github-cells" aria-hidden="true">
+              {cells.map((level, index) => (
+                <span
+                  key={index}
+                  className={`github-cell github-cell-${Math.min(4, Math.max(0, level))}`}
+                />
+              ))}
             </div>
-          ))}
-        </div>
-      </div>
-      <p className="github-note">
-        One square a day, {view.rangeLabel}. {formatCount(view.total)} public contributions — commits,
-        pull requests, reviews, and issues.{best} This plate counts public repositories. Work at Tesco,
-        Rippling, and Groww stays in private ones.
-      </p>
-      <p className="github-status">
-        {live ? 'Live from GitHub' : `Last printed ${printed}`}
-        <span className="sep"> · </span>
-        <a className="press-link" href={person.github} target="_blank" rel="me noreferrer">
-          View profile
+          </div>
+        ) : null}
+
+        <p className="github-note">{site.github.note}</p>
+        <a
+          href={site.github.link.href}
+          className="text-link"
+          target="_blank"
+          rel="me noreferrer"
+        >
+          {site.github.link.label}
         </a>
-      </p>
-    </>
+      </div>
+    </section>
   )
 }
