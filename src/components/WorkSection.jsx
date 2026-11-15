@@ -8,6 +8,21 @@ function defaultIndex() {
   return index >= 0 ? index : 0
 }
 
+function CompanyLogo({ job, className }) {
+  if (!job.logo?.src) return null
+  return (
+    <img
+      className={className}
+      src={job.logo.src}
+      alt=""
+      width={40}
+      height={40}
+      decoding="async"
+      aria-hidden="true"
+    />
+  )
+}
+
 export default function WorkSection() {
   const baseId = useId()
   const [selected, setSelected] = useState(defaultIndex)
@@ -60,7 +75,8 @@ export default function WorkSection() {
               onClick={() => setSelected(index)}
               onKeyDown={(event) => onKeyDown(event, index)}
             >
-              {job.company}
+              <CompanyLogo job={job} className="work-tab-logo" />
+              <span>{job.company}</span>
             </button>
           )
         })}
@@ -73,6 +89,7 @@ export default function WorkSection() {
         aria-labelledby={`${baseId}-tab-${selected}`}
       >
         <div className="work-heading">
+          <CompanyLogo job={current} className="work-panel-logo" />
           <span className="work-company grad">{current.company}</span>
           <span className="work-role">{current.role}</span>
           <span className="work-dates">

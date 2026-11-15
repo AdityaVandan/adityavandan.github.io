@@ -8,12 +8,12 @@
     "name": "Aditya Vandan Sharma",
     "links": [
       {
-        "label": "Writing",
-        "href": "#writing"
-      },
-      {
         "label": "Work",
         "href": "#work"
+      },
+      {
+        "label": "Writing",
+        "href": "#writing"
       },
       {
         "label": "Projects",
@@ -161,6 +161,10 @@
       {
         "role": "Software Engineer 2",
         "company": "Tesco",
+        "logo": {
+          "src": "/images/logos/tesco.png",
+          "alt": "Tesco logo"
+        },
         "start": "March 2025",
         "end": "Present",
         "highlights": [
@@ -175,6 +179,10 @@
       {
         "role": "Software Engineer 2",
         "company": "Rippling",
+        "logo": {
+          "src": "/images/logos/rippling.png",
+          "alt": "Rippling logo"
+        },
         "start": "July 2022",
         "end": "Feb 2025",
         "highlights": [
@@ -187,6 +195,10 @@
       {
         "role": "Software Development Engineer",
         "company": "Groww",
+        "logo": {
+          "src": "/images/logos/groww.svg",
+          "alt": "Groww logo"
+        },
         "start": "October 2020",
         "end": "July 2022",
         "highlights": [
@@ -198,6 +210,10 @@
       {
         "role": "Data Engineer",
         "company": "Almug.ai",
+        "logo": {
+          "src": "/images/logos/almug.png",
+          "alt": "Almug.ai logo"
+        },
         "start": "June 2020",
         "end": "Sept 2020",
         "highlights": [
