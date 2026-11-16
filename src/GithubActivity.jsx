@@ -88,7 +88,7 @@ export default function GithubActivity() {
         ]
 
   return (
-    <section id="github" className="github-section" aria-label="GitHub activity">
+    <section id="github" className="github-section" aria-label="GitHub activity" data-aside="github">
       <div className="glass github-panel">
         <h2 className="section-title">{site.github.title}</h2>
 

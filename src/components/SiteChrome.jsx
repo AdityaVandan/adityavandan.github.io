@@ -1,6 +1,7 @@
 import { useRef } from 'react'
 import { site } from '../data/content.js'
 import { useScrollGlow } from '../hooks/useScrollGlow.js'
+import SectionAside from './SectionAside.jsx'
 
 export function PageShell({ children }) {
   const pageRef = useRef(null)
@@ -10,6 +11,7 @@ export function PageShell({ children }) {
     <div className="page" ref={pageRef}>
       <div className="aurora" aria-hidden="true" />
       {children}
+      <SectionAside />
     </div>
   )
 }
@@ -41,7 +43,7 @@ export function SiteNav({ onHome = true }) {
 
 export function SiteFooter() {
   return (
-    <footer className="site-footer">
+    <footer className="site-footer" data-aside="footer">
       <div className="site-footer-inner">
         <span>{site.footer.copyright}</span>
         <div className="site-footer-links">

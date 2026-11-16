@@ -6,7 +6,7 @@ import GithubActivity from '../GithubActivity.jsx'
 
 function ImpactSection() {
   return (
-    <section className="section container" aria-label="Impact">
+    <section className="section container" aria-label="Impact" data-aside="impact">
       <div className="impact-grid">
         {site.impact.map((tile) =>
           tile.lead ? (
@@ -32,7 +32,7 @@ function ImpactSection() {
 
 function ProjectsSection() {
   return (
-    <section id="projects" className="projects">
+    <section id="projects" className="projects" data-aside="projects">
       <h2 className="section-title" style={{ textAlign: 'center' }}>
         Projects
       </h2>
@@ -93,7 +93,7 @@ function ProjectsSection() {
 
 function StackSection() {
   return (
-    <section id="stack" className="section container" style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+    <section id="stack" className="section container" style={{ display: 'flex', flexDirection: 'column', gap: 32 }} data-aside="stack">
       <h2 className="section-title" style={{ textAlign: 'center' }}>
         Stack
       </h2>
@@ -114,7 +114,7 @@ export default function Home() {
     <PageShell>
       <SiteNav onHome />
       <main className="main">
-        <section id="top" className="hero">
+        <section id="top" className="hero" data-aside="hero">
           <div className="hero-block">
             <img
               src={site.hero.portrait.src}
@@ -146,7 +146,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="statement container-narrow" aria-label="About">
+        <section className="statement container-narrow" aria-label="About" data-aside="about">
           <p>{site.statement}</p>
         </section>
 
@@ -157,7 +157,7 @@ export default function Home() {
         <StackSection />
         <GithubActivity />
 
-        <section id="contact" className="contact">
+        <section id="contact" className="contact" data-aside="contact">
           <p className="contact-statement grad">{site.contact.statement}</p>
           <div className="cta-row" style={{ paddingTop: 0 }}>
             <a href={`mailto:${site.contact.email}`} className="btn">

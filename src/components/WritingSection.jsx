@@ -25,7 +25,7 @@ export default function WritingSection() {
       : `${shown.length} ${shown.length === 1 ? 'essay' : 'essays'} on ${topic}`
 
   return (
-    <section id="writing" className="writing">
+    <section id="writing" className="writing" data-aside="writing">
       <div className="writing-header">
         <h2 className="section-title">{site.writing.title}</h2>
         <p className="section-intro">{site.writing.intro}</p>
