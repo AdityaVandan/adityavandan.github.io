@@ -90,7 +90,18 @@ export default function WorkSection() {
       >
         <div className="work-heading">
           <CompanyLogo job={current} className="work-panel-logo" />
-          <span className="work-company grad">{current.company}</span>
+          {current.url ? (
+            <a
+              className="work-company grad"
+              href={current.url}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {current.company}
+            </a>
+          ) : (
+            <span className="work-company grad">{current.company}</span>
+          )}
           <span className="work-role">{current.role}</span>
           <span className="work-dates">
             {current.start} to {current.end}
