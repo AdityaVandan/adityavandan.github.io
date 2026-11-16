@@ -696,6 +696,12 @@ button:focus-visible {
   letter-spacing: -0.04em;
   line-height: 1.05;
   padding-bottom: 4px;
+  width: fit-content;
+}
+
+a.work-company:hover {
+  text-decoration-thickness: 2px;
+  text-underline-offset: 6px;
 }
 
 .work-role {

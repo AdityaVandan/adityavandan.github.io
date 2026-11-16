@@ -83,6 +83,12 @@ describe('portfolio SEO metadata', () => {
     assert.ok(about.sameAs.includes(person.linkedin))
     assert.ok(about.sameAs.includes(writingSnapshot.source))
     assert.equal(about.worksFor.name, 'Tesco')
+    assert.equal(about.worksFor.url, 'https://www.tesco.com')
+    assert.ok(
+      about.affiliation.some(
+        (org) => org.name === 'Rippling' && org.url === 'https://www.rippling.com',
+      ),
+    )
   })
 
   test('writes one head block and a no-JS summary without touching the module script', () => {

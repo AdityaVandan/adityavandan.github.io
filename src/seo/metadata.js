@@ -131,10 +131,11 @@ function personNode() {
     },
     sameAs: identityUrls(),
     knowsAbout: skillNames(),
-    affiliation: unique(experience.map((job) => job.company)).map((name) => ({
-      '@type': 'Organization',
-      name,
-    })),
+    affiliation: experience.map((job) => {
+      const org = { '@type': 'Organization', name: job.company }
+      if (job.url) org.url = job.url
+      return org
+    }),
     subjectOf: {
       '@type': 'DigitalDocument',
       name: `${person.name} resume`,
@@ -143,6 +144,7 @@ function personNode() {
   }
   if (current) {
     node.worksFor = { '@type': 'Organization', name: current.company }
+    if (current.url) node.worksFor.url = current.url
   }
   return node
 }
@@ -376,10 +378,12 @@ export function applySeoBlock(html, meta) {
 
 function fallbackHtml() {
   const work = experience
-    .map(
-      (job) =>
-        `<li>${escapeHtml(job.role)}, ${escapeHtml(job.company)} (${escapeHtml(job.start)} – ${escapeHtml(job.end)})</li>`,
-    )
+    .map((job) => {
+      const company = job.url
+        ? `<a href="${escapeHtml(job.url)}">${escapeHtml(job.company)}</a>`
+        : escapeHtml(job.company)
+      return `<li>${escapeHtml(job.role)}, ${company} (${escapeHtml(job.start)} – ${escapeHtml(job.end)})</li>`
+    })
     .join('\n')
   const projectItems = projects
     .map((project) => `<li>${escapeHtml(project.name)} — ${escapeHtml(project.about)}</li>`)
