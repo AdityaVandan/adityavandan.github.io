@@ -161,6 +161,7 @@
       {
         "role": "Software Engineer 2",
         "company": "Tesco",
+        "url": "https://www.tesco.com",
         "logo": {
           "src": "/images/logos/tesco.png",
           "alt": "Tesco logo"
@@ -179,6 +180,7 @@
       {
         "role": "Software Engineer 2",
         "company": "Rippling",
+        "url": "https://www.rippling.com",
         "logo": {
           "src": "/images/logos/rippling.png",
           "alt": "Rippling logo"
@@ -195,6 +197,7 @@
       {
         "role": "Software Development Engineer",
         "company": "Groww",
+        "url": "https://groww.in",
         "logo": {
           "src": "/images/logos/groww.svg",
           "alt": "Groww logo"
@@ -210,6 +213,7 @@
       {
         "role": "Data Engineer",
         "company": "Almug.ai",
+        "url": "https://almug.ai",
         "logo": {
           "src": "/images/logos/almug.png",
           "alt": "Almug.ai logo"

@@ -37,6 +37,7 @@ export const positioning = {
 export const experience = site.work.jobs.map((job) => ({
   role: job.role,
   company: job.company,
+  url: job.url ?? null,
   location: 'Bangalore, India',
   start: job.start,
   end: job.end,
