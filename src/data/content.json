@@ -324,5 +324,47 @@
         "href": "https://medium.com/@van13heisenberg"
       }
     ]
+  },
+  "asides": {
+    "hero": [
+      "Looking at me looking at you.",
+      "I staged this entrance. Keep going."
+    ],
+    "about": [
+      "Thesis first. Evidence downstairs.",
+      "The short version. The rest is proof."
+    ],
+    "impact": [
+      "The quiet flex. I measure in minutes saved.",
+      "Numbers I still get a little protective about."
+    ],
+    "work": [
+      "Past chapters. Still proud of a few lines.",
+      "Where the scars — and the logos — came from."
+    ],
+    "writing": [
+      "Shh. An essay thinks you might open it.",
+      "Longer thoughts, for when a resume line won't do."
+    ],
+    "projects": [
+      "Side quests that shipped.",
+      "Experiments that grew opinions."
+    ],
+    "stack": [
+      "Tools with fingerprints on them.",
+      "My usual kit. Ask me about the weird ones."
+    ],
+    "github": [
+      "Green squares I can show you. The best ones I can't.",
+      "Public heat. Private fire."
+    ],
+    "contact": [
+      "You're hovering the good part. Say hello.",
+      "Don't be shy. I'm right here."
+    ],
+    "footer": [
+      "End of the page. Not the conversation.",
+      "Still here? That's flattering."
+    ]
   }
 }

@@ -48,7 +48,7 @@ export default function WorkSection() {
   }
 
   return (
-    <section id="work" className="work">
+    <section id="work" className="work" data-aside="work">
       <div className="section-header">
         <h2 className="section-title">{site.work.title}</h2>
         <p className="section-intro">{site.work.intro}</p>
