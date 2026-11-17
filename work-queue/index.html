@@ -1,0 +1,2610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Worklog — work queue &amp; daily log</title>
+  <meta name="description" content="A work queue plus a daily work log. Frontend-only, saved in your browser." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650;9..144,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <style>
+    :root {
+      --bg: #f3efe6;
+      --bg-deep: #ebe4d6;
+      --paper: #faf7f1;
+      --paper-2: #f5f0e6;
+      --ink: #1c1915;
+      --ink-soft: #5c554c;
+      --ink-faint: #8a8276;
+      --line: rgba(28, 25, 21, 0.1);
+      --line-strong: rgba(28, 25, 21, 0.18);
+      --accent: #d4500f;
+      --accent-soft: rgba(212, 80, 15, 0.12);
+      --accent-glow: rgba(212, 80, 15, 0.22);
+      --done: #2e7d4f;
+      --done-soft: rgba(46, 125, 79, 0.12);
+      --warn: #c48a12;
+      --warn-soft: rgba(196, 138, 18, 0.18);
+      --danger: #b42318;
+      --danger-soft: rgba(180, 35, 24, 0.12);
+      --shadow: 0 1px 2px rgba(28, 25, 21, 0.04), 0 8px 24px rgba(28, 25, 21, 0.06);
+      --shadow-lg: 0 12px 40px rgba(28, 25, 21, 0.14);
+      --radius: 14px;
+      --radius-sm: 10px;
+      --font-display: "Fraunces", Georgia, serif;
+      --font-body: "Inter", system-ui, sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, monospace;
+      --header-h: 4.5rem;
+      --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1a1814;
+        --bg-deep: #12100e;
+        --paper: #24201b;
+        --paper-2: #2c271f;
+        --ink: #f3efe6;
+        --ink-soft: #b8b0a2;
+        --ink-faint: #8a8276;
+        --line: rgba(243, 239, 230, 0.1);
+        --line-strong: rgba(243, 239, 230, 0.18);
+        --accent: #e86a2a;
+        --accent-soft: rgba(232, 106, 42, 0.16);
+        --accent-glow: rgba(232, 106, 42, 0.28);
+        --done: #4caf74;
+        --done-soft: rgba(76, 175, 116, 0.16);
+        --warn: #e0a93a;
+        --warn-soft: rgba(224, 169, 58, 0.2);
+        --danger: #f07066;
+        --danger-soft: rgba(240, 112, 102, 0.16);
+        --shadow: 0 1px 2px rgba(0, 0, 0, 0.25), 0 8px 24px rgba(0, 0, 0, 0.28);
+        --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.45);
+      }
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { height: 100%; }
+    body {
+      margin: 0;
+      min-height: 100%;
+      font-family: var(--font-body);
+      color: var(--ink);
+      background:
+        radial-gradient(1200px 600px at 10% -10%, var(--accent-soft), transparent 55%),
+        radial-gradient(900px 500px at 100% 0%, rgba(46, 125, 79, 0.08), transparent 50%),
+        linear-gradient(180deg, var(--bg) 0%, var(--bg-deep) 100%);
+      background-attachment: fixed;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button, input, textarea, select { font: inherit; color: inherit; }
+    button { cursor: pointer; border: none; background: none; padding: 0; }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .sr-only {
+      position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+    }
+
+    /* ——— App shell ——— */
+    .app {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 1.25rem 1.25rem 4rem;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .brand-block { min-width: 0; }
+    .brand {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: clamp(1.75rem, 3.5vw, 2.35rem);
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      margin: 0;
+    }
+    .brand span { color: var(--accent); }
+    .live-clock {
+      margin: 0.35rem 0 0;
+      font-family: var(--font-display);
+      font-size: clamp(1.05rem, 2vw, 1.35rem);
+      font-weight: 500;
+      color: var(--ink-soft);
+    }
+    .live-clock time {
+      font-family: var(--font-mono);
+      font-size: 0.92em;
+      color: var(--ink-faint);
+      margin-left: 0.5rem;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.55rem 0.9rem;
+      border-radius: 999px;
+      border: 1px solid var(--line-strong);
+      background: var(--paper);
+      box-shadow: var(--shadow);
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: background 0.15s ease, transform 0.15s ease, border-color 0.15s;
+    }
+    .btn:hover { background: var(--paper-2); }
+    .btn:active { transform: scale(0.98); }
+    .btn-primary {
+      background: var(--accent);
+      border-color: transparent;
+      color: #fff;
+    }
+    .btn-primary:hover { filter: brightness(1.05); background: var(--accent); }
+    .btn-ghost {
+      background: transparent;
+      box-shadow: none;
+    }
+    .btn-ghost:hover { background: var(--accent-soft); }
+    .btn-icon {
+      width: 2.4rem;
+      height: 2.4rem;
+      padding: 0;
+      justify-content: center;
+      border-radius: 12px;
+    }
+
+    .progress-wrap {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 0.85rem 1rem;
+      box-shadow: var(--shadow);
+      margin-bottom: 1.25rem;
+    }
+    .progress-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 1rem;
+      margin-bottom: 0.55rem;
+      font-size: 0.85rem;
+      color: var(--ink-soft);
+    }
+    .progress-meta strong { color: var(--ink); font-weight: 600; }
+    .count-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 1.5rem;
+      padding: 0.1rem 0.45rem;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 500;
+    }
+    .count-badge.done { background: var(--done-soft); color: var(--done); }
+    .progress-track {
+      height: 8px;
+      border-radius: 999px;
+      background: var(--bg-deep);
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--done), #3f9a62);
+      transition: width 0.45s var(--ease);
+    }
+
+    .banner {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      padding: 0.85rem 1rem;
+      margin-bottom: 1rem;
+      border-radius: var(--radius-sm);
+      background: var(--warn-soft);
+      border: 1px solid rgba(196, 138, 18, 0.35);
+      color: var(--ink);
+      font-size: 0.9rem;
+    }
+    .banner.visible { display: flex; }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      align-items: start;
+    }
+    @media (max-width: 860px) {
+      .layout { grid-template-columns: 1fr; }
+    }
+
+    .panel {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1rem 1rem 1.1rem;
+      min-height: 22rem;
+    }
+    .panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 0.85rem;
+    }
+    .panel-title {
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      font-weight: 650;
+      letter-spacing: -0.01em;
+    }
+
+    .composer {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.35rem 0.45rem 0.35rem 0.85rem;
+      border: 1px solid var(--line-strong);
+      border-radius: 999px;
+      background: var(--bg);
+      margin-bottom: 0.75rem;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .composer:focus-within {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+    .composer input[type="text"] {
+      flex: 1;
+      border: none;
+      background: transparent;
+      padding: 0.55rem 0.25rem;
+      min-width: 0;
+    }
+    .composer input:focus { outline: none; }
+    .composer-due {
+      display: none;
+      width: 100%;
+      margin: -0.35rem 0 0.75rem;
+      padding: 0.55rem 0.75rem;
+      border: 1px dashed var(--line-strong);
+      border-radius: var(--radius-sm);
+      background: var(--paper-2);
+    }
+    .composer-due.open { display: block; }
+    .composer-due input {
+      width: 100%;
+      border: none;
+      background: transparent;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+    }
+
+    .sort-wrap { position: relative; }
+    .sort-menu {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: calc(100% + 0.35rem);
+      z-index: 20;
+      min-width: 11rem;
+      padding: 0.35rem;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      box-shadow: var(--shadow-lg);
+    }
+    .sort-menu.open { display: block; }
+    .sort-menu button {
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 0.55rem 0.7rem;
+      border-radius: 8px;
+      font-size: 0.875rem;
+    }
+    .sort-menu button:hover,
+    .sort-menu button[aria-checked="true"] {
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+      min-height: 3rem;
+    }
+
+    .empty {
+      display: none;
+      padding: 2rem 1rem;
+      text-align: center;
+      color: var(--ink-faint);
+      font-size: 0.92rem;
+    }
+    .empty.visible { display: block; }
+
+    .item {
+      position: relative;
+      display: grid;
+      grid-template-columns: auto auto 1fr auto;
+      align-items: center;
+      gap: 0.55rem 0.65rem;
+      padding: 0.7rem 0.75rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid transparent;
+      background: var(--bg);
+      transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
+    }
+    .item:hover, .item:focus-within, .item.focused {
+      border-color: var(--line);
+      background: var(--paper-2);
+    }
+    .item.focused { box-shadow: 0 0 0 2px var(--accent-glow); }
+    .item.entering {
+      animation: dropIn 0.38s var(--ease) both;
+    }
+    .item.highlight {
+      background: var(--accent-soft);
+    }
+    .item.ghost-placeholder {
+      opacity: 0.45;
+      border: 1.5px dashed var(--accent) !important;
+      background: var(--accent-soft) !important;
+      box-shadow: none !important;
+    }
+    .item.sortable-fallback {
+      transform: rotate(1.5deg) !important;
+      box-shadow: var(--shadow-lg) !important;
+      border-color: var(--line-strong) !important;
+      background: var(--paper) !important;
+      opacity: 0.98;
+    }
+    .item.completing .item-text {
+      text-decoration: line-through;
+      color: var(--ink-faint);
+    }
+    .item.completing .check-btn {
+      background: var(--done);
+      border-color: var(--done);
+      color: #fff;
+    }
+
+    .handle {
+      cursor: grab;
+      color: var(--ink-faint);
+      font-size: 0.95rem;
+      letter-spacing: -0.12em;
+      padding: 0.2rem;
+      user-select: none;
+      touch-action: none;
+    }
+    .handle:active { cursor: grabbing; }
+
+    .check-btn {
+      width: 1.55rem;
+      height: 1.55rem;
+      border-radius: 50%;
+      border: 1.75px solid var(--line-strong);
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      transition: background 0.2s, border-color 0.2s, transform 0.2s;
+      color: transparent;
+    }
+    .check-btn svg { width: 0.75rem; height: 0.75rem; }
+    .check-btn:hover {
+      border-color: var(--done);
+      color: var(--done);
+    }
+    .check-btn.filled {
+      background: var(--done);
+      border-color: var(--done);
+      color: #fff;
+    }
+    .check-btn.filled .tick-path {
+      stroke-dasharray: 16;
+      stroke-dashoffset: 16;
+      animation: drawTick 0.28s ease forwards;
+    }
+
+    .item-main { min-width: 0; }
+    .item-text {
+      display: block;
+      font-size: 0.95rem;
+      line-height: 1.35;
+      word-break: break-word;
+    }
+    .item-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.4rem;
+      margin-top: 0.25rem;
+    }
+    .added-at {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--ink-faint);
+    }
+    .due-chip {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      padding: 0.15rem 0.45rem;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+    .due-chip.soon { background: var(--warn-soft); color: var(--warn); }
+    .due-chip.overdue { background: var(--danger-soft); color: var(--danger); }
+
+    .item-edit {
+      width: 100%;
+      border: 1px solid var(--accent);
+      border-radius: 8px;
+      padding: 0.35rem 0.5rem;
+      background: var(--paper);
+      font-size: 0.95rem;
+    }
+
+    .del-btn {
+      opacity: 0;
+      width: 1.7rem;
+      height: 1.7rem;
+      border-radius: 8px;
+      color: var(--ink-faint);
+      font-size: 1.1rem;
+      line-height: 1;
+      transition: opacity 0.15s, background 0.15s, color 0.15s;
+      justify-self: end;
+    }
+    .item:hover .del-btn,
+    .item:focus-within .del-btn,
+    .item.focused .del-btn { opacity: 1; }
+    .del-btn:hover { background: var(--danger-soft); color: var(--danger); }
+    @media (hover: none) {
+      .del-btn { opacity: 1; }
+    }
+
+    /* Done log */
+    .log-item {
+      display: grid;
+      grid-template-columns: 4.2rem 1fr auto;
+      gap: 0.55rem;
+      padding: 0.7rem 0.75rem;
+      border-radius: var(--radius-sm);
+      background: var(--bg);
+      border: 1px solid transparent;
+      align-items: start;
+    }
+    .log-item:hover, .log-item:focus-within {
+      border-color: var(--line);
+      background: var(--paper-2);
+    }
+    .log-item.pop {
+      animation: logPop 0.4s var(--ease) both;
+    }
+    .log-time {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--done);
+      padding-top: 0.15rem;
+    }
+    .log-body { min-width: 0; }
+    .log-text { font-size: 0.95rem; word-break: break-word; }
+    .log-wait {
+      margin-top: 0.2rem;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--ink-faint);
+    }
+    .log-actions {
+      display: flex;
+      gap: 0.25rem;
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+    .log-item:hover .log-actions,
+    .log-item:focus-within .log-actions { opacity: 1; }
+    @media (hover: none) {
+      .log-actions { opacity: 1; }
+    }
+    .mini-btn {
+      padding: 0.3rem 0.45rem;
+      border-radius: 8px;
+      font-size: 0.72rem;
+      color: var(--ink-soft);
+      white-space: nowrap;
+    }
+    .mini-btn:hover { background: var(--accent-soft); color: var(--accent); }
+    .mini-btn.danger:hover { background: var(--danger-soft); color: var(--danger); }
+
+    .wrap-summary-card {
+      display: none;
+      margin-bottom: 0.85rem;
+      padding: 0.9rem 1rem;
+      border-radius: var(--radius-sm);
+      background: var(--done-soft);
+      border: 1px solid rgba(46, 125, 79, 0.25);
+    }
+    .wrap-summary-card.visible { display: block; }
+    .wrap-summary-card h3 {
+      margin: 0 0 0.4rem;
+      font-family: var(--font-display);
+      font-size: 1rem;
+    }
+    .wrap-summary-card p {
+      margin: 0;
+      white-space: pre-wrap;
+      font-size: 0.9rem;
+      color: var(--ink-soft);
+      line-height: 1.45;
+    }
+    .wrap-summary-actions {
+      display: flex;
+      gap: 0.4rem;
+      margin-top: 0.65rem;
+      flex-wrap: wrap;
+    }
+
+    /* Overlays */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      background: rgba(20, 16, 12, 0.45);
+      backdrop-filter: blur(4px);
+    }
+    .overlay.open { display: flex; }
+    .modal {
+      width: min(920px, 100%);
+      max-height: min(90vh, 820px);
+      overflow: auto;
+      background: var(--paper);
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow-lg);
+      transform-origin: center;
+    }
+    .modal.entering { animation: modalIn 0.28s var(--ease) both; }
+    .modal.leaving { animation: modalOut 0.2s ease both; }
+    .modal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1.1rem 1.25rem;
+      border-bottom: 1px solid var(--line);
+      position: sticky;
+      top: 0;
+      background: var(--paper);
+      z-index: 1;
+    }
+    .modal-head h2 {
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+    }
+    .modal-body { padding: 1.15rem 1.25rem 1.35rem; }
+    .modal-foot {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      padding: 0.9rem 1.25rem 1.15rem;
+      border-top: 1px solid var(--line);
+      position: sticky;
+      bottom: 0;
+      background: var(--paper);
+    }
+
+    .wrap-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+    }
+    @media (max-width: 720px) {
+      .wrap-grid { grid-template-columns: 1fr; }
+    }
+    .recap-note {
+      font-size: 0.85rem;
+      color: var(--ink-soft);
+      margin: 0 0 0.75rem;
+    }
+    .recap-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      max-height: 16rem;
+      overflow: auto;
+    }
+    .recap-list li {
+      display: grid;
+      grid-template-columns: 3.6rem 1fr;
+      gap: 0.5rem;
+      padding: 0.45rem 0.55rem;
+      border-radius: 8px;
+      background: var(--bg);
+      font-size: 0.88rem;
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    .recap-list li.show {
+      opacity: 1;
+      transform: none;
+      transition: opacity 0.3s var(--ease), transform 0.3s var(--ease);
+    }
+    .recap-list .t {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--done);
+    }
+    .field-label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 0.35rem;
+      color: var(--ink-soft);
+    }
+    .field {
+      width: 100%;
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius-sm);
+      padding: 0.7rem 0.8rem;
+      background: var(--bg);
+      resize: vertical;
+      min-height: 6.5rem;
+      margin-bottom: 0.75rem;
+    }
+    .field:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+    .field.shake { animation: shake 0.4s ease; }
+    .linkish {
+      display: inline-block;
+      margin: -0.35rem 0 0.75rem;
+      font-size: 0.82rem;
+      color: var(--accent);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+    }
+
+    .wrap-step { display: none; }
+    .wrap-step.active { display: block; animation: fadeStep 0.28s ease both; }
+
+    .success-block {
+      text-align: center;
+      padding: 1.5rem 0.5rem 0.5rem;
+    }
+    .check-svg {
+      width: 72px;
+      height: 72px;
+      margin: 0 auto 1rem;
+    }
+    .check-svg .ring {
+      fill: none;
+      stroke: var(--done);
+      stroke-width: 3;
+      stroke-dasharray: 166;
+      stroke-dashoffset: 166;
+    }
+    .check-svg .mark {
+      fill: none;
+      stroke: var(--done);
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 48;
+      stroke-dashoffset: 48;
+    }
+    .success-block.animate .ring {
+      animation: strokeCircle 0.5s ease forwards;
+    }
+    .success-block.animate .mark {
+      animation: strokeCheck 0.35s 0.4s ease forwards;
+    }
+    .success-block h3 {
+      font-family: var(--font-display);
+      margin: 0 0 0.35rem;
+      font-size: 1.5rem;
+    }
+    .success-block p {
+      margin: 0 0 1.25rem;
+      color: var(--ink-soft);
+    }
+    .success-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: center;
+    }
+
+    .confetti {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 200;
+      overflow: hidden;
+    }
+    .confetti i {
+      position: absolute;
+      top: -12px;
+      width: 8px;
+      height: 12px;
+      border-radius: 2px;
+      opacity: 0.95;
+    }
+
+    /* Export */
+    .export-opts {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      align-items: center;
+    }
+    .check-row {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-size: 0.9rem;
+    }
+    .segmented {
+      position: relative;
+      display: inline-grid;
+      grid-template-columns: repeat(3, 1fr);
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 0.2rem;
+    }
+    .segmented button {
+      position: relative;
+      z-index: 1;
+      padding: 0.4rem 0.85rem;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--ink-soft);
+    }
+    .segmented button[aria-checked="true"] { color: var(--ink); }
+    .seg-pill {
+      position: absolute;
+      top: 0.2rem;
+      bottom: 0.2rem;
+      width: calc(33.333% - 0.133rem);
+      left: 0.2rem;
+      border-radius: 999px;
+      background: var(--paper);
+      box-shadow: var(--shadow);
+      transition: transform 0.25s var(--ease);
+      z-index: 0;
+    }
+    .preview-box {
+      margin: 0;
+      padding: 0.9rem 1rem;
+      border-radius: var(--radius-sm);
+      background: var(--bg-deep);
+      border: 1px solid var(--line);
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      line-height: 1.5;
+      max-height: 18rem;
+      overflow: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    /* History drawer */
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 90;
+      background: rgba(20, 16, 12, 0.35);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .drawer-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      z-index: 95;
+      width: min(380px, 100%);
+      height: 100%;
+      background: var(--paper);
+      border-left: 1px solid var(--line);
+      box-shadow: var(--shadow-lg);
+      transform: translateX(105%);
+      transition: transform 0.32s var(--ease);
+      display: flex;
+      flex-direction: column;
+    }
+    .drawer.open { transform: translateX(0); }
+    .drawer-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.1rem 1.15rem;
+      border-bottom: 1px solid var(--line);
+    }
+    .drawer-head h2 {
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+    }
+    .drawer-body {
+      flex: 1;
+      overflow: auto;
+      padding: 0.85rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+    .hist-card {
+      padding: 0.85rem 0.9rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--line);
+      background: var(--bg);
+      opacity: 0;
+      transform: translateX(12px);
+    }
+    .hist-card.show {
+      opacity: 1;
+      transform: none;
+      transition: opacity 0.3s var(--ease), transform 0.3s var(--ease);
+    }
+    .hist-top {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.4rem;
+      margin-bottom: 0.45rem;
+    }
+    .hist-date {
+      font-family: var(--font-display);
+      font-weight: 650;
+      font-size: 1rem;
+      margin-right: auto;
+    }
+    .chip {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      padding: 0.15rem 0.45rem;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+    .chip.ok { background: var(--done-soft); color: var(--done); }
+    .chip.warn { background: var(--warn-soft); color: var(--warn); }
+    .hist-preview {
+      margin: 0 0 0.65rem;
+      font-size: 0.82rem;
+      color: var(--ink-soft);
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      white-space: pre-wrap;
+    }
+    .hist-actions { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+
+    /* Settings mini */
+    .settings-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--ink-soft);
+    }
+    .settings-row input[type="time"] {
+      border: 1px solid var(--line-strong);
+      border-radius: 8px;
+      padding: 0.35rem 0.45rem;
+      background: var(--bg);
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+    }
+
+    /* Toasts */
+    .toasts {
+      position: fixed;
+      left: 50%;
+      bottom: 1.25rem;
+      transform: translateX(-50%);
+      z-index: 300;
+      display: flex;
+      flex-direction: column-reverse;
+      gap: 0.45rem;
+      width: min(420px, calc(100% - 2rem));
+      pointer-events: none;
+    }
+    .toast {
+      pointer-events: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      padding: 0.75rem 0.95rem;
+      background: var(--ink);
+      color: var(--paper);
+      border-radius: 12px;
+      box-shadow: var(--shadow-lg);
+      font-size: 0.88rem;
+      animation: toastIn 0.32s var(--ease) both;
+    }
+    .toast.leaving { animation: toastOut 0.25s ease both; }
+    .toast button {
+      color: var(--accent);
+      font-weight: 600;
+      font-size: 0.85rem;
+      filter: brightness(1.35);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .toast { background: #0e0c0a; color: var(--ink); }
+    }
+
+    @keyframes dropIn {
+      from { opacity: 0; transform: translateY(-14px); }
+      to { opacity: 1; transform: none; }
+    }
+    @keyframes drawTick {
+      to { stroke-dashoffset: 0; }
+    }
+    @keyframes logPop {
+      0% { opacity: 0; transform: scale(0.96); background: var(--done-soft); }
+      60% { background: var(--done-soft); }
+      100% { opacity: 1; transform: none; background: var(--bg); }
+    }
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.96); }
+      to { opacity: 1; transform: none; }
+    }
+    @keyframes modalOut {
+      from { opacity: 1; transform: none; }
+      to { opacity: 0; transform: scale(0.96); }
+    }
+    @keyframes fadeStep {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-6px); }
+      40%, 80% { transform: translateX(6px); }
+    }
+    @keyframes strokeCircle {
+      to { stroke-dashoffset: 0; }
+    }
+    @keyframes strokeCheck {
+      to { stroke-dashoffset: 0; }
+    }
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: none; }
+    }
+    @keyframes toastOut {
+      to { opacity: 0; transform: translateY(12px); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      .item.sortable-fallback { transform: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand-block">
+        <h1 class="brand">Work<span>log</span></h1>
+        <p class="live-clock">
+          <span id="dateHeading">—</span>
+          <time id="liveTime" datetime="">--:--</time>
+        </p>
+      </div>
+      <div class="top-actions">
+        <label class="settings-row" title="End-of-day wrap-up time">
+          Wrap at
+          <input type="time" id="wrapTimeInput" value="18:00" aria-label="Wrap-up time" />
+        </label>
+        <button type="button" class="btn btn-ghost" id="btnHistory" aria-haspopup="dialog">History</button>
+        <button type="button" class="btn btn-ghost" id="btnExport">Export</button>
+        <button type="button" class="btn btn-primary" id="btnWrap">Wrap up</button>
+      </div>
+    </header>
+
+    <div class="banner" id="missedBanner" role="status">
+      <span id="missedBannerText">An earlier day still needs a wrap-up.</span>
+      <button type="button" class="btn btn-primary" id="btnMissedWrap">Wrap it up</button>
+    </div>
+
+    <div class="progress-wrap" aria-live="polite">
+      <div class="progress-meta">
+        <span>
+          Progress
+          <strong id="progressLabel">0 / 0</strong>
+        </span>
+        <span>
+          <span class="count-badge done" id="doneCount">0</span> done ·
+          <span class="count-badge" id="queueCount">0</span> queued
+        </span>
+      </div>
+      <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progressBar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+    </div>
+
+    <div class="layout">
+      <!-- QUEUE -->
+      <section class="panel" aria-labelledby="queueTitle">
+        <div class="panel-head">
+          <h2 class="panel-title" id="queueTitle">Queue</h2>
+          <div class="sort-wrap">
+            <button type="button" class="btn btn-ghost" id="btnSort" aria-haspopup="menu" aria-expanded="false">Sort</button>
+            <div class="sort-menu" id="sortMenu" role="menu" hidden>
+              <button type="button" role="menuitemradio" data-sort="newest" aria-checked="true">Newest first</button>
+              <button type="button" role="menuitemradio" data-sort="oldest" aria-checked="false">Oldest first</button>
+              <button type="button" role="menuitemradio" data-sort="due" aria-checked="false">Due soonest</button>
+              <button type="button" role="menuitemradio" data-sort="az" aria-checked="false">A→Z</button>
+            </div>
+          </div>
+        </div>
+
+        <form id="queueForm" class="composer" autocomplete="off">
+          <input type="text" id="queueInput" placeholder="What's next? Press Enter to queue it" aria-label="Queue a new item" />
+          <button type="button" class="btn btn-icon" id="btnDueToggle" title="Set due datetime" aria-expanded="false" aria-controls="dueField">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <circle cx="12" cy="12" r="8"/><path d="M12 8v4l2.5 1.5"/>
+            </svg>
+          </button>
+        </form>
+        <div class="composer-due" id="dueField">
+          <label class="sr-only" for="dueInput">Due datetime</label>
+          <input type="datetime-local" id="dueInput" />
+        </div>
+
+        <ul class="list" id="queueList" aria-label="Work queue"></ul>
+        <div class="empty" id="queueEmpty">Nothing queued. Capture what's next.</div>
+      </section>
+
+      <!-- DONE TODAY -->
+      <section class="panel" aria-labelledby="doneTitle">
+        <div class="panel-head">
+          <h2 class="panel-title" id="doneTitle">Done today</h2>
+        </div>
+
+        <div class="wrap-summary-card" id="summaryCard">
+          <h3>Day summary</h3>
+          <p id="summaryText"></p>
+          <div class="wrap-summary-actions">
+            <button type="button" class="btn" id="btnEditSummary">Edit summary</button>
+            <button type="button" class="btn" id="btnExportDay">Export day</button>
+          </div>
+        </div>
+
+        <form id="logForm" class="composer" autocomplete="off">
+          <input type="text" id="logInput" placeholder="Log something done (skip the queue)" aria-label="Log done item directly" />
+        </form>
+
+        <ul class="list" id="logList" aria-label="Done today"></ul>
+        <div class="empty" id="logEmpty">Nothing logged yet today.</div>
+      </section>
+    </div>
+  </div>
+
+  <!-- Wrap-up modal -->
+  <div class="overlay" id="wrapOverlay" role="dialog" aria-modal="true" aria-labelledby="wrapTitle" hidden>
+    <div class="modal" id="wrapModal">
+      <div class="modal-head">
+        <h2 id="wrapTitle">What did you get done today?</h2>
+        <button type="button" class="btn btn-icon" id="btnWrapClose" aria-label="Close">×</button>
+      </div>
+
+      <div class="wrap-step active" id="wrapStepForm">
+        <div class="modal-body">
+          <div class="wrap-grid">
+            <div>
+              <p class="recap-note" id="wrapRecapNote"></p>
+              <ul class="recap-list" id="wrapRecap"></ul>
+            </div>
+            <div>
+              <label class="field-label" for="summaryInput">Summary <span aria-hidden="true">*</span></label>
+              <textarea class="field" id="summaryInput" required placeholder="A short recap of the day…"></textarea>
+              <button type="button" class="linkish" id="btnInsertBullets">Insert logged items as bullets</button>
+              <label class="field-label" for="carryInput">Carry into tomorrow <span style="font-weight:400">(optional)</span></label>
+              <textarea class="field" id="carryInput" placeholder="Notes or leftovers for tomorrow…" style="min-height:4.5rem"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-foot">
+          <button type="button" class="btn" id="btnSnooze">Remind me in 30 min</button>
+          <button type="button" class="btn btn-primary" id="btnSaveWrap">Save &amp; wrap up</button>
+        </div>
+      </div>
+
+      <div class="wrap-step" id="wrapStepSuccess">
+        <div class="modal-body">
+          <div class="success-block" id="successBlock">
+            <svg class="check-svg" viewBox="0 0 52 52" aria-hidden="true">
+              <circle class="ring" cx="26" cy="26" r="24"/>
+              <path class="mark" d="M14.5 27.5 L22.5 34.5 L37 18"/>
+            </svg>
+            <h3>Day wrapped</h3>
+            <p>Your summary is saved. Export it any time from History.</p>
+            <div class="success-actions">
+              <button type="button" class="btn btn-primary" id="btnCopyMd">Copy as Markdown</button>
+              <button type="button" class="btn" id="btnDownloadMd">Download .md</button>
+              <button type="button" class="btn" id="btnMoreExport">More export options</button>
+            </div>
+          </div>
+        </div>
+        <div class="modal-foot">
+          <button type="button" class="btn btn-primary" id="btnWrapDone">Done</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Export modal -->
+  <div class="overlay" id="exportOverlay" role="dialog" aria-modal="true" aria-labelledby="exportTitle" hidden>
+    <div class="modal" id="exportModal" style="width:min(640px,100%)">
+      <div class="modal-head">
+        <h2 id="exportTitle">Export</h2>
+        <button type="button" class="btn btn-icon" id="btnExportClose" aria-label="Close">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="export-opts">
+          <label class="check-row"><input type="checkbox" id="expDay" checked /> Day log &amp; summary</label>
+          <label class="check-row"><input type="checkbox" id="expQueue" checked /> Queued items</label>
+          <label class="check-row">
+            Day
+            <select id="expDayPicker" aria-label="Export day"></select>
+          </label>
+        </div>
+        <div class="export-opts">
+          <div class="segmented" role="radiogroup" aria-label="Format">
+            <span class="seg-pill" id="segPill"></span>
+            <button type="button" data-fmt="md" aria-checked="true" role="radio">Markdown</button>
+            <button type="button" data-fmt="csv" aria-checked="false" role="radio">CSV</button>
+            <button type="button" data-fmt="json" aria-checked="false" role="radio">JSON</button>
+          </div>
+        </div>
+        <pre class="preview-box" id="exportPreview"></pre>
+      </div>
+      <div class="modal-foot">
+        <button type="button" class="btn" id="btnExportCopy">Copy</button>
+        <button type="button" class="btn btn-primary" id="btnExportDownload">Download</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- History drawer -->
+  <div class="drawer-overlay" id="drawerOverlay" hidden></div>
+  <aside class="drawer" id="historyDrawer" aria-label="History" hidden>
+    <div class="drawer-head">
+      <h2>History</h2>
+      <button type="button" class="btn btn-icon" id="btnDrawerClose" aria-label="Close history">×</button>
+    </div>
+    <div class="drawer-body" id="historyBody"></div>
+  </aside>
+
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+  <div class="confetti" id="confetti" aria-hidden="true"></div>
+
+  <script>
+(function () {
+  'use strict';
+
+  const LS = {
+    queue: 'worklog:queue',
+    settings: 'worklog:settings',
+    day: (d) => 'worklog:day:' + d,
+  };
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ——— Storage ———
+  function lsGet(key, fallback) {
+    try {
+      const raw = localStorage.getItem(key);
+      if (raw == null) return fallback;
+      return JSON.parse(raw);
+    } catch (_) {
+      return fallback;
+    }
+  }
+  function lsSet(key, value) {
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  function uid() {
+    return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+  }
+
+  function localDateKey(date = new Date()) {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  }
+
+  function parseLocalDate(key) {
+    const [y, m, d] = key.split('-').map(Number);
+    return new Date(y, m - 1, d);
+  }
+
+  function formatDateLong(date) {
+    return date.toLocaleDateString(undefined, {
+      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+    });
+  }
+
+  function formatTime(date) {
+    return date.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
+  }
+
+  function formatDateTimeShort(iso) {
+    const d = new Date(iso);
+    return d.toLocaleString(undefined, {
+      month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit',
+    });
+  }
+
+  function formatDuration(ms) {
+    if (ms < 0) ms = 0;
+    const totalMin = Math.round(ms / 60000);
+    const h = Math.floor(totalMin / 60);
+    const m = totalMin % 60;
+    if (h === 0) return `${m}m`;
+    return `${h}h ${m}m`;
+  }
+
+  function dueState(dueAt, now = Date.now()) {
+    if (!dueAt) return null;
+    const t = new Date(dueAt).getTime();
+    if (t <= now) return 'overdue';
+    if (t - now <= 60 * 60 * 1000) return 'soon';
+    return 'ok';
+  }
+
+  // ——— State ———
+  let queue = lsGet(LS.queue, []);
+  if (!Array.isArray(queue)) queue = [];
+
+  let settings = lsGet(LS.settings, { wrapTime: '18:00', days: [] });
+  if (!settings || typeof settings !== 'object') settings = { wrapTime: '18:00', days: [] };
+  if (!Array.isArray(settings.days)) settings.days = [];
+  if (!settings.wrapTime) settings.wrapTime = '18:00';
+
+  let todayKey = localDateKey();
+  let currentDay = loadDay(todayKey);
+  let focusedQueueId = null;
+  let currentSort = 'newest';
+  let wrapTargetDay = null;
+  let snoozeUntil = 0;
+  let wrapPromptedFor = null;
+  let exportFmt = 'md';
+  let sortable = null;
+
+  function emptyDay(key) {
+    return {
+      date: key,
+      log: [],
+      summary: '',
+      carryOver: '',
+      wrapped: false,
+      wrappedAt: null,
+    };
+  }
+
+  function loadDay(key) {
+    const d = lsGet(LS.day(key), null);
+    if (!d || typeof d !== 'object') return emptyDay(key);
+    return {
+      date: key,
+      log: Array.isArray(d.log) ? d.log : [],
+      summary: d.summary || '',
+      carryOver: d.carryOver || '',
+      wrapped: !!d.wrapped,
+      wrappedAt: d.wrappedAt || null,
+    };
+  }
+
+  function ensureDayTracked(key) {
+    if (!settings.days.includes(key)) {
+      settings.days.push(key);
+      settings.days.sort();
+      persistSettings();
+    }
+  }
+
+  function persistQueue() {
+    lsSet(LS.queue, queue);
+  }
+  function persistSettings() {
+    lsSet(LS.settings, settings);
+  }
+  function persistDay(day = currentDay) {
+    lsSet(LS.day(day.date), day);
+    ensureDayTracked(day.date);
+  }
+
+  function switchToTodayIfNeeded() {
+    const key = localDateKey();
+    if (key === todayKey) return false;
+    todayKey = key;
+    currentDay = loadDay(todayKey);
+    ensureDayTracked(todayKey);
+    wrapPromptedFor = null;
+    return true;
+  }
+
+  // ——— DOM refs ———
+  const $ = (id) => document.getElementById(id);
+  const els = {
+    dateHeading: $('dateHeading'),
+    liveTime: $('liveTime'),
+    wrapTimeInput: $('wrapTimeInput'),
+    progressLabel: $('progressLabel'),
+    progressFill: $('progressFill'),
+    progressBar: $('progressBar'),
+    doneCount: $('doneCount'),
+    queueCount: $('queueCount'),
+    queueForm: $('queueForm'),
+    queueInput: $('queueInput'),
+    dueField: $('dueField'),
+    dueInput: $('dueInput'),
+    btnDueToggle: $('btnDueToggle'),
+    queueList: $('queueList'),
+    queueEmpty: $('queueEmpty'),
+    logForm: $('logForm'),
+    logInput: $('logInput'),
+    logList: $('logList'),
+    logEmpty: $('logEmpty'),
+    summaryCard: $('summaryCard'),
+    summaryText: $('summaryText'),
+    btnSort: $('btnSort'),
+    sortMenu: $('sortMenu'),
+    missedBanner: $('missedBanner'),
+    missedBannerText: $('missedBannerText'),
+    btnMissedWrap: $('btnMissedWrap'),
+    wrapOverlay: $('wrapOverlay'),
+    wrapModal: $('wrapModal'),
+    wrapStepForm: $('wrapStepForm'),
+    wrapStepSuccess: $('wrapStepSuccess'),
+    wrapRecap: $('wrapRecap'),
+    wrapRecapNote: $('wrapRecapNote'),
+    summaryInput: $('summaryInput'),
+    carryInput: $('carryInput'),
+    successBlock: $('successBlock'),
+    exportOverlay: $('exportOverlay'),
+    exportModal: $('exportModal'),
+    exportPreview: $('exportPreview'),
+    expDay: $('expDay'),
+    expQueue: $('expQueue'),
+    expDayPicker: $('expDayPicker'),
+    segPill: $('segPill'),
+    drawerOverlay: $('drawerOverlay'),
+    historyDrawer: $('historyDrawer'),
+    historyBody: $('historyBody'),
+    toasts: $('toasts'),
+    confetti: $('confetti'),
+  };
+
+  els.wrapTimeInput.value = settings.wrapTime;
+
+  // ——— FLIP ———
+  function flip(container, mutate, opts = {}) {
+    if (reduceMotion) {
+      mutate();
+      return;
+    }
+    const kids = Array.from(container.children);
+    const first = new Map();
+    kids.forEach((el) => {
+      if (el.dataset.id) first.set(el.dataset.id, el.getBoundingClientRect());
+    });
+    mutate();
+    const after = Array.from(container.children);
+    after.forEach((el) => {
+      const id = el.dataset.id;
+      if (!id || !first.has(id)) return;
+      const last = el.getBoundingClientRect();
+      const prev = first.get(id);
+      const dx = prev.left - last.left;
+      const dy = prev.top - last.top;
+      if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5) return;
+      el.animate(
+        [{ transform: `translate(${dx}px, ${dy}px)` }, { transform: 'translate(0,0)' }],
+        { duration: opts.duration || 280, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' }
+      );
+    });
+  }
+
+  function bumpBadge(el) {
+    if (reduceMotion) return;
+    el.animate(
+      [
+        { transform: 'scale(1)' },
+        { transform: 'scale(1.18)' },
+        { transform: 'scale(1)' },
+      ],
+      { duration: 320, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' }
+    );
+  }
+
+  // ——— Render progress ———
+  function updateProgress() {
+    const done = currentDay.log.length;
+    const queued = queue.length;
+    const total = done + queued;
+    const pct = total === 0 ? 0 : Math.round((done / total) * 100);
+    const prevDone = Number(els.doneCount.textContent);
+    const prevQ = Number(els.queueCount.textContent);
+    els.doneCount.textContent = String(done);
+    els.queueCount.textContent = String(queued);
+    if (prevDone !== done) bumpBadge(els.doneCount);
+    if (prevQ !== queued) bumpBadge(els.queueCount);
+    els.progressLabel.textContent = `${done} / ${total}`;
+    els.progressFill.style.width = pct + '%';
+    els.progressBar.setAttribute('aria-valuenow', String(pct));
+  }
+
+  // ——— Queue render ———
+  function dueChipHtml(dueAt) {
+    if (!dueAt) return '';
+    const state = dueState(dueAt);
+    const cls = state === 'overdue' ? ' overdue' : state === 'soon' ? ' soon' : '';
+    const label = state === 'overdue' ? 'Overdue' : 'Due ' + formatDateTimeShort(dueAt);
+    return `<span class="due-chip${cls}">${escapeHtml(label)}</span>`;
+  }
+
+  function renderQueueItem(item) {
+    const li = document.createElement('li');
+    li.className = 'item';
+    li.dataset.id = item.id;
+    li.tabIndex = 0;
+    li.setAttribute('role', 'listitem');
+    if (focusedQueueId === item.id) li.classList.add('focused');
+
+    li.innerHTML = `
+      <span class="handle" aria-label="Drag to reorder" title="Drag">⋮⋮</span>
+      <button type="button" class="check-btn" data-action="done" aria-label="Mark done">
+        <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path class="tick-path" d="M3.5 8.5 L6.5 11.5 L12.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="item-main">
+        <span class="item-text">${escapeHtml(item.text)}</span>
+        <div class="item-meta">
+          <span class="added-at">added ${escapeHtml(formatDateTimeShort(item.createdAt))}</span>
+          ${dueChipHtml(item.dueAt)}
+        </div>
+      </div>
+      <button type="button" class="del-btn" data-action="delete" aria-label="Delete">×</button>
+    `;
+    return li;
+  }
+
+  function renderQueue(opts = {}) {
+    const { animateEmpty = true } = opts;
+    flip(els.queueList, () => {
+      els.queueList.innerHTML = '';
+      queue.forEach((item) => els.queueList.appendChild(renderQueueItem(item)));
+    });
+    const empty = queue.length === 0;
+    if (empty) {
+      els.queueEmpty.classList.add('visible');
+      if (animateEmpty && !reduceMotion) {
+        els.queueEmpty.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 280 });
+      }
+    } else {
+      els.queueEmpty.classList.remove('visible');
+    }
+    updateProgress();
+  }
+
+  // ——— Log render ———
+  function renderLogItem(entry) {
+    const li = document.createElement('li');
+    li.className = 'log-item';
+    li.dataset.id = entry.id;
+    const waited = entry.fromQueue && entry.createdAt
+      ? `from queue · waited ${formatDuration(new Date(entry.completedAt) - new Date(entry.createdAt))}`
+      : entry.fromQueue ? 'from queue' : 'logged directly';
+    li.innerHTML = `
+      <span class="log-time">${escapeHtml(formatTime(new Date(entry.completedAt)))}</span>
+      <div class="log-body">
+        <div class="log-text">${escapeHtml(entry.text)}</div>
+        <div class="log-wait">${escapeHtml(waited)}</div>
+      </div>
+      <div class="log-actions">
+        <button type="button" class="mini-btn" data-action="back">back to queue</button>
+        <button type="button" class="mini-btn danger" data-action="delete">×</button>
+      </div>
+    `;
+    return li;
+  }
+
+  function renderLog(opts = {}) {
+    const sorted = [...currentDay.log].sort(
+      (a, b) => new Date(b.completedAt) - new Date(a.completedAt)
+    );
+    flip(els.logList, () => {
+      els.logList.innerHTML = '';
+      sorted.forEach((e) => els.logList.appendChild(renderLogItem(e)));
+    });
+    const empty = currentDay.log.length === 0;
+    if (empty) {
+      els.logEmpty.classList.add('visible');
+      if (opts.animateEmpty && !reduceMotion) {
+        els.logEmpty.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 280 });
+      }
+    } else {
+      els.logEmpty.classList.remove('visible');
+    }
+
+    if (currentDay.wrapped && currentDay.summary) {
+      els.summaryCard.classList.add('visible');
+      els.summaryText.textContent = currentDay.summary;
+    } else {
+      els.summaryCard.classList.remove('visible');
+    }
+    updateProgress();
+  }
+
+  function escapeHtml(s) {
+    return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  // ——— Clock & midnight ———
+  function tickClock() {
+    const now = new Date();
+    els.dateHeading.textContent = formatDateLong(now);
+    els.liveTime.textContent = now.toLocaleTimeString(undefined, {
+      hour: 'numeric', minute: '2-digit', second: '2-digit',
+    });
+    els.liveTime.dateTime = now.toISOString();
+
+    if (switchToTodayIfNeeded()) {
+      renderQueue();
+      renderLog();
+      updateMissedBanner();
+      refreshDueChips();
+    }
+
+    maybeAutoWrap(now);
+    refreshDueChips();
+  }
+
+  function refreshDueChips() {
+    els.queueList.querySelectorAll('.item').forEach((li) => {
+      const item = queue.find((q) => q.id === li.dataset.id);
+      if (!item) return;
+      const meta = li.querySelector('.item-meta');
+      if (!meta) return;
+      const existing = meta.querySelector('.due-chip');
+      if (existing) existing.remove();
+      if (item.dueAt) {
+        meta.insertAdjacentHTML('beforeend', dueChipHtml(item.dueAt));
+      }
+    });
+  }
+
+  function maybeAutoWrap(now) {
+    if (currentDay.wrapped) return;
+    if (Date.now() < snoozeUntil) return;
+    if (wrapPromptedFor === todayKey && els.wrapOverlay.classList.contains('open')) return;
+
+    const [hh, mm] = (settings.wrapTime || '18:00').split(':').map(Number);
+    const target = new Date(now);
+    target.setHours(hh, mm, 0, 0);
+    if (now >= target) {
+      if (wrapPromptedFor !== todayKey) {
+        wrapPromptedFor = todayKey;
+        openWrapModal(todayKey);
+      }
+    }
+  }
+
+  // ——— Queue actions ———
+  function addQueueItem(text, dueAt) {
+    const item = {
+      id: uid(),
+      text: text.trim(),
+      createdAt: new Date().toISOString(),
+      dueAt: dueAt || null,
+    };
+    if (!item.text) return;
+
+    flip(els.queueList, () => {
+      queue.unshift(item);
+      persistQueue();
+      const li = renderQueueItem(item);
+      li.classList.add('entering', 'highlight');
+      els.queueList.prepend(li);
+      els.queueEmpty.classList.remove('visible');
+      setTimeout(() => li.classList.remove('highlight'), 600);
+    });
+    updateProgress();
+  }
+
+  function deleteQueueItem(id, { silent } = {}) {
+    const idx = queue.findIndex((q) => q.id === id);
+    if (idx < 0) return;
+    const item = queue[idx];
+    const li = els.queueList.querySelector(`[data-id="${id}"]`);
+
+    const finish = () => {
+      flip(els.queueList, () => {
+        queue.splice(idx, 1);
+        persistQueue();
+        if (li) li.remove();
+        if (queue.length === 0) {
+          els.queueEmpty.classList.add('visible');
+        }
+      });
+      if (focusedQueueId === id) focusedQueueId = null;
+      updateProgress();
+      if (!silent) {
+        showUndoToast('Item deleted', () => {
+          queue.splice(idx, 0, item);
+          persistQueue();
+          renderQueue();
+        });
+      }
+    };
+
+    if (li && !reduceMotion) {
+      const anim = li.animate(
+        [
+          { opacity: 1, transform: 'translateX(0)' },
+          { opacity: 0, transform: 'translateX(48px)' },
+        ],
+        { duration: 220, easing: 'ease', fill: 'forwards' }
+      );
+      anim.onfinish = finish;
+    } else {
+      finish();
+    }
+  }
+
+  function completeQueueItem(id) {
+    const idx = queue.findIndex((q) => q.id === id);
+    if (idx < 0) return;
+    const item = queue[idx];
+    const li = els.queueList.querySelector(`[data-id="${id}"]`);
+
+    const moveToLog = () => {
+      const entry = {
+        id: uid(),
+        text: item.text,
+        completedAt: new Date().toISOString(),
+        createdAt: item.createdAt,
+        fromQueue: true,
+      };
+      queue.splice(idx, 1);
+      persistQueue();
+      currentDay.log.push(entry);
+      persistDay();
+
+      if (li) li.remove();
+      renderQueue({ animateEmpty: true });
+      renderLog();
+
+      const newLi = els.logList.querySelector(`[data-id="${entry.id}"]`);
+      if (newLi) newLi.classList.add('pop');
+    };
+
+    if (li && !reduceMotion) {
+      li.classList.add('completing');
+      const check = li.querySelector('.check-btn');
+      if (check) check.classList.add('filled');
+
+      setTimeout(() => {
+        const start = li.getBoundingClientRect();
+        const clone = li.cloneNode(true);
+        clone.style.position = 'fixed';
+        clone.style.left = start.left + 'px';
+        clone.style.top = start.top + 'px';
+        clone.style.width = start.width + 'px';
+        clone.style.margin = '0';
+        clone.style.zIndex = '50';
+        clone.style.pointerEvents = 'none';
+        document.body.appendChild(clone);
+
+        moveToLog();
+
+        const dest = els.logList.querySelector(`[data-id]`);
+        const end = dest
+          ? dest.getBoundingClientRect()
+          : els.logList.getBoundingClientRect();
+
+        const midX = (start.left + end.left) / 2 + 40;
+        const midY = Math.min(start.top, end.top) - 40;
+
+        clone.animate(
+          [
+            { transform: 'translate(0,0) scale(1)', opacity: 1, offset: 0 },
+            {
+              transform: `translate(${midX - start.left}px, ${midY - start.top}px) scale(0.92)`,
+              opacity: 0.9,
+              offset: 0.45,
+            },
+            {
+              transform: `translate(${end.left - start.left}px, ${end.top - start.top}px) scale(0.85)`,
+              opacity: 0,
+              offset: 1,
+            },
+          ],
+          { duration: 480, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' }
+        ).onfinish = () => clone.remove();
+      }, 280);
+    } else {
+      moveToLog();
+    }
+  }
+
+  function startEditQueue(id) {
+    const item = queue.find((q) => q.id === id);
+    const li = els.queueList.querySelector(`[data-id="${id}"]`);
+    if (!item || !li) return;
+    const main = li.querySelector('.item-main');
+    const input = document.createElement('input');
+    input.className = 'item-edit';
+    input.value = item.text;
+    main.innerHTML = '';
+    main.appendChild(input);
+    input.focus();
+    input.select();
+
+    const commit = () => {
+      const v = input.value.trim();
+      if (v) {
+        item.text = v;
+        persistQueue();
+      }
+      renderQueue();
+      const again = els.queueList.querySelector(`[data-id="${id}"]`);
+      if (again) again.focus();
+    };
+    const cancel = () => {
+      renderQueue();
+      const again = els.queueList.querySelector(`[data-id="${id}"]`);
+      if (again) again.focus();
+    };
+
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); commit(); }
+      if (e.key === 'Escape') { e.preventDefault(); cancel(); }
+    });
+    input.addEventListener('blur', () => {
+      setTimeout(() => {
+        if (document.activeElement !== input) commit();
+      }, 0);
+    });
+  }
+
+  function moveFocused(delta) {
+    if (!queue.length) return;
+    let idx = focusedQueueId
+      ? queue.findIndex((q) => q.id === focusedQueueId)
+      : 0;
+    if (idx < 0) idx = 0;
+    const next = Math.max(0, Math.min(queue.length - 1, idx + delta));
+    if (next === idx) return;
+    const [item] = queue.splice(idx, 1);
+    queue.splice(next, 0, item);
+    focusedQueueId = item.id;
+    persistQueue();
+    renderQueue();
+    const li = els.queueList.querySelector(`[data-id="${item.id}"]`);
+    if (li) li.focus();
+  }
+
+  function sortQueue(mode) {
+    currentSort = mode;
+    els.sortMenu.querySelectorAll('[data-sort]').forEach((btn) => {
+      btn.setAttribute('aria-checked', btn.dataset.sort === mode ? 'true' : 'false');
+    });
+    const copy = [...queue];
+    if (mode === 'newest') {
+      copy.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    } else if (mode === 'oldest') {
+      copy.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+    } else if (mode === 'due') {
+      copy.sort((a, b) => {
+        if (!a.dueAt && !b.dueAt) return 0;
+        if (!a.dueAt) return 1;
+        if (!b.dueAt) return -1;
+        return new Date(a.dueAt) - new Date(b.dueAt);
+      });
+    } else if (mode === 'az') {
+      copy.sort((a, b) => a.text.localeCompare(b.text, undefined, { sensitivity: 'base' }));
+    }
+    flip(els.queueList, () => {
+      queue = copy;
+      persistQueue();
+      els.queueList.innerHTML = '';
+      queue.forEach((item) => els.queueList.appendChild(renderQueueItem(item)));
+    });
+  }
+
+  // ——— Log actions ———
+  function addDirectLog(text) {
+    const t = text.trim();
+    if (!t) return;
+    const entry = {
+      id: uid(),
+      text: t,
+      completedAt: new Date().toISOString(),
+      createdAt: new Date().toISOString(),
+      fromQueue: false,
+    };
+    currentDay.log.push(entry);
+    persistDay();
+    renderLog();
+    const li = els.logList.querySelector(`[data-id="${entry.id}"]`);
+    if (li) li.classList.add('pop');
+  }
+
+  function deleteLogEntry(id) {
+    const idx = currentDay.log.findIndex((e) => e.id === id);
+    if (idx < 0) return;
+    const entry = currentDay.log[idx];
+    currentDay.log.splice(idx, 1);
+    persistDay();
+    renderLog();
+    showUndoToast('Log entry deleted', () => {
+      currentDay.log.splice(idx, 0, entry);
+      persistDay();
+      renderLog();
+    });
+  }
+
+  function backToQueue(id) {
+    const idx = currentDay.log.findIndex((e) => e.id === id);
+    if (idx < 0) return;
+    const entry = currentDay.log[idx];
+    currentDay.log.splice(idx, 1);
+    persistDay();
+    const item = {
+      id: uid(),
+      text: entry.text,
+      createdAt: entry.createdAt || new Date().toISOString(),
+      dueAt: null,
+    };
+    queue.unshift(item);
+    persistQueue();
+    renderLog();
+    renderQueue();
+    const li = els.queueList.querySelector(`[data-id="${item.id}"]`);
+    if (li) {
+      li.classList.add('entering', 'highlight');
+      setTimeout(() => li.classList.remove('highlight'), 600);
+    }
+  }
+
+  function startEditLog(id) {
+    const entry = currentDay.log.find((e) => e.id === id);
+    const li = els.logList.querySelector(`[data-id="${id}"]`);
+    if (!entry || !li) return;
+    const body = li.querySelector('.log-body');
+    const input = document.createElement('input');
+    input.className = 'item-edit';
+    input.value = entry.text;
+    body.innerHTML = '';
+    body.appendChild(input);
+    input.focus();
+    input.select();
+    const commit = () => {
+      const v = input.value.trim();
+      if (v) {
+        entry.text = v;
+        persistDay();
+      }
+      renderLog();
+    };
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); commit(); }
+      if (e.key === 'Escape') { e.preventDefault(); renderLog(); }
+    });
+    input.addEventListener('blur', () => setTimeout(commit, 0));
+  }
+
+  // ——— Toasts ———
+  function showToast(message, { undo, duration = 5000 } = {}) {
+    const el = document.createElement('div');
+    el.className = 'toast';
+    el.innerHTML = `<span>${escapeHtml(message)}</span>`;
+    let done = false;
+    const cleanup = () => {
+      if (done) return;
+      done = true;
+      el.classList.add('leaving');
+      setTimeout(() => el.remove(), 250);
+    };
+    if (typeof undo === 'function') {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.textContent = 'Undo';
+      btn.addEventListener('click', () => {
+        undo();
+        cleanup();
+      });
+      el.appendChild(btn);
+    }
+    els.toasts.appendChild(el);
+    setTimeout(cleanup, duration);
+  }
+
+  function showUndoToast(message, onUndo) {
+    showToast(message, { undo: onUndo, duration: 5000 });
+  }
+
+  // ——— Missed wrap banner ———
+  function findMissedDay() {
+    const past = settings.days
+      .filter((d) => d < todayKey)
+      .sort()
+      .reverse();
+    for (const key of past) {
+      const day = loadDay(key);
+      if (day.log.length > 0 && !day.wrapped) return key;
+    }
+    return null;
+  }
+
+  function updateMissedBanner() {
+    const missed = findMissedDay();
+    if (missed) {
+      els.missedBanner.classList.add('visible');
+      els.missedBannerText.textContent =
+        `${formatDateLong(parseLocalDate(missed))} has log entries but was never wrapped up.`;
+      els.btnMissedWrap.dataset.day = missed;
+    } else {
+      els.missedBanner.classList.remove('visible');
+    }
+  }
+
+  // ——— Wrap-up ———
+  function openWrapModal(dayKey) {
+    wrapTargetDay = dayKey || todayKey;
+    const day = wrapTargetDay === todayKey ? currentDay : loadDay(wrapTargetDay);
+
+    els.wrapStepForm.classList.add('active');
+    els.wrapStepSuccess.classList.remove('active');
+    els.successBlock.classList.remove('animate');
+
+    els.summaryInput.value = day.summary || '';
+    els.carryInput.value = day.carryOver || '';
+
+    const queuedNote =
+      wrapTargetDay === todayKey
+        ? queue.length
+          ? `${queue.length} item${queue.length === 1 ? '' : 's'} still queued — they'll carry over to tomorrow.`
+          : 'Queue is empty — nice close.'
+        : 'Review this day\'s log and write a summary.';
+
+    els.wrapRecapNote.textContent = queuedNote;
+
+    const chrono = [...day.log].sort(
+      (a, b) => new Date(a.completedAt) - new Date(b.completedAt)
+    );
+    els.wrapRecap.innerHTML = '';
+    if (!chrono.length) {
+      els.wrapRecap.innerHTML = '<li class="show"><span class="t">—</span><span>No items logged.</span></li>';
+    } else {
+      chrono.forEach((e, i) => {
+        const li = document.createElement('li');
+        li.innerHTML = `<span class="t">${escapeHtml(formatTime(new Date(e.completedAt)))}</span><span>${escapeHtml(e.text)}</span>`;
+        els.wrapRecap.appendChild(li);
+        setTimeout(() => li.classList.add('show'), reduceMotion ? 0 : 40 + i * 45);
+      });
+    }
+
+    openOverlay(els.wrapOverlay, els.wrapModal);
+    setTimeout(() => els.summaryInput.focus(), 50);
+  }
+
+  function saveWrap() {
+    const summary = els.summaryInput.value.trim();
+    if (!summary) {
+      els.summaryInput.classList.remove('shake');
+      void els.summaryInput.offsetWidth;
+      els.summaryInput.classList.add('shake');
+      els.summaryInput.focus();
+      return;
+    }
+    const day = wrapTargetDay === todayKey ? currentDay : loadDay(wrapTargetDay);
+    day.summary = summary;
+    day.carryOver = els.carryInput.value.trim();
+    day.wrapped = true;
+    day.wrappedAt = new Date().toISOString();
+    if (wrapTargetDay === todayKey) {
+      currentDay = day;
+    }
+    persistDay(day);
+    updateMissedBanner();
+    renderLog();
+
+    els.wrapStepForm.classList.remove('active');
+    els.wrapStepSuccess.classList.add('active');
+    els.successBlock.classList.add('animate');
+    burstConfetti();
+  }
+
+  function burstConfetti() {
+    if (reduceMotion) return;
+    const colors = ['#d4500f', '#2e7d4f', '#c48a12', '#e86a2a', '#4caf74', '#f3efe6'];
+    const root = els.confetti;
+    root.innerHTML = '';
+    for (let i = 0; i < 48; i++) {
+      const bit = document.createElement('i');
+      const left = Math.random() * 100;
+      const delay = Math.random() * 0.25;
+      const dur = 0.9 + Math.random() * 0.8;
+      bit.style.left = left + '%';
+      bit.style.background = colors[i % colors.length];
+      bit.style.transform = `rotate(${Math.random() * 360}deg)`;
+      root.appendChild(bit);
+      bit.animate(
+        [
+          { transform: `translateY(0) rotate(0deg)`, opacity: 1 },
+          {
+            transform: `translateY(${60 + Math.random() * 40}vh) rotate(${200 + Math.random() * 200}deg)`,
+            opacity: 0,
+          },
+        ],
+        { duration: dur * 1000, delay: delay * 1000, easing: 'cubic-bezier(0.22, 1, 0.36, 1)', fill: 'forwards' }
+      );
+    }
+    setTimeout(() => { root.innerHTML = ''; }, 2200);
+  }
+
+  // ——— Export ———
+  function buildExport(dayKey, { includeDay, includeQueue, format }) {
+    const day = dayKey === todayKey ? currentDay : loadDay(dayKey);
+    // Queue is live/global (not stored per day); export the current queue when requested.
+    const q = queue;
+
+    if (format === 'json') {
+      const obj = { date: dayKey };
+      if (includeDay) {
+        obj.summary = day.summary || '';
+        obj.carryOver = day.carryOver || '';
+        obj.wrapped = !!day.wrapped;
+        obj.log = [...day.log].sort(
+          (a, b) => new Date(a.completedAt) - new Date(b.completedAt)
+        );
+      }
+      if (includeQueue) obj.queue = q;
+      return JSON.stringify(obj, null, 2);
+    }
+
+    if (format === 'csv') {
+      const rows = [['type', 'time', 'text', 'meta']];
+      if (includeDay) {
+        if (day.summary) rows.push(['summary', '', day.summary, '']);
+        if (day.carryOver) rows.push(['carry', '', day.carryOver, '']);
+        [...day.log]
+          .sort((a, b) => new Date(a.completedAt) - new Date(b.completedAt))
+          .forEach((e) => {
+            rows.push(['done', e.completedAt, e.text, e.fromQueue ? 'from queue' : 'direct']);
+          });
+      }
+      if (includeQueue) {
+        q.forEach((item) => {
+          rows.push(['queued', item.createdAt, item.text, item.dueAt ? 'due ' + item.dueAt : '']);
+        });
+      }
+      return rows.map((r) => r.map(csvEscape).join(',')).join('\n');
+    }
+
+    // Markdown
+    const lines = [`# Work log — ${dayKey}`, ''];
+    if (includeDay) {
+      if (day.summary) {
+        lines.push('## Summary', '', day.summary, '');
+      }
+      if (day.carryOver) {
+        lines.push('## Carry into tomorrow', '', day.carryOver, '');
+      }
+      const chrono = [...day.log].sort(
+        (a, b) => new Date(a.completedAt) - new Date(b.completedAt)
+      );
+      lines.push(`## Done (${chrono.length})`, '');
+      chrono.forEach((e) => {
+        lines.push(`- **${formatTime(new Date(e.completedAt))}** — ${e.text}`);
+      });
+      if (!chrono.length) lines.push('_Nothing logged._');
+      lines.push('');
+    }
+    if (includeQueue) {
+      lines.push(`## Queued (${q.length})`, '');
+      q.forEach((item, i) => {
+        let meta = `added ${formatDateTimeShort(item.createdAt)}`;
+        if (item.dueAt) meta += `; due ${formatDateTimeShort(item.dueAt)}`;
+        lines.push(`${i + 1}. ${item.text} _(${meta})_`);
+      });
+      if (!q.length) lines.push('_Queue empty._');
+      lines.push('');
+    }
+    return lines.join('\n').trim() + '\n';
+  }
+
+  function csvEscape(v) {
+    const s = String(v ?? '');
+    if (/[",\n]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
+    return s;
+  }
+
+  function refreshExportPreview() {
+    const dayKey = els.expDayPicker.value || todayKey;
+    const text = buildExport(dayKey, {
+      includeDay: els.expDay.checked,
+      includeQueue: els.expQueue.checked,
+      format: exportFmt,
+    });
+    els.exportPreview.textContent = text;
+  }
+
+  function openExportModal(preselectDay) {
+    const days = new Set([todayKey, ...settings.days]);
+    const list = Array.from(days).sort().reverse();
+    els.expDayPicker.innerHTML = list
+      .map((d) => `<option value="${d}"${d === (preselectDay || todayKey) ? ' selected' : ''}>${d}${d === todayKey ? ' (today)' : ''}</option>`)
+      .join('');
+    setExportFmt(exportFmt);
+    refreshExportPreview();
+    openOverlay(els.exportOverlay, els.exportModal);
+  }
+
+  function setExportFmt(fmt) {
+    exportFmt = fmt;
+    const btns = els.exportOverlay.querySelectorAll('[data-fmt]');
+    let idx = 0;
+    btns.forEach((b, i) => {
+      const on = b.dataset.fmt === fmt;
+      b.setAttribute('aria-checked', on ? 'true' : 'false');
+      if (on) idx = i;
+    });
+    els.segPill.style.transform = `translateX(${idx * 100}%)`;
+    refreshExportPreview();
+  }
+
+  function downloadText(filename, text) {
+    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  async function copyText(text) {
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch (_) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      ta.remove();
+    }
+    showToast('Copied to clipboard', { duration: 2200 });
+  }
+
+  // ——— History ———
+  function openHistory() {
+    els.drawerOverlay.hidden = false;
+    els.historyDrawer.hidden = false;
+    requestAnimationFrame(() => {
+      els.drawerOverlay.classList.add('open');
+      els.historyDrawer.classList.add('open');
+    });
+    renderHistory();
+  }
+
+  function closeHistory() {
+    els.drawerOverlay.classList.remove('open');
+    els.historyDrawer.classList.remove('open');
+    setTimeout(() => {
+      els.drawerOverlay.hidden = true;
+      els.historyDrawer.hidden = true;
+    }, 320);
+  }
+
+  function renderHistory() {
+    const days = Array.from(new Set([todayKey, ...settings.days]))
+      .filter((d) => d !== todayKey || loadDay(d).log.length || loadDay(d).wrapped || d === todayKey)
+      .sort()
+      .reverse();
+
+    els.historyBody.innerHTML = '';
+    if (!days.length) {
+      els.historyBody.innerHTML = '<p class="empty visible">No past days yet.</p>';
+      return;
+    }
+
+    days.forEach((key, i) => {
+      const day = key === todayKey ? currentDay : loadDay(key);
+      if (key !== todayKey && !day.log.length && !day.wrapped && !day.summary) return;
+
+      const card = document.createElement('article');
+      card.className = 'hist-card';
+      const preview = day.summary
+        ? day.summary
+        : day.log.length
+          ? day.log.map((e) => e.text).slice(0, 3).join('\n')
+          : 'No summary yet.';
+      card.innerHTML = `
+        <div class="hist-top">
+          <span class="hist-date">${escapeHtml(key === todayKey ? 'Today' : key)}</span>
+          <span class="chip">${day.log.length} done</span>
+          <span class="chip ${day.wrapped ? 'ok' : 'warn'}">${day.wrapped ? 'wrapped' : 'not wrapped'}</span>
+        </div>
+        <p class="hist-preview">${escapeHtml(preview)}</p>
+        <div class="hist-actions">
+          ${
+            day.wrapped
+              ? `<button type="button" class="btn" data-act="edit" data-day="${key}">Edit summary</button>`
+              : `<button type="button" class="btn btn-primary" data-act="wrap" data-day="${key}">Wrap up</button>`
+          }
+          <button type="button" class="btn" data-act="export" data-day="${key}">Export</button>
+        </div>
+      `;
+      els.historyBody.appendChild(card);
+      setTimeout(() => card.classList.add('show'), reduceMotion ? 0 : 40 + i * 50);
+    });
+  }
+
+  // ——— Overlays helpers ———
+  function openOverlay(overlay, modal) {
+    overlay.hidden = false;
+    overlay.classList.add('open');
+    modal.classList.remove('leaving');
+    modal.classList.add('entering');
+  }
+
+  function closeOverlay(overlay, modal) {
+    modal.classList.remove('entering');
+    modal.classList.add('leaving');
+    setTimeout(() => {
+      overlay.classList.remove('open');
+      overlay.hidden = true;
+      modal.classList.remove('leaving');
+    }, reduceMotion ? 0 : 200);
+  }
+
+  // ——— Sortable ———
+  function initSortable() {
+    if (typeof Sortable === 'undefined') return;
+    if (sortable) sortable.destroy();
+    sortable = Sortable.create(els.queueList, {
+      handle: '.handle',
+      animation: reduceMotion ? 0 : 180,
+      forceFallback: true,
+      fallbackClass: 'sortable-fallback',
+      ghostClass: 'ghost-placeholder',
+      dragClass: 'dragging',
+      onEnd(evt) {
+        if (evt.oldIndex == null || evt.newIndex == null) return;
+        if (evt.oldIndex === evt.newIndex) return;
+        const [moved] = queue.splice(evt.oldIndex, 1);
+        queue.splice(evt.newIndex, 0, moved);
+        persistQueue();
+      },
+    });
+  }
+
+  // ——— Events ———
+  els.queueForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const dueOpen = els.dueField.classList.contains('open');
+    const dueVal = dueOpen && els.dueInput.value
+      ? new Date(els.dueInput.value).toISOString()
+      : null;
+    addQueueItem(els.queueInput.value, dueVal);
+    els.queueInput.value = '';
+    els.dueInput.value = '';
+    els.dueField.classList.remove('open');
+    els.btnDueToggle.setAttribute('aria-expanded', 'false');
+  });
+
+  els.btnDueToggle.addEventListener('click', () => {
+    const open = els.dueField.classList.toggle('open');
+    els.btnDueToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if (open) els.dueInput.focus();
+  });
+
+  els.logForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    addDirectLog(els.logInput.value);
+    els.logInput.value = '';
+  });
+
+  els.queueList.addEventListener('click', (e) => {
+    const li = e.target.closest('.item');
+    if (!li) return;
+    focusedQueueId = li.dataset.id;
+    els.queueList.querySelectorAll('.item').forEach((el) => {
+      el.classList.toggle('focused', el === li);
+    });
+    const action = e.target.closest('[data-action]');
+    if (!action) return;
+    if (action.dataset.action === 'done') completeQueueItem(li.dataset.id);
+    if (action.dataset.action === 'delete') deleteQueueItem(li.dataset.id);
+  });
+
+  els.queueList.addEventListener('dblclick', (e) => {
+    const li = e.target.closest('.item');
+    if (!li || e.target.closest('.check-btn, .del-btn, .handle')) return;
+    startEditQueue(li.dataset.id);
+  });
+
+  els.queueList.addEventListener('keydown', (e) => {
+    const li = e.target.closest('.item');
+    if (!li || e.target.matches('input')) return;
+    focusedQueueId = li.dataset.id;
+    if (e.key === ' ' || e.code === 'Space') {
+      e.preventDefault();
+      completeQueueItem(li.dataset.id);
+    } else if (e.key === 'Delete' || e.key === 'Backspace') {
+      e.preventDefault();
+      deleteQueueItem(li.dataset.id);
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      startEditQueue(li.dataset.id);
+    }
+  });
+
+  els.queueList.addEventListener('focusin', (e) => {
+    const li = e.target.closest('.item');
+    if (!li) return;
+    focusedQueueId = li.dataset.id;
+    els.queueList.querySelectorAll('.item').forEach((el) => {
+      el.classList.toggle('focused', el === li);
+    });
+  });
+
+  els.logList.addEventListener('click', (e) => {
+    const li = e.target.closest('.log-item');
+    if (!li) return;
+    const action = e.target.closest('[data-action]');
+    if (!action) return;
+    if (action.dataset.action === 'back') backToQueue(li.dataset.id);
+    if (action.dataset.action === 'delete') deleteLogEntry(li.dataset.id);
+  });
+
+  els.logList.addEventListener('dblclick', (e) => {
+    const li = e.target.closest('.log-item');
+    if (!li || e.target.closest('[data-action]')) return;
+    startEditLog(li.dataset.id);
+  });
+
+  // Sort menu
+  els.btnSort.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const open = !els.sortMenu.classList.contains('open');
+    els.sortMenu.hidden = !open;
+    els.sortMenu.classList.toggle('open', open);
+    els.btnSort.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if (open && !reduceMotion) {
+      Array.from(els.sortMenu.children).forEach((btn, i) => {
+        btn.style.opacity = '0';
+        btn.animate(
+          [{ opacity: 0, transform: 'translateY(-4px)' }, { opacity: 1, transform: 'none' }],
+          { duration: 200, delay: i * 35, fill: 'forwards', easing: 'ease' }
+        );
+      });
+    }
+  });
+  els.sortMenu.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-sort]');
+    if (!btn) return;
+    sortQueue(btn.dataset.sort);
+    els.sortMenu.classList.remove('open');
+    els.sortMenu.hidden = true;
+    els.btnSort.setAttribute('aria-expanded', 'false');
+  });
+  document.addEventListener('click', () => {
+    els.sortMenu.classList.remove('open');
+    els.sortMenu.hidden = true;
+    els.btnSort.setAttribute('aria-expanded', 'false');
+  });
+
+  // Header actions
+  $('btnWrap').addEventListener('click', () => openWrapModal(todayKey));
+  $('btnExport').addEventListener('click', () => openExportModal(todayKey));
+  $('btnHistory').addEventListener('click', openHistory);
+  $('btnEditSummary').addEventListener('click', () => openWrapModal(todayKey));
+  $('btnExportDay').addEventListener('click', () => openExportModal(todayKey));
+  els.btnMissedWrap.addEventListener('click', () => {
+    openWrapModal(els.btnMissedWrap.dataset.day);
+  });
+
+  els.wrapTimeInput.addEventListener('change', () => {
+    settings.wrapTime = els.wrapTimeInput.value || '18:00';
+    persistSettings();
+    wrapPromptedFor = null;
+  });
+
+  // Wrap modal
+  $('btnWrapClose').addEventListener('click', () => closeOverlay(els.wrapOverlay, els.wrapModal));
+  $('btnWrapDone').addEventListener('click', () => closeOverlay(els.wrapOverlay, els.wrapModal));
+  $('btnSnooze').addEventListener('click', () => {
+    snoozeUntil = Date.now() + 30 * 60 * 1000;
+    wrapPromptedFor = todayKey;
+    closeOverlay(els.wrapOverlay, els.wrapModal);
+    showUndoToast('Reminded in 30 minutes', () => {
+      snoozeUntil = 0;
+      wrapPromptedFor = null;
+    });
+  });
+  $('btnSaveWrap').addEventListener('click', saveWrap);
+  $('btnInsertBullets').addEventListener('click', () => {
+    const day = wrapTargetDay === todayKey ? currentDay : loadDay(wrapTargetDay);
+    const bullets = [...day.log]
+      .sort((a, b) => new Date(a.completedAt) - new Date(b.completedAt))
+      .map((e) => `• ${e.text}`)
+      .join('\n');
+    if (!bullets) return;
+    const cur = els.summaryInput.value;
+    els.summaryInput.value = cur ? cur.trimEnd() + '\n\n' + bullets : bullets;
+    els.summaryInput.focus();
+  });
+  $('btnCopyMd').addEventListener('click', () => {
+    const text = buildExport(wrapTargetDay || todayKey, {
+      includeDay: true, includeQueue: true, format: 'md',
+    });
+    copyText(text);
+  });
+  $('btnDownloadMd').addEventListener('click', () => {
+    const key = wrapTargetDay || todayKey;
+    const text = buildExport(key, { includeDay: true, includeQueue: true, format: 'md' });
+    downloadText(`worklog-${key}.md`, text);
+  });
+  $('btnMoreExport').addEventListener('click', () => {
+    closeOverlay(els.wrapOverlay, els.wrapModal);
+    openExportModal(wrapTargetDay || todayKey);
+  });
+
+  els.wrapOverlay.addEventListener('click', (e) => {
+    if (e.target === els.wrapOverlay) closeOverlay(els.wrapOverlay, els.wrapModal);
+  });
+
+  // Export modal
+  $('btnExportClose').addEventListener('click', () => closeOverlay(els.exportOverlay, els.exportModal));
+  els.exportOverlay.addEventListener('click', (e) => {
+    if (e.target === els.exportOverlay) closeOverlay(els.exportOverlay, els.exportModal);
+  });
+  els.expDay.addEventListener('change', refreshExportPreview);
+  els.expQueue.addEventListener('change', refreshExportPreview);
+  els.expDayPicker.addEventListener('change', refreshExportPreview);
+  els.exportOverlay.querySelectorAll('[data-fmt]').forEach((btn) => {
+    btn.addEventListener('click', () => setExportFmt(btn.dataset.fmt));
+  });
+  $('btnExportCopy').addEventListener('click', () => copyText(els.exportPreview.textContent));
+  $('btnExportDownload').addEventListener('click', () => {
+    const dayKey = els.expDayPicker.value || todayKey;
+    const ext = exportFmt === 'md' ? 'md' : exportFmt;
+    downloadText(`worklog-${dayKey}.${ext}`, els.exportPreview.textContent);
+  });
+
+  // History drawer
+  $('btnDrawerClose').addEventListener('click', closeHistory);
+  els.drawerOverlay.addEventListener('click', closeHistory);
+  els.historyBody.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-act]');
+    if (!btn) return;
+    const day = btn.dataset.day;
+    if (btn.dataset.act === 'wrap' || btn.dataset.act === 'edit') {
+      closeHistory();
+      openWrapModal(day);
+    } else if (btn.dataset.act === 'export') {
+      closeHistory();
+      openExportModal(day);
+    }
+  });
+
+  // Global keyboard
+  document.addEventListener('keydown', (e) => {
+    const tag = (e.target && e.target.tagName) || '';
+    const typing = tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || e.target.isContentEditable;
+
+    if (e.key === 'Escape') {
+      if (els.wrapOverlay.classList.contains('open')) closeOverlay(els.wrapOverlay, els.wrapModal);
+      else if (els.exportOverlay.classList.contains('open')) closeOverlay(els.exportOverlay, els.exportModal);
+      else if (els.historyDrawer.classList.contains('open')) closeHistory();
+      return;
+    }
+
+    if (typing) return;
+
+    if (e.key === 'n' || e.key === 'N' || e.key === '/') {
+      e.preventDefault();
+      els.queueInput.focus();
+      return;
+    }
+
+    if (e.altKey && (e.key === 'ArrowUp' || e.key === 'ArrowDown')) {
+      e.preventDefault();
+      moveFocused(e.key === 'ArrowUp' ? -1 : 1);
+    }
+  });
+
+  // ——— Boot ———
+  ensureDayTracked(todayKey);
+  renderQueue();
+  renderLog();
+  updateMissedBanner();
+  initSortable();
+  tickClock();
+  setInterval(tickClock, 1000);
+})();
+  </script>
+</body>
+</html>
