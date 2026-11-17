@@ -439,6 +439,7 @@ export function sitemapXml() {
     HOME_CANONICAL,
     absoluteUrl(person.resume),
     `${SITE}/llms.txt`,
+    `${SITE}/work-queue/`,
     ...writingSnapshot.posts.map((post) => essayPageUrl(post)),
   ]
   const body = urls
