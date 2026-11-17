@@ -90,6 +90,7 @@
   --radius-aside: var(--radius-pill);
   --color-aside: var(--color-action);
   --color-aside-text: var(--color-action-text);
+  --color-aside-cursor: var(--color-action);
   --motion-aside: 160ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
@@ -1119,6 +1120,39 @@ a.work-company:hover {
   opacity: 0.7;
 }
 
+html.aside-cursor-active,
+html.aside-cursor-active * {
+  cursor: none !important;
+}
+
+.section-aside-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: calc(var(--z-aside) + 1);
+  width: 22px;
+  height: 22px;
+  pointer-events: none;
+  color: var(--color-aside-cursor);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity var(--motion-aside),
+    visibility var(--motion-aside);
+  will-change: transform;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.35));
+}
+
+.section-aside-cursor.is-visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.section-aside-cursor-glyph {
+  display: block;
+  overflow: visible;
+}
+
 .section-aside {
   position: fixed;
   top: 0;
@@ -1199,8 +1233,14 @@ a.work-company:hover {
 }
 
 @media (hover: none), (pointer: coarse) {
-  .section-aside {
+  .section-aside,
+  .section-aside-cursor {
     display: none;
+  }
+
+  html.aside-cursor-active,
+  html.aside-cursor-active * {
+    cursor: auto !important;
   }
 }
 
@@ -1217,11 +1257,17 @@ a.work-company:hover {
     transform: none;
   }
 
-  .section-aside {
+  .section-aside,
+  .section-aside-cursor {
     display: none;
   }
 
   .section-aside-text {
     animation: none;
+  }
+
+  html.aside-cursor-active,
+  html.aside-cursor-active * {
+    cursor: auto !important;
   }
 }
