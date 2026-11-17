@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { site } from '../data/content.js'
 
-/** Keep the pill tucked against the cursor tip, like the reference. */
-const OFFSET_X = 12
-const OFFSET_Y = 8
+/** Keep the pill tucked against the custom cursor tip, like the reference. */
+const OFFSET_X = 14
+const OFFSET_Y = 10
 const EDGE = 12
 
 function canUseAside() {
@@ -16,6 +16,32 @@ function canUseAside() {
 function pickLine(lines, index) {
   if (!lines?.length) return ''
   return lines[index % lines.length]
+}
+
+/** Figma multiplayer arrow — white halo under a solid fill (tip at top-left). */
+const FIGMA_CURSOR_PATH =
+  'M5.65376 12.3673H5.46026L5.31717 12.4976L0.500002 16.8829L0.500002 1.19841L11.7841 12.3638H5.65376Z'
+
+function AsideCursor() {
+  return (
+    <svg
+      className="section-aside-cursor-glyph"
+      width="24"
+      height="36"
+      viewBox="0 0 24 36"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path
+        d={FIGMA_CURSOR_PATH}
+        fill="#ffffff"
+        stroke="#ffffff"
+        strokeWidth="2.25"
+        strokeLinejoin="round"
+      />
+      <path d={FIGMA_CURSOR_PATH} fill="currentColor" />
+    </svg>
+  )
 }
 
 /**
@@ -31,16 +57,19 @@ export default function SectionAside() {
   const [state, setState] = useState({
     visible: false,
     text: '',
-    x: 0,
-    y: 0,
+    cursorX: 0,
+    cursorY: 0,
+    bubbleX: 0,
+    bubbleY: 0,
   })
 
   useEffect(() => {
     if (!canUseAside()) return undefined
 
     const asides = site.asides ?? {}
+    const root = document.documentElement
 
-    const place = (x, y) => {
+    const placeBubble = (x, y) => {
       const bubble = bubbleRef.current
       const width = bubble?.offsetWidth || 200
       const height = bubble?.offsetHeight || 36
@@ -53,6 +82,10 @@ export default function SectionAside() {
       return { x: left, y: top }
     }
 
+    const setActive = (active) => {
+      root.classList.toggle('aside-cursor-active', active)
+    }
+
     const tick = () => {
       rafRef.current = 0
       const { x, y } = latestRef.current
@@ -63,10 +96,22 @@ export default function SectionAside() {
 
       if (!lines?.length) {
         keyRef.current = ''
+        setActive(false)
         setState((prev) => {
-          if (!prev.visible) return prev
-          const pos = place(x, y)
-          return { ...prev, visible: false, x: pos.x, y: pos.y }
+          if (!prev.visible) {
+            return prev.cursorX === x && prev.cursorY === y
+              ? prev
+              : { ...prev, cursorX: x, cursorY: y }
+          }
+          const pos = placeBubble(x, y)
+          return {
+            ...prev,
+            visible: false,
+            cursorX: x,
+            cursorY: y,
+            bubbleX: pos.x,
+            bubbleY: pos.y,
+          }
         })
         return
       }
@@ -81,12 +126,15 @@ export default function SectionAside() {
         text = undefined
       }
 
-      const pos = place(x, y)
+      const pos = placeBubble(x, y)
+      setActive(true)
       setState((prev) => ({
         visible: true,
         text: text ?? prev.text,
-        x: pos.x,
-        y: pos.y,
+        cursorX: x,
+        cursorY: y,
+        bubbleX: pos.x,
+        bubbleY: pos.y,
       }))
     }
 
@@ -98,6 +146,7 @@ export default function SectionAside() {
 
     const onLeave = () => {
       keyRef.current = ''
+      setActive(false)
       setState((prev) => (prev.visible ? { ...prev, visible: false } : prev))
     }
 
@@ -107,19 +156,29 @@ export default function SectionAside() {
       window.removeEventListener('pointermove', onMove)
       document.documentElement.removeEventListener('pointerleave', onLeave)
       if (rafRef.current) window.cancelAnimationFrame(rafRef.current)
+      setActive(false)
     }
   }, [])
 
   return (
-    <div
-      ref={bubbleRef}
-      className={`section-aside${state.visible ? ' is-visible' : ''}`}
-      style={{ transform: `translate3d(${state.x}px, ${state.y}px, 0)` }}
-      aria-hidden="true"
-    >
-      <span key={state.text} className="section-aside-text">
-        {state.text}
-      </span>
-    </div>
+    <>
+      <div
+        className={`section-aside-cursor${state.visible ? ' is-visible' : ''}`}
+        style={{ transform: `translate3d(${state.cursorX}px, ${state.cursorY}px, 0)` }}
+        aria-hidden="true"
+      >
+        <AsideCursor />
+      </div>
+      <div
+        ref={bubbleRef}
+        className={`section-aside${state.visible ? ' is-visible' : ''}`}
+        style={{ transform: `translate3d(${state.bubbleX}px, ${state.bubbleY}px, 0)` }}
+        aria-hidden="true"
+      >
+        <span key={state.text} className="section-aside-text">
+          {state.text}
+        </span>
+      </div>
+    </>
   )
 }
