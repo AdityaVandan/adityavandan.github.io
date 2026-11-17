@@ -18,24 +18,28 @@ function pickLine(lines, index) {
   return lines[index % lines.length]
 }
 
+/** Figma multiplayer arrow — white halo under a solid fill (tip at top-left). */
+const FIGMA_CURSOR_PATH =
+  'M5.65376 12.3673H5.46026L5.31717 12.4976L0.500002 16.8829L0.500002 1.19841L11.7841 12.3638H5.65376Z'
+
 function AsideCursor() {
   return (
     <svg
       className="section-aside-cursor-glyph"
-      width="22"
-      height="22"
-      viewBox="0 0 24 24"
+      width="24"
+      height="36"
+      viewBox="0 0 24 36"
       aria-hidden="true"
       focusable="false"
     >
       <path
-        d="M5.2 2.6v17.2l4.1-4.1 3.5 7.3 2.6-1.3-3.5-7.2h6.4L5.2 2.6z"
-        fill="currentColor"
+        d={FIGMA_CURSOR_PATH}
+        fill="#ffffff"
         stroke="#ffffff"
-        strokeWidth="1.6"
+        strokeWidth="2.25"
         strokeLinejoin="round"
-        strokeLinecap="round"
       />
+      <path d={FIGMA_CURSOR_PATH} fill="currentColor" />
     </svg>
   )
 }

@@ -1130,8 +1130,8 @@ html.aside-cursor-active * {
   top: 0;
   left: 0;
   z-index: calc(var(--z-aside) + 1);
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 36px;
   pointer-events: none;
   color: var(--color-aside-cursor);
   opacity: 0;
@@ -1140,7 +1140,9 @@ html.aside-cursor-active * {
     opacity var(--motion-aside),
     visibility var(--motion-aside);
   will-change: transform;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.35));
+  /* Tip sits near (0.5, 1.2) in the Figma glyph — nudge so it lands on the point. */
+  margin: -2px 0 0 -2px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4));
 }
 
 .section-aside-cursor.is-visible {
